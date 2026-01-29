@@ -1,9 +1,9 @@
-short_name = "godot"
-name = "Godot Engine"
+short_name = "zyris"
+name = "Zyris Engine"
 major = 4
 minor = 6
 patch = 0
 status = "stable"
 module_config = ""
-website = "https://godotengine.org"
+website = "https://zyrisengine.com"
 docs = "4.6"
