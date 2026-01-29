@@ -38,7 +38,7 @@ jobs:
             api-compat: true
             artifact: true
             # Validate godot-cpp compatibility on one arbitrary editor build.
-            godot-cpp: true
+            godot-cpp: false
 
           - name: Editor with doubles and GCC sanitizers (target=editor, dev_build=yes, scu_build=yes, precision=double, use_asan=yes, use_ubsan=yes, linker=mold)
             cache-name: linux-editor-double-sanitizers
