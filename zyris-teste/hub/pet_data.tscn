@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://pet_data_scene"]
+
+[ext_resource type="Script" path="res://hub/pet_data.gd" id="1_script"]
+
+[node name="PetData" type="Node"]
+script = ExtResource("1_script")

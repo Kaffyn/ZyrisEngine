@@ -1,0 +1,32 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://coxfcq58181kj" path="res://snake/snake_game.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://snake/snake_player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://snake/snake_food.tscn" id="3_food"]
+[ext_resource type="PackedScene" path="res://snake/snake_hud.tscn" id="4_hud"]
+
+
+[node name="SnakeGame" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Background" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="BGColor" type="ColorRect" parent="Background"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.07, 0.07, 0.07, 1)
+
+[node name="SnakePlayer" parent="." instance=ExtResource("2_player")]
+
+[node name="Food" parent="." instance=ExtResource("3_food")]
+
+[node name="SnakeHUD" parent="." instance=ExtResource("4_hud")]
+
+[node name="GameTimer" type="Timer" parent="."]
+wait_time = 0.15
+
+[connection signal="timeout" from="GameTimer" to="." method="_on_game_timer_timeout"]

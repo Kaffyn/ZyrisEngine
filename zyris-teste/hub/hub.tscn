@@ -1,0 +1,44 @@
+[gd_scene load_steps=3 format=3 uid="uid://hub_scene"]
+
+[ext_resource type="Script" path="res://hub/hub.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://pet_data_scene" path="res://hub/pet_data.tscn" id="2_pet"]
+
+[node name="Hub" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="PetData" parent="." instance=ExtResource("2_pet")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CoinsLabel" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 120.0
+offset_bottom = 43.0
+text = "Coins: 0"
+
+[node name="PlaySnake" type="Button" parent="CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -60.0
+offset_top = -15.5
+offset_right = 60.0
+offset_bottom = 15.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Play Snake"
+
+[connection signal="pressed" from="CanvasLayer/HUD/PlaySnake" to="." method="_on_play_snake_pressed"]

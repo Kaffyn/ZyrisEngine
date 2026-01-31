@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://lss_root_scene"]
+
+[ext_resource type="Script" path="res://core/lss_root.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://hub_scene" path="res://hub/hub.tscn" id="2_hub"]
+[ext_resource type="PackedScene" uid="uid://pet_data_scene" path="res://hub/pet_data.tscn" id="3_pet"]
+
+[node name="LSSRoot" type="Node"]
+script = ExtResource("1_script")
+
+[node name="PetData" parent="." instance=ExtResource("3_pet")]
+
+[node name="Hub" parent="." instance=ExtResource("2_hub")]

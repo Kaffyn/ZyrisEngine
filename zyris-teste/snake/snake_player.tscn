@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://snake_player_scene"]
+
+[ext_resource type="Script" path="res://snake/snake_player.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_head"]
+size = Vector2(18, 18)
+
+[node name="SnakePlayer" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Head" type="Area2D" parent="." groups=["snake_snake"]]
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Head"]
+shape = SubResource("RectangleShape2D_head")
+
+[connection signal="area_entered" from="Head" to="." method="_on_head_area_entered"]
