@@ -134,6 +134,7 @@ void Input::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_joy_known", "device"), &Input::is_joy_known);
 	ClassDB::bind_method(D_METHOD("get_joy_axis", "device", "axis"), &Input::get_joy_axis);
 	ClassDB::bind_method(D_METHOD("get_joy_name", "device"), &Input::get_joy_name);
+	ClassDB::bind_method(D_METHOD("get_joy_button_string", "button"), &Input::get_joy_button_string);
 	ClassDB::bind_method(D_METHOD("get_joy_guid", "device"), &Input::get_joy_guid);
 	ClassDB::bind_method(D_METHOD("get_joy_info", "device"), &Input::get_joy_info);
 	ClassDB::bind_method(D_METHOD("should_ignore_device", "vendor_id", "product_id"), &Input::should_ignore_device);
@@ -142,6 +143,8 @@ void Input::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_joy_vibration_duration", "device"), &Input::get_joy_vibration_duration);
 	ClassDB::bind_method(D_METHOD("start_joy_vibration", "device", "weak_magnitude", "strong_magnitude", "duration"), &Input::start_joy_vibration, DEFVAL(0));
 	ClassDB::bind_method(D_METHOD("stop_joy_vibration", "device"), &Input::stop_joy_vibration);
+	ClassDB::bind_method(D_METHOD("is_virtual_button_pressed", "device", "button_index"), &Input::is_virtual_button_pressed);
+	ClassDB::bind_method(D_METHOD("get_virtual_axis_value", "device", "axis"), &Input::get_virtual_axis_value);
 	ClassDB::bind_method(D_METHOD("vibrate_handheld", "duration_ms", "amplitude"), &Input::vibrate_handheld, DEFVAL(500), DEFVAL(-1.0));
 	ClassDB::bind_method(D_METHOD("get_gravity"), &Input::get_gravity);
 	ClassDB::bind_method(D_METHOD("get_accelerometer"), &Input::get_accelerometer);
@@ -173,10 +176,14 @@ void Input::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_emulate_touch_from_mouse", "enable"), &Input::set_emulate_touch_from_mouse);
 	ClassDB::bind_method(D_METHOD("is_emulating_touch_from_mouse"), &Input::is_emulating_touch_from_mouse);
 
+	ClassDB::bind_method(D_METHOD("get_last_input_type"), &Input::get_last_input_type);
+
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "mouse_mode"), "set_mouse_mode", "get_mouse_mode");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "use_accumulated_input"), "set_use_accumulated_input", "is_using_accumulated_input");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "emulate_mouse_from_touch"), "set_emulate_mouse_from_touch", "is_emulating_mouse_from_touch");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "emulate_touch_from_mouse"), "set_emulate_touch_from_mouse", "is_emulating_touch_from_mouse");
+
+	ADD_SIGNAL(MethodInfo("last_input_device_changed", PropertyInfo(Variant::INT, "type")));
 
 	BIND_ENUM_CONSTANT(MOUSE_MODE_VISIBLE);
 	BIND_ENUM_CONSTANT(MOUSE_MODE_HIDDEN);
@@ -202,6 +209,11 @@ void Input::_bind_methods() {
 	BIND_ENUM_CONSTANT(CURSOR_VSPLIT);
 	BIND_ENUM_CONSTANT(CURSOR_HSPLIT);
 	BIND_ENUM_CONSTANT(CURSOR_HELP);
+
+	BIND_ENUM_CONSTANT(LAST_INPUT_KEYBOARD_MOUSE);
+	BIND_ENUM_CONSTANT(LAST_INPUT_JOYPAD);
+	BIND_ENUM_CONSTANT(LAST_INPUT_TOUCH);
+	BIND_ENUM_CONSTANT(LAST_INPUT_UNKNOWN);
 
 	ADD_SIGNAL(MethodInfo("joy_connection_changed", PropertyInfo(Variant::INT, "device"), PropertyInfo(Variant::BOOL, "connected")));
 }
@@ -372,6 +384,17 @@ bool Input::is_joy_button_pressed(int p_device, JoyButton p_button) const {
 	}
 
 	return joy_buttons_pressed.has(_combine_device(p_button, p_device));
+}
+
+bool Input::is_virtual_button_pressed(int p_device, int p_button) const {
+	_THREAD_SAFE_METHOD_
+	if (disable_input) {
+		return false;
+	}
+	if (!virtual_device_states.has(p_device)) {
+		return false;
+	}
+	return virtual_device_states[p_device].buttons_pressed.has(p_button);
 }
 
 bool Input::is_action_pressed(const StringName &p_action, bool p_exact) const {
@@ -586,9 +609,30 @@ float Input::get_joy_axis(int p_device, JoyAxis p_axis) const {
 	}
 }
 
+float Input::get_virtual_axis_value(int p_device, int p_axis) const {
+	_THREAD_SAFE_METHOD_
+	if (disable_input) {
+		return 0.0f;
+	}
+	if (!virtual_device_states.has(p_device)) {
+		return 0.0f;
+	}
+	if (!virtual_device_states[p_device].axes_values.has(p_axis)) {
+		return 0.0f;
+	}
+	return virtual_device_states[p_device].axes_values[p_axis];
+}
+
 String Input::get_joy_name(int p_idx) {
 	_THREAD_SAFE_METHOD_
 	return joy_names[p_idx].name;
+}
+
+String Input::get_joy_button_string(JoyButton p_button) {
+	if (p_button < JoyButton::A || p_button >= JoyButton::SDL_MAX) {
+		return "";
+	}
+	return _joy_buttons[(size_t)p_button];
 }
 
 Vector2 Input::get_joy_vibration_strength(int p_device) {
@@ -727,6 +771,14 @@ Vector3 Input::get_magnetometer() const {
 	return magnetometer;
 }
 
+void Input::_set_last_input_type(LastInputType p_type) {
+	if (last_input_type == p_type) {
+		return;
+	}
+	last_input_type = p_type;
+	emit_signal(SNAME("last_input_device_changed"), (int)last_input_type);
+}
+
 Vector3 Input::get_gyroscope() const {
 	_THREAD_SAFE_METHOD_
 
@@ -753,6 +805,7 @@ void Input::_parse_input_event_impl(const Ref<InputEvent> &p_event, bool p_is_em
 
 	Ref<InputEventKey> k = p_event;
 	if (k.is_valid() && !k->is_echo() && k->get_keycode() != Key::NONE) {
+		_set_last_input_type(LAST_INPUT_KEYBOARD_MOUSE);
 		if (k->is_pressed()) {
 			keys_pressed.insert(k->get_keycode());
 		} else {
@@ -774,9 +827,30 @@ void Input::_parse_input_event_impl(const Ref<InputEvent> &p_event, bool p_is_em
 		}
 	}
 
+	Ref<InputEventVirtualButton> vb = p_event;
+	if (vb.is_valid()) {
+		_set_last_input_type(LAST_INPUT_TOUCH);
+		VirtualDeviceState &ds = virtual_device_states[vb->get_device()];
+		if (vb->is_pressed()) {
+			ds.buttons_pressed.insert(vb->get_button_index());
+		} else {
+			ds.buttons_pressed.erase(vb->get_button_index());
+		}
+	}
+
+	Ref<InputEventVirtualMotion> vm = p_event;
+	if (vm.is_valid()) {
+		_set_last_input_type(LAST_INPUT_TOUCH);
+		VirtualDeviceState &ds = virtual_device_states[vm->get_device()];
+		ds.axes_values[vm->get_axis()] = vm->get_axis_value();
+	}
+
 	Ref<InputEventMouseButton> mb = p_event;
 
 	if (mb.is_valid()) {
+		if (!p_is_emulated) {
+			_set_last_input_type(LAST_INPUT_KEYBOARD_MOUSE);
+		}
 		if (mb->is_pressed()) {
 			mouse_button_mask.set_flag(mouse_button_to_mask(mb->get_button_index()));
 		} else {
@@ -806,6 +880,9 @@ void Input::_parse_input_event_impl(const Ref<InputEvent> &p_event, bool p_is_em
 	Ref<InputEventMouseMotion> mm = p_event;
 
 	if (mm.is_valid()) {
+		if (!p_is_emulated) {
+			_set_last_input_type(LAST_INPUT_KEYBOARD_MOUSE);
+		}
 		Point2 position = mm->get_global_position();
 		if (mouse_pos != position) {
 			set_mouse_position(position);
@@ -837,6 +914,7 @@ void Input::_parse_input_event_impl(const Ref<InputEvent> &p_event, bool p_is_em
 	Ref<InputEventScreenTouch> st = p_event;
 
 	if (st.is_valid()) {
+		_set_last_input_type(LAST_INPUT_TOUCH);
 		if (st->is_pressed()) {
 			VelocityTrack &track = touch_velocity_track[st->get_index()];
 			track.reset();
@@ -889,6 +967,7 @@ void Input::_parse_input_event_impl(const Ref<InputEvent> &p_event, bool p_is_em
 	Ref<InputEventScreenDrag> sd = p_event;
 
 	if (sd.is_valid()) {
+		_set_last_input_type(LAST_INPUT_TOUCH);
 		VelocityTrack &track = touch_velocity_track[sd->get_index()];
 		track.update(sd->get_relative(), sd->get_relative_screen_position());
 		sd->set_velocity(track.velocity);
@@ -918,6 +997,7 @@ void Input::_parse_input_event_impl(const Ref<InputEvent> &p_event, bool p_is_em
 	Ref<InputEventJoypadButton> jb = p_event;
 
 	if (jb.is_valid()) {
+		_set_last_input_type(LAST_INPUT_JOYPAD);
 		JoyButton c = _combine_device(jb->get_button_index(), jb->get_device());
 
 		if (jb->is_pressed()) {
@@ -930,6 +1010,7 @@ void Input::_parse_input_event_impl(const Ref<InputEvent> &p_event, bool p_is_em
 	Ref<InputEventJoypadMotion> jm = p_event;
 
 	if (jm.is_valid()) {
+		_set_last_input_type(LAST_INPUT_JOYPAD);
 		set_joy_axis(jm->get_device(), jm->get_axis(), jm->get_axis_value());
 	}
 
@@ -1085,6 +1166,10 @@ Point2 Input::get_last_mouse_velocity() {
 Point2 Input::get_last_mouse_screen_velocity() {
 	mouse_velocity_track.update(Vector2(), Vector2());
 	return mouse_velocity_track.screen_velocity;
+}
+
+Input::LastInputType Input::get_last_input_type() const {
+	return last_input_type;
 }
 
 BitField<MouseButtonMask> Input::get_mouse_button_mask() const {

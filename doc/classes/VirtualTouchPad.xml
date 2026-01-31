@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VirtualTouchPad" inherits="VirtualDevice" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+	<brief_description>
+		A control for relative touch movement, ideal for camera control.
+	</brief_description>
+	<description>
+		[VirtualTouchPad] is a specialized control for tracking relative movement (deltas). It behaves similarly to a laptop trackpad or a mouse.
+		[b]Architecture Note (Pure Motion):[/b] This node is strictly designed for [b]Continuous Motion[/b] (e.g., controlling a 3D camera, aiming a weapon). It emits [InputEventVirtualMotion] based on the relative movement of the finger between frames.
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="circle_color" type="Color" setter="set_circle_color" getter="get_circle_color" default="Color(1, 1, 1, 0.5)">
+			The color of the circle in Circle mode.
+		</member>
+		<member name="circle_radius" type="float" setter="set_circle_radius" getter="get_circle_radius" default="50.0">
+			The radius of the circle in Circle mode.
+		</member>
+		<member name="circle_width" type="float" setter="set_circle_width" getter="get_circle_width" default="4.0">
+			The width of the circle stroke in Circle mode.
+		</member>
+		<member name="hand" type="int" setter="set_hand" getter="get_hand" enum="VirtualTouchPad.TouchPadHand" default="0">
+			The hand this touchpad is designed for. Affects the default virtual axis indices if not overridden.
+		</member>
+		<member name="mode" type="int" setter="set_mode" getter="get_mode" enum="VirtualTouchPad.TouchPadMode" default="1">
+			The visual mode of the touchpad.
+		</member>
+		<member name="sensitivity" type="float" setter="set_sensitivity" getter="get_sensitivity" default="1.0">
+			Multiplier for the output values.
+		</member>
+		<member name="trace_base_color" type="Color" setter="set_base_color" getter="get_base_color" default="Color(1, 1, 1, 0.5)">
+			The base color of the trace. If alpha is 0, the theme color is used.
+		</member>
+		<member name="trace_base_width" type="float" setter="set_base_width" getter="get_base_width" default="4.0">
+			The width of the trace line. If less than or equal to 0, the theme constant is used.
+		</member>
+		<member name="trace_fade_duration" type="float" setter="set_fade_duration" getter="get_fade_duration" default="1.0">
+			The time in seconds for the trace to fade out completely.
+		</member>
+		<member name="trace_length" type="int" setter="set_trace_length" getter="get_trace_length" default="30">
+			The maximum number of points in the trace.
+		</member>
+		<member name="trace_style" type="int" setter="set_trace_style" getter="get_trace_style" enum="VirtualTouchPad.TraceStyle" default="0">
+			The style of the trace pattern.
+		</member>
+		<member name="trace_tapering" type="bool" setter="set_tapering" getter="is_tapering" default="false">
+			If [code]true[/code], the trace width scales with the alpha (fading out), simulating a brush tip pressure/taper effect.
+		</member>
+	</members>
+	<constants>
+		<constant name="MODE_NONE" value="0" enum="TouchPadMode">
+			No visual feedback is drawn.
+		</constant>
+		<constant name="MODE_CIRCLE" value="1" enum="TouchPadMode">
+			Draws a procedural circle around the finger position.
+		</constant>
+		<constant name="MODE_TRACE" value="2" enum="TouchPadMode">
+			Draws a trace following the finger movement.
+		</constant>
+		<constant name="TRACE_STYLE_SOLID" value="0" enum="TraceStyle">
+			Solid line trace, rendered as a smooth continuous ribbon supporting transparency and variable width.
+		</constant>
+		<constant name="TRACE_STYLE_DOTTED" value="1" enum="TraceStyle">
+			Dotted trace using circles.
+		</constant>
+		<constant name="TRACE_STYLE_DASHED" value="2" enum="TraceStyle">
+			Dashed line trace.
+		</constant>
+		<constant name="TRACE_STYLE_SQUARES" value="3" enum="TraceStyle">
+			Trace composed of rotating squares.
+		</constant>
+		<constant name="HAND_LEFT" value="0" enum="TouchPadHand">
+			Left hand. Uses axes 0 and 1 by default.
+		</constant>
+		<constant name="HAND_RIGHT" value="1" enum="TouchPadHand">
+			Right hand. Uses axes 2 and 3 by default.
+		</constant>
+	</constants>
+	<theme_items>
+		<theme_item name="trace_color" data_type="color" type="Color" default="Color(1, 1, 1, 0.5)">
+			The color of the trace visualization.
+		</theme_item>
+		<theme_item name="trace_width" data_type="constant" type="int" default="4">
+			The thickness of the trace line in pixels.
+		</theme_item>
+		<theme_item name="trace_texture" data_type="icon" type="Texture2D">
+			Optional texture drawn at the touch position instead of a line.
+		</theme_item>
+		<theme_item name="style_panel" data_type="style" type="StyleBox">
+		</theme_item>
+	</theme_items>
+</class>

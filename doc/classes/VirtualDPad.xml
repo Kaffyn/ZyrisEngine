@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VirtualDPad" inherits="VirtualDevice" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+	<brief_description>
+		An on-screen virtual directional pad.
+	</brief_description>
+	<description>
+		[VirtualDPad] provides a directional pad interface. It detects touches in four sectors (Up, Down, Left, Right) relative to its center and emits [InputEventVirtualButton] events corresponding to the configured button indices for each direction.
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="button_width_ratio" type="float" setter="set_button_width_ratio" getter="get_button_width_ratio" default="0.33">
+			The width ratio of the directional arms relative to the control size (0.1 to 1.0).
+		</member>
+		<member name="deadzone_size" type="float" setter="set_deadzone_size" getter="get_deadzone_size" default="15.0">
+			The radius in pixels of the central deadzone where no direction is triggered.
+		</member>
+		<member name="down_index" type="int" setter="set_down_button_index" getter="get_down_button_index" default="13">
+			The virtual button index triggered by the down direction.
+		</member>
+		<member name="left_index" type="int" setter="set_left_button_index" getter="get_left_button_index" default="14">
+			The virtual button index triggered by the left direction.
+		</member>
+		<member name="right_index" type="int" setter="set_right_button_index" getter="get_right_button_index" default="15">
+			The virtual button index triggered by the right direction.
+		</member>
+		<member name="texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			The visual texture of the D-Pad.
+		</member>
+		<member name="up_index" type="int" setter="set_up_button_index" getter="get_up_button_index" default="12">
+			The virtual button index triggered by the up direction.
+		</member>
+	</members>
+	<theme_items>
+		<theme_item name="base_color" data_type="color" type="Color" default="Color(1, 1, 1, 1)">
+		</theme_item>
+		<theme_item name="border_color" data_type="color" type="Color" default="Color(0, 0, 0, 0)">
+		</theme_item>
+		<theme_item name="border_width" data_type="constant" type="int" default="0">
+		</theme_item>
+		<theme_item name="texture" data_type="icon" type="Texture2D">
+			Theme-provided texture for the DPad.
+		</theme_item>
+		<theme_item name="center_style" data_type="style" type="StyleBox">
+		</theme_item>
+		<theme_item name="normal_style" data_type="style" type="StyleBox">
+		</theme_item>
+		<theme_item name="pressed_style" data_type="style" type="StyleBox">
+		</theme_item>
+	</theme_items>
+</class>

@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  input_event_codec.h                                                   */
+/*  virtual_joystick_dynamic.h                                            */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -30,22 +30,46 @@
 
 #pragma once
 
-#include "core/input/input_event.h"
+#include "scene/gui/virtual_joystick.h"
 
-/**
- * Encodes the input event as a byte array.
- *
- * Returns `true` if the event was successfully encoded, `false` otherwise.
- */
-bool encode_input_event(const Ref<InputEvent> &p_event, PackedByteArray &r_data);
-void decode_input_event(const PackedByteArray &p_data, Ref<InputEvent> &r_event);
+class VirtualJoystickDynamic : public VirtualJoystick {
+	GDCLASS(VirtualJoystickDynamic, VirtualJoystick);
 
-void encode_input_event_key(const Ref<InputEventKey> &p_event, PackedByteArray &r_data);
-void encode_input_event_mouse_button(const Ref<InputEventMouseButton> &p_event, PackedByteArray &r_data);
-void encode_input_event_mouse_motion(const Ref<InputEventMouseMotion> &p_event, PackedByteArray &r_data);
-void encode_input_event_joypad_button(const Ref<InputEventJoypadButton> &p_event, PackedByteArray &r_data);
-void encode_input_event_joypad_motion(const Ref<InputEventJoypadMotion> &p_event, PackedByteArray &r_data);
-void encode_input_event_gesture_pan(const Ref<InputEventPanGesture> &p_event, PackedByteArray &r_data);
-void encode_input_event_gesture_magnify(const Ref<InputEventMagnifyGesture> &p_event, PackedByteArray &r_data);
-void encode_input_event_virtual_button(const Ref<InputEventVirtualButton> &p_event, PackedByteArray &r_data);
-void encode_input_event_virtual_motion(const Ref<InputEventVirtualMotion> &p_event, PackedByteArray &r_data);
+	bool visible_by_default = false;
+	Vector2 default_position;
+	float joystick_size = 100.0f;
+
+protected:
+	void _notification(int p_what);
+	void _validate_property(PropertyInfo &p_property) const;
+	virtual void _draw_joystick() override;
+	static void _bind_methods();
+
+	// Helper to get the effective default position (either manual or auto-centered)
+	Vector2 _get_effective_default_position() const;
+
+#ifdef TOOLS_ENABLED
+	virtual int _edit_get_handle_count() const override;
+	virtual String _edit_get_handle_name(int p_idx) const override;
+	virtual Variant _edit_get_handle_value(int p_idx) const override;
+	virtual void _edit_set_handle(int p_idx, const Variant &p_value) override;
+#endif
+
+public:
+	void set_visible_by_default(bool p_visible);
+	bool is_visible_by_default() const;
+
+	void set_default_position(const Vector2 &p_pos);
+	Vector2 get_default_position() const;
+
+	void set_joystick_size(float p_size);
+	float get_joystick_size() const;
+
+	virtual float get_joystick_radius() const override;
+
+	virtual void _on_touch_down(int p_index, const Vector2 &p_pos) override;
+	virtual void _on_touch_up(int p_index, const Vector2 &p_pos) override;
+	virtual void _reset_joystick() override;
+
+	VirtualJoystickDynamic();
+};

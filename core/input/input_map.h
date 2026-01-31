@@ -56,6 +56,20 @@ public:
 	// Keep bigger deadzone for toggle actions (default `ui_*` actions, axis `pressed`) (GH-103360).
 	static constexpr float DEFAULT_TOGGLE_DEADZONE = 0.5f;
 
+	enum VirtualButton {
+		VIRTUAL_BUTTON_DPAD_UP = 12,
+		VIRTUAL_BUTTON_DPAD_DOWN = 13,
+		VIRTUAL_BUTTON_DPAD_LEFT = 14,
+		VIRTUAL_BUTTON_DPAD_RIGHT = 15,
+	};
+
+	enum VirtualAxis {
+		VIRTUAL_AXIS_LEFT_X = 0,
+		VIRTUAL_AXIS_LEFT_Y = 1,
+		VIRTUAL_AXIS_RIGHT_X = 2,
+		VIRTUAL_AXIS_RIGHT_Y = 3,
+	};
+
 private:
 	static inline InputMap *singleton = nullptr;
 

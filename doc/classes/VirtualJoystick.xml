@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VirtualJoystick" inherits="VirtualDevice" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+	<brief_description>
+		An on-screen virtual joystick.
+	</brief_description>
+	<description>
+		[VirtualJoystick] is a GUI control that simulates an analog stick in a fixed position. For a dynamic joystick that appears at the touch position, use [VirtualJoystickDynamic]. It emits [InputEventVirtualMotion] events for axes 0 (X) and 1 (Y).
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_joystick_mode" qualifiers="const">
+			<return type="int" enum="VirtualJoystick.JoystickMode" />
+			<description>
+			</description>
+		</method>
+		<method name="get_output" qualifiers="const">
+			<return type="Vector2" />
+			<description>
+				Returns the current normalized output vector of the joystick.
+			</description>
+		</method>
+		<method name="set_joystick_mode">
+			<return type="void" />
+			<param index="0" name="mode" type="int" enum="VirtualJoystick.JoystickMode" />
+			<description>
+				Sets the behavior mode of the joystick. Internal use mostly, as specific nodes ([VirtualJoystick], [VirtualJoystickDynamic]) set their appropriate mode.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="base_color" type="Color" setter="set_base_color" getter="get_base_color" default="Color(1, 1, 1, 1)">
+			Modulate color for the joystick base.
+		</member>
+		<member name="base_texture" type="Texture2D" setter="set_base_texture" getter="get_base_texture">
+			Texture for the joystick base (background).
+		</member>
+		<member name="clamp_zone_size" type="float" setter="set_clamp_zone_size" getter="get_clamp_zone_size" default="1.0">
+			The maximum distance the joystick tip can move, as a multiplier of the base radius. A value of 1.0 means the tip stays within the base circle. A value of 1.5 (default) allows the tip to extend halfway beyond the base circle. Range: 0.5 to 2.0.
+		</member>
+		<member name="deadzone_size" type="float" setter="set_deadzone_size" getter="get_deadzone_size" default="0.0">
+			The radius of the center deadzone as a percentage of the base radius. Movement within this zone is ignored. Range: 0.0 to 0.15.
+		</member>
+		<member name="joystick_hand" type="int" setter="set_joystick_hand" getter="get_joystick_hand" enum="VirtualJoystick.JoystickHand" default="0">
+			The hand this joystick is designed for. Affects the virtual axis indices (0/1 for Left, 2/3 for Right).
+		</member>
+		<member name="mouse_filter" type="int" setter="set_mouse_filter" getter="get_mouse_filter" overrides="Control" enum="Control.MouseFilter" default="1" />
+		<member name="tip_color" type="Color" setter="set_tip_color" getter="get_tip_color" default="Color(1, 1, 1, 1)">
+			Modulate color for the joystick tip (handle).
+		</member>
+		<member name="tip_scale" type="float" setter="set_tip_scale" getter="get_tip_scale" default="0.5">
+			The scale of the tip relative to the base radius (0.01 to 1.0).
+		</member>
+		<member name="tip_texture" type="Texture2D" setter="set_tip_texture" getter="get_tip_texture">
+			Texture for the joystick tip (handle).
+		</member>
+	</members>
+	<constants>
+		<constant name="JOYSTICK_MODE_FIXED" value="0" enum="JoystickMode">
+			The joystick remains in a fixed position.
+		</constant>
+		<constant name="JOYSTICK_MODE_DYNAMIC" value="1" enum="JoystickMode">
+			The joystick appears at the position where the screen is touched.
+		</constant>
+		<constant name="JOYSTICK_HAND_LEFT" value="0" enum="JoystickHand">
+			Left hand. Uses virtual axes 0 and 1.
+		</constant>
+		<constant name="JOYSTICK_HAND_RIGHT" value="1" enum="JoystickHand">
+			Right hand. Uses virtual axes 2 and 3.
+		</constant>
+	</constants>
+	<theme_items>
+		<theme_item name="base_color" data_type="color" type="Color" default="Color(1, 1, 1, 1)">
+			Theme-provided modulate color for the base.
+		</theme_item>
+		<theme_item name="tip_color" data_type="color" type="Color" default="Color(1, 1, 1, 1)">
+			Theme-provided modulate color for the tip.
+		</theme_item>
+		<theme_item name="base" data_type="icon" type="Texture2D">
+			Theme-provided texture for the joystick base.
+		</theme_item>
+		<theme_item name="tip" data_type="icon" type="Texture2D">
+			Theme-provided texture for the joystick tip.
+		</theme_item>
+		<theme_item name="base_style" data_type="style" type="StyleBox">
+			StyleBox for the joystick base.
+		</theme_item>
+		<theme_item name="tip_style" data_type="style" type="StyleBox">
+			StyleBox for the joystick tip.
+		</theme_item>
+	</theme_items>
+</class>

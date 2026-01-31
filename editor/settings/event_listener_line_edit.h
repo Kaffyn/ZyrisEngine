@@ -36,7 +36,9 @@ enum InputType {
 	INPUT_KEY = 1,
 	INPUT_MOUSE_BUTTON = 2,
 	INPUT_JOY_BUTTON = 4,
-	INPUT_JOY_MOTION = 8
+	INPUT_JOY_MOTION = 8,
+	INPUT_VIRTUAL_BUTTON = 16,
+	INPUT_VIRTUAL_MOTION = 32,
 };
 
 class EventListenerLineEdit : public LineEdit {
