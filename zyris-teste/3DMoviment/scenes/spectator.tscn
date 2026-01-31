@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://d4e5f6g7h8ja"]
+
+[ext_resource type="Script" uid="uid://b88vbwt3mu3wg" path="res://3DMoviment/scripts/spectator.gd" id="1_script"]
+
+[node name="Spectator" type="Camera3D"]
+script = ExtResource("1_script")

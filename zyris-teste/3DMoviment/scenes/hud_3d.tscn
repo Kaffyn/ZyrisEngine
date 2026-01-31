@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://c1d4e2f3g4h5"]
+
+[ext_resource type="Script" uid="uid://cbbqbycx62p70" path="res://3DMoviment/scripts/hud_3d.gd" id="1_script"]
+
+[node name="HUD3D" type="CanvasLayer" unique_id=1537507877]
+script = ExtResource("1_script")
+
+[node name="VirtualJoystickDynamic" type="VirtualJoystickDynamic" parent="." unique_id=851256219]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -576.0
+grow_horizontal = 2
+grow_vertical = 2
+visible_by_default = true
+default_position = Vector2(130, 400)
+joystick_size = 150.0
+
+[node name="VirtualTouchPad" type="VirtualTouchPad" parent="." unique_id=1779369100]
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -576.0
+grow_horizontal = 0
+grow_vertical = 2
+size_flags_horizontal = 8
+sensitivity = 2.0
+hand = 1

@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://df43f1d2a1d0"]
+
+[ext_resource type="Script" uid="uid://c8ki5qfrdea38" path="res://2DMoviment/scripts/hud_2d.gd" id="1_script"]
+
+[node name="HUD2D" type="CanvasLayer" unique_id=7368580]
+script = ExtResource("1_script")
+
+[node name="Control" type="Control" parent="." unique_id=1651792888]
+layout_mode = 3
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 76.0
+offset_top = 76.0
+offset_right = -76.0
+offset_bottom = 76.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VirtualDPad" type="VirtualDPad" parent="Control" unique_id=1741545628]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -90.0
+offset_right = 180.0
+offset_bottom = 90.0
+grow_vertical = 2
+button_width_ratio = 0.35
+
+[node name="VirtualButton" type="VirtualButton" parent="Control" unique_id=1039700000]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -50.0
+offset_bottom = 50.0
+grow_horizontal = 0
+grow_vertical = 2
+button_index = 0
+text = "JUMP"
+font_size = 20

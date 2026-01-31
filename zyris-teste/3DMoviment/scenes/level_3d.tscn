@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://b8d3f1d2a1b2"]
+
+[ext_resource type="Script" uid="uid://ckq436lok6osh" path="res://3DMoviment/scripts/level_3d.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://c1d4e2f3g4h5" path="res://3DMoviment/scenes/hud_3d.tscn" id="2_hud"]
+[ext_resource type="PackedScene" uid="uid://d4e5f6g7h8ja" path="res://3DMoviment/scenes/spectator.tscn" id="3_spectator"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+albedo_color = Color(0.2, 0.6, 1.0, 1.0)
+uv1_scale = Vector3(10, 10, 10)
+
+[node name="Level3D" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, -0.75, 0.433013, 0, 10, 0)
+shadow_enabled = true
+
+[node name="Floor" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+use_collision = true
+size = Vector3(50, 1, 50)
+material = SubResource("StandardMaterial3D_1")
+
+[node name="Obstacle1" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, 0)
+size = Vector3(2, 2, 2)
+material = SubResource("StandardMaterial3D_1")
+
+[node name="Spectator" parent="." instance=ExtResource("3_spectator")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 10)
+current = true
+
+[node name="HUD3D" parent="." instance=ExtResource("2_hud")]

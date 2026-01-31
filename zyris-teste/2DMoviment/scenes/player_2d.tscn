@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://df43f1d2a1da"]
+
+[ext_resource type="Script" uid="uid://ddtc8y8ter6kq" path="res://2DMoviment/scripts/player_2d.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
+size = Vector2(40, 40)
+
+[node name="Player2D" type="CharacterBody2D" unique_id=514322773]
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1894406046]
+shape = SubResource("RectangleShape2D_2")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=789185077]
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+color = Color(0.2, 0.6, 1, 1)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=857075092]
+position_smoothing_enabled = true
