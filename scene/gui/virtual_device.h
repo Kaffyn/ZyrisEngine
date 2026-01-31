@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  input_event_codec.h                                                   */
+/*  virtual_device.h                                                      */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -30,22 +30,67 @@
 
 #pragma once
 
-#include "core/input/input_event.h"
+#include "scene/gui/control.h"
 
-/**
- * Encodes the input event as a byte array.
- *
- * Returns `true` if the event was successfully encoded, `false` otherwise.
- */
-bool encode_input_event(const Ref<InputEvent> &p_event, PackedByteArray &r_data);
-void decode_input_event(const PackedByteArray &p_data, Ref<InputEvent> &r_event);
+class VirtualDevice : public Control {
+	GDCLASS(VirtualDevice, Control);
 
-void encode_input_event_key(const Ref<InputEventKey> &p_event, PackedByteArray &r_data);
-void encode_input_event_mouse_button(const Ref<InputEventMouseButton> &p_event, PackedByteArray &r_data);
-void encode_input_event_mouse_motion(const Ref<InputEventMouseMotion> &p_event, PackedByteArray &r_data);
-void encode_input_event_joypad_button(const Ref<InputEventJoypadButton> &p_event, PackedByteArray &r_data);
-void encode_input_event_joypad_motion(const Ref<InputEventJoypadMotion> &p_event, PackedByteArray &r_data);
-void encode_input_event_gesture_pan(const Ref<InputEventPanGesture> &p_event, PackedByteArray &r_data);
-void encode_input_event_gesture_magnify(const Ref<InputEventMagnifyGesture> &p_event, PackedByteArray &r_data);
-void encode_input_event_virtual_button(const Ref<InputEventVirtualButton> &p_event, PackedByteArray &r_data);
-void encode_input_event_virtual_motion(const Ref<InputEventVirtualMotion> &p_event, PackedByteArray &r_data);
+public:
+	enum VisibilityMode {
+		VISIBILITY_ALWAYS,
+		VISIBILITY_TOUCHSCREEN_ONLY,
+	};
+
+private:
+	int device = 0;
+	VisibilityMode visibility_mode = VISIBILITY_ALWAYS;
+	BitField<MouseButtonMask> action_mask = MouseButtonMask::LEFT;
+
+protected:
+	// Touch state - accessible to subclasses for custom handling
+	int current_touch_index = -1; // -1 means no touch
+	bool pressed = false;
+	bool hovering = false;
+
+	// Common properties matching BaseButton for familiarity
+
+	virtual void _update_theme_item_cache() override;
+
+	void _notification(int p_what);
+	void _on_input_type_changed(int p_type);
+	static void _bind_methods();
+
+	// Input handling core
+	virtual void gui_input(const Ref<InputEvent> &p_event) override;
+
+	// virtual hooks for subclasses
+	virtual void _on_touch_down(int p_index, const Vector2 &p_pos);
+	virtual void _on_touch_up(int p_index, const Vector2 &p_pos);
+	virtual void _on_drag(int p_index, const Vector2 &p_pos, const Vector2 &p_relative);
+
+	virtual void pressed_state_changed(); // Called when pressed changes
+
+public:
+	enum DrawMode {
+		DRAW_NORMAL,
+		DRAW_PRESSED,
+		DRAW_HOVER,
+		DRAW_HOVER_PRESSED,
+	};
+
+	DrawMode get_draw_mode() const;
+
+	void set_device(int p_device);
+	int get_device() const;
+
+	void set_visibility_mode(VisibilityMode p_mode);
+	VisibilityMode get_visibility_mode() const;
+
+	bool is_pressed() const;
+	bool is_hovered() const;
+
+	VirtualDevice();
+};
+
+VARIANT_ENUM_CAST(VirtualDevice::VisibilityMode);
+VARIANT_ENUM_CAST(VirtualDevice::DrawMode);

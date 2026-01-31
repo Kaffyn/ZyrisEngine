@@ -1349,10 +1349,80 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_icon("resizer", "GraphEditMinimap", icons["resizer_nw"]);
 	theme->set_color("resizer_color", "GraphEditMinimap", Color(1, 1, 1, 0.85));
 
-	// Theme
+	// Virtual Controls
+
+	// VirtualButton
+	theme->set_stylebox(CoreStringName(normal), "VirtualButton", button_normal);
+	theme->set_stylebox(SceneStringName(hover), "VirtualButton", button_hover);
+	theme->set_stylebox(SceneStringName(pressed), "VirtualButton", button_pressed);
+	theme->set_stylebox("disabled", "VirtualButton", button_disabled);
+	theme->set_stylebox("focus", "VirtualButton", focus);
+
+	theme->set_font(SceneStringName(font), "VirtualButton", Ref<Font>());
+	theme->set_font_size(SceneStringName(font_size), "VirtualButton", -1);
+	theme->set_constant("outline_size", "VirtualButton", 0);
+
+	theme->set_color(SceneStringName(font_color), "VirtualButton", control_font_color);
+	theme->set_color("font_pressed_color", "VirtualButton", control_font_pressed_color);
+	theme->set_color("font_hover_color", "VirtualButton", control_font_hover_color);
+	theme->set_color("font_focus_color", "VirtualButton", control_font_focus_color);
+	theme->set_color("font_hover_pressed_color", "VirtualButton", control_font_pressed_color);
+	theme->set_color("font_disabled_color", "VirtualButton", control_font_disabled_color);
+	theme->set_color("font_outline_color", "VirtualButton", Color(0, 0, 0));
+
+	theme->set_color("icon_normal_color", "VirtualButton", Color(1, 1, 1, 1));
+	theme->set_color("icon_pressed_color", "VirtualButton", Color(1, 1, 1, 1));
+	theme->set_color("icon_hover_color", "VirtualButton", Color(1, 1, 1, 1));
+	theme->set_color("icon_hover_pressed_color", "VirtualButton", Color(1, 1, 1, 1));
+	theme->set_color("icon_focus_color", "VirtualButton", Color(1, 1, 1, 1));
+	theme->set_color("icon_disabled_color", "VirtualButton", Color(1, 1, 1, 0.4));
+	// VirtualButton should NOT have a default icon, behaving like a standard Godot button.
+
+	// VirtualJoystick
+	Ref<StyleBoxFlat> vjoy_base_style = make_flat_stylebox(Color(0.2, 0.2, 0.2, 0.6), 0, 0, 0, 0, 1024, true, 4);
+	vjoy_base_style->set_border_color(Color(1, 1, 1, 0.4));
+	vjoy_base_style->set_corner_detail(64);
+	vjoy_base_style->set_anti_aliased(true);
+
+	Ref<StyleBoxFlat> vjoy_tip_style = make_flat_stylebox(Color(1, 1, 1, 1), 0, 0, 0, 0, 1024, true);
+	vjoy_tip_style->set_corner_detail(64);
+	vjoy_tip_style->set_anti_aliased(true);
+
+	theme->set_stylebox("base_style", "VirtualJoystick", vjoy_base_style);
+	theme->set_stylebox("tip_style", "VirtualJoystick", vjoy_tip_style);
+	theme->set_color("base_color", "VirtualJoystick", Color(1, 1, 1, 1));
+	theme->set_color("tip_color", "VirtualJoystick", Color(1, 1, 1, 1));
+	// VirtualJoystick is procedural by default for better quality at scaling.
+
+	// VirtualDPad
+	Ref<StyleBoxFlat> vd_normal = make_flat_stylebox(Color(0.1, 0.1, 0.1, 0.6), 2, 2, 2, 2, 4);
+	Ref<StyleBoxFlat> vd_pressed = make_flat_stylebox(Color(0.4, 0.4, 0.4, 0.8), 2, 2, 2, 2, 4);
+
+	theme->set_stylebox(CoreStringName(normal), "VirtualDPad", vd_normal);
+	theme->set_stylebox(SceneStringName(pressed), "VirtualDPad", vd_pressed);
+	theme->set_stylebox("center", "VirtualDPad", vd_normal);
+	theme->set_color("base_color", "VirtualDPad", Color(1, 1, 1, 1));
+	theme->set_color("normal_color", "VirtualDPad", Color(0.8, 0.8, 0.8, 0.4));
+	theme->set_color("active_color", "VirtualDPad", Color(1, 1, 1, 0.8));
+	theme->set_color("highlight_color", "VirtualDPad", Color(0, 0.8, 1, 1));
+	theme->set_color("border_color", "VirtualDPad", Color(0, 0, 0, 0));
+	theme->set_constant("border_width", "VirtualDPad", 0);
+	// VirtualDPad is procedural by default. No "texture" icon set here.
+
+	// VirtualTouchPad
+	Ref<StyleBoxFlat> vt_panel = make_flat_stylebox(Color(0.1, 0.1, 0.1, 0.4), 2, 2, 2, 2, 4);
+	vt_panel->set_border_width_all(2);
+	vt_panel->set_border_color(Color(0.5, 0.5, 0.5, 0.5));
+
+	theme->set_stylebox(SceneStringName(panel), "VirtualTouchPad", vt_panel);
+	theme->set_color("trace_color", "VirtualTouchPad", Color(1, 1, 1, 0.5));
+	theme->set_constant("trace_width", "VirtualTouchPad", 4);
+	theme->set_icon("icon", "VirtualTouchPad", icons["virtual_touchpad"]);
+	theme->set_icon("trace_texture", "VirtualTouchPad", Ref<Texture2D>());
+
+	// Default Theme Backend fallback (Globals)
 
 	default_icon = icons["error_icon"];
-	// Same color as the error icon.
 	default_style = make_flat_stylebox(Color(1, 0.365, 0.365), 4, 4, 4, 4, 0, false, 2);
 }
 
