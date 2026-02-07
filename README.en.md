@@ -49,17 +49,15 @@ Zyris is implementing a comprehensive set of systems. Below is our development r
 
 - [x] **Virtual Input Devices** - Cross-platform Input Abstraction Layer
 
-  A complete virtual input system integrated directly into the engine core, providing fluid touch controls for mobile and hybrid devices.
+    A complete virtual input system integrated directly into the engine core, providing fluid touch controls for mobile and hybrid devices.
 
-  **Interface Nodes:**
-
+    **Interface Nodes:**
   - `VirtualButton` - Configurable touch button with visual feedback and action mapping
   - `VirtualJoystick` - Analog control with customizable deadzones and sensitivity
   - `VirtualDPad` - Directional pad with support for 4 and 8 directions
   - `VirtualTouchPad` - Multi-touch gesture area for camera and viewport control
 
-  **Key Features:**
-
+    **Key Features:**
   - **Haptic Feedback Integration** - Vibration support for mobile devices and gamepads
   - **Input Device Tracking** - `LastInputType` API automatically detects and tracks the active input method (Touch, Keyboard/Mouse, Gamepad)
   - **Dynamic UI Adaptation** - Virtual controls automatically appear/hide based on the detected device
@@ -68,6 +66,19 @@ Zyris is implementing a comprehensive set of systems. Below is our development r
   - **Polymorphic Input System** - The `InputEvent` base class now uses virtual methods for action matching and event comparison, allowing custom virtual events to integrate seamlessly into the engine core as first-class citizens.
   - **Editor Integration** - Full inspector support with visual configuration
   - **Performance Optimized** - Minimal overhead with efficient event handling
+
+- [x] **Save Server** - Persistence and Serialization Orchestrator
+
+     A robust, high-performance persistence system integrated into the engine core, allowing for secure and asynchronous saving and loading of complex states.
+
+     **Key Features:**
+
+- **Declarative Protocol (@persistent)** - Full automation via GDScript annotations and C++ flags. Mark any variable as `@persistent` to include it in the save system. Supports `@persistent_group` for tag-based organization.
+- **Customization Hooks** - Implement `_save_persistence(state)` and `_load_persistence(data)` for complex manual serialization or state reconstruction logic.
+- **Threaded Architecture** - I/O operations, ZSTD compression, and AES-256 encryption run on dedicated threads, ensuring zero stuttering during gameplay (fluid autosaves).
+- **Snapshot Resource** - Saves are treated as standard `Resources` (`Snapshot`), containing metadata (playtime, version), optional thumbnails, and SHA-256 checksums for integrity validation.
+- **Instance Identification** - Support for `persistence_id` to reconnect properties to specific nodes in dynamic scenes, and `save_policy` for granular hierarchy control.
+- **Project Settings Integration** - Management of encryption keys, formats (Binary/Text), and validation levels (Strict, Signature) directly through the editor.
 
 ### In Development
 
@@ -84,48 +95,48 @@ Zyris is implementing a comprehensive set of systems. Below is our development r
 
 - [ ] **Gameplay Ability System (GAS)** - Data-Oriented Gameplay Framework
 
-  A high-performance native implementation of the GAS pattern, designed to scale from simple mechanics to complex RPG combat systems.
+    A high-performance native implementation of the GAS pattern, designed to scale from simple mechanics to complex RPG combat systems.
 
-  **Architecture:**
+    **Architecture:**
   - `AbilitySystemComponent`: The central processor attached to entities (Player, Enemies).
   - `AttributeSet`: Defines vital statistics (HP, Mana, Stamina) with replication and modifier calculations.
   - `GameplayAbility`: Modular ability logic (Jump, Shoot, Magic).
   - `GameplayEffect`: Attribute alteration rules (Damage, Healing, Buffs/Debuffs).
 
-  **Editor Integration (EditorPlugin):**
-  GAS uses a **Modal Editor (Popup)** triggered via Inspector, similar to the `AudioStreamInteractive` system.
+    **Editor Integration (EditorPlugin):**
+    GAS uses a **Modal Editor (Popup)** triggered via Inspector, similar to the `AudioStreamInteractive` system.
   - **Floating Graph Window** - Abilities are edited in a dedicated overlaid window, allowing quick visual access without losing the context of the main 3D/2D scene.
   - **Edit Button** - The inspector provides direct access to the visual editor when an ability Resource is selected.
   - **Tag Management** - Visual `GameplayTags` selector to define complex interactions (e.g., "Stun" cancels "Casting") without hard-coding.
   - **Live Debug** - Real-time visualization of ability execution flow and effect stacks.
 
-  **Differentials:**
+    **Differentials:**
   - **Determinism** - Optimized for multiplayer games with prediction and reconciliation.
   - **Data-Driven** - Designers can create entire ability variations just by changing configurations in the Editor.
 
 - [ ] **Behavior Tree System** - Modular and Reactive AI
 
-  A robust node-based AI implementation, focused on creating complex behaviors through simple and reusable visual logic.
+    A robust node-based AI implementation, focused on creating complex behaviors through simple and reusable visual logic.
 
-  **Architecture:**
+    **Architecture:**
   - `BTAgent`: The orchestrator attached to the NPC, managing memory (`Blackboard`) and tree ticking.
   - **Composites** - Flow nodes (`Sequence`, `Selector`) that define decision making.
   - **Decorators** - Conditional logic and modifiers (`Cooldown`, `Loop`, `Blackboard Check`) that wrap other nodes.
   - **Leafs** - The actual work units (`MoveTo`, `Wait`, `ActivateAbility`).
 
-  **Editor Integration (EditorPlugin):**
-  Behavior Trees use a **Dedicated Visual Editor** that operates in exclusive mode.
+    **Editor Integration (EditorPlugin):**
+    Behavior Trees use a **Dedicated Visual Editor** that operates in exclusive mode.
   - **Visual Board** - Infinite canvas to organize complex AI hierarchies with visual clarity, supporting drag-and-drop of nodes.
   - **Live Debugging** - Visual tracking of execution flow in real-time (nodes light up while active).
   - **Sub-Trees** - Capability to create nodes that encapsulate entire trees, allowing massive reuse (e.g., a "Combat" tree used inside various different AIs).
 
-  **Differentials:**
+    **Differentials:**
   - **Native & GAS** - Designed to trigger `GameplayAbilities` directly via action nodes.
   - **Performance** - Tree traversal in pure C++, eliminating script bottlenecks in dense AIs.
 
 - [ ] **Inventory System** - Item and Transaction Management
   - **InventoryServer** - Authoritative singleton that validates all item movements, preventing inconsistent states or cheating.
-  - **Equipment Bridge (GAS)** - When equipping an item, the system automatically injects/removes *Gameplay Abilities* and *Effects* on the bearer's component, without manual scripts.
+  - **Equipment Bridge (GAS)** - When equipping an item, the system automatically injects/removes _Gameplay Abilities_ and _Effects_ on the bearer's component, without manual scripts.
   - **Smart UI Nodes** - Set of `Control` nodes (`InventoryGrid`, `EquipmentSlot`) that manage drag-and-drop and automatic synchronization with the server.
   - **Loot Tables** - Procedural generation integrated with the GAS luck and tag system.
 
@@ -135,23 +146,11 @@ Zyris is implementing a comprehensive set of systems. Below is our development r
   - **Procedural Shake** - Trauma system based on Perlin noise, where shake profiles are editable and cumulative Resources.
   - **Viewport Integration** - Uses **Custom 3D Gizmos** to draw and visually adjust transition zones, tracking paths, and influence volumes directly in the scene.
 
-- [ ] **Save Server** - Persistence and Serialization Orchestrator
-  - **Threaded Architecture** - I/O and encryption operations occur in dedicated threads, ensuring saving without *stuttering* (frozen frames).
-  - **Smart Reference Handling** - Intelligent serializer that tracks UIDs to resolve cyclic references and shared sub-resources, avoiding data duplication.
-  - **Node Protocol:**
-    - `_save_state() -> Dictionary`: Virtual method where the object defines its own serialization.
-    - `_load_state(data)`: Called automatically by the server when restoring instances.
-  - **LSS Integration (State Injection):**
-    - **Snapshot** - State freezing via server requested by LSS before unloading zones.
-    - **Hydration** - Injection of server-injected data before the node enters the SceneTree.
-  - **Operation Modes** - Native support for Manual Slots, Checkpoints, and Quick-Save.
-
 - [ ] **Audio System Improvements**
 
-  Zyris expands and overhauls its native audio system, acting directly on existing components (`AudioServer`, `AudioStream`, `AudioStreamPlayer`, `AudioBus`, `AudioEffect`), without introducing parallel servers or external naming conventions.
+    Zyris expands and overhauls its native audio system, acting directly on existing components (`AudioServer`, `AudioStream`, `AudioStreamPlayer`, `AudioBus`, `AudioEffect`), without introducing parallel servers or external naming conventions.
 
-  **Scope of Improvements:**
-
+    **Scope of Improvements:**
   - **Overhaul of AudioStreamPlayers and Listeners**
     - Players now support high-level sound logic.
     - Direct integration with events, states, and gameplay parameters.
@@ -177,43 +176,61 @@ Zyris is implementing a comprehensive set of systems. Below is our development r
     - Direct integration with GAS, Behavior Trees, LSS, and Save Server.
     - Game states influence mixing, execution, and sound transitions.
 
-  These improvements elevate Zyris audio to a modern, reactive, and scalable level, maintaining conceptual compatibility with the base engine.
+    These improvements elevate Zyris audio to a modern, reactive, and scalable level, maintaining conceptual compatibility with the base engine.
 
 - [ ] **Sounds Engine** — Audio Middleware & Design
 
-  Native middleware solution that revolutionizes the audio workflow, replacing direct file playback ("Play Sound") with an architecture based on **Logical Events**, similar to FMOD Studio and Wwise.
+    Native middleware solution that revolutionizes the audio workflow, replacing direct file playback ("Play Sound") with an architecture based on **Logical Events**, similar to FMOD Studio and Wwise.
 
-  **System Philosophy:**
-  Instead of the programmer choosing *which* file to play, they only signal *what* happened (e.g., `PlayEvent("Footsteps")`). The Sounds Engine decides the auditory result based on logic pre-configured by the Sound Designer.
+    **System Philosophy:**
+    Instead of the programmer choosing _which_ file to play, they only signal _what_ happened (e.g., `PlayEvent("Footsteps")`). The Sounds Engine decides the auditory result based on logic pre-configured by the Sound Designer.
 
-  **Key Features:**
+    **Key Features:**
   - **Probabilistic and Conditional Logic** - Sound changes dynamically depending on game parameters (e.g., Floor surface, player health, wind speed) without extra code.
   - **Automatic Variation** - Pitch, Volume, and Container randomization system to avoid the "machine gun effect" (robotic repetition) in repetitive sounds.
   - **Hierarchical Mixing** - Professional Bus (Group) and VCA systems with Sidechaining (e.g., lowering music volume when someone speaks) and mixing snapshots.
   - **Real-Time Profiler** - Connect the editor to the running game to adjust volume curves, effects, and visualize voice consumption live.
 
-  This ensures total independence for the audio team and gameplay code agnostic to sound implementation.
+    This ensures total independence for the audio team and gameplay code agnostic to sound implementation.
 
 - [ ] **AOT Export System** — SDK-based Architecture
 
-  The AOT Export System is one of the central pillars of the Zyris vision, designed to deliver high-performance native execution without altering Godot's development flow.
+    The AOT Export System is one of the central pillars of the Zyris vision, designed to deliver high-performance native execution without altering Godot's development flow.
 
-  AOT does not replace the VM during development. It acts exclusively at export time, removing the VM only from the final built game and generating native binaries targeted at the destination hardware.
+    AOT does not replace the VM during development. It acts exclusively at export time, removing the VM only from the final built game and generating native binaries targeted at the destination hardware.
 
-  **Key Benefits:**
+    **Key Benefits:**
   - **Native Performance** - By removing the Virtual Machine (VM) from the final executable, the game runs directly on hardware, eliminating script interpretation overhead.
   - **Security (Anti-Hack)** - Compilation to native machine code makes reverse engineering exponentially harder compared to script or bytecode decompilation, protecting intellectual property.
   - **Export-Only** - The development flow remains agile with Hot-Reloading, while AOT acts only in the final build pipeline.
 
-  To ensure sustainability, scalability, and ease of contribution, AOT is conceived as an external SDK, integrated into the engine's export pipeline.
+    To ensure sustainability, scalability, and ease of contribution, AOT is conceived as an external SDK, integrated into the engine's export pipeline.
 
-  **Model Guidelines:**
+    **Model Guidelines:**
   - Execution only on export (does not participate in editor or debug)
   - Editor remains lightweight and decoupled from compiler cost
   - Contributions facilitated via dedicated repository
   - Architecture aligned with professional SDK models (Android SDK, NDK)
 
-  The SDK uses Python as an orchestration layer, responsible for coordinating complex compilation pipelines, IR transformation, and integration with native toolchains.
+    The SDK uses Python as an orchestration layer, responsible for coordinating complex compilation pipelines, IR transformation, and integration with native toolchains.
+
+## Project Showcase
+
+To demonstrate the full power of the Zyris Engine, we maintain a set of projects that serve both as stress tests and as a showcase of the implemented technologies. Our strategy follows the cycle: **GDScript Prototyping → Validation → Native C++ Implementation → Game Refactoring.**
+
+### 1. NeonShooter (2D GAS Showcase)
+
+**Status:** Functional (GAS Lite Implementation)
+
+- **Technologies:** GAS Lite (GDScript), SaveServer, Virtual Input Devices, Screen Shake System.
+- **Highlight:** Demonstrates how complex ability and persistence systems can be seamlessly integrated into a high-speed 2D environment.
+
+### 3. Horizon Zero (3D Cyber-Movement Shooter)
+
+**Status:** Planned / In Development
+
+- **Technologies:** Jolt Physics, 3D GAS, Behavior Tree (AI), vCam (Virtual Camera), Particle Stress Test.
+- **Highlight:** Focused on validating the performance of physics-based movement (Wall-run, momentum) and complex reactive AIs, exploring the full potential of the Forward+ renderer.
 
 ## Contribution
 
