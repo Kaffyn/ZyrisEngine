@@ -2874,6 +2874,16 @@ Error GDScriptCompiler::_prepare_compilation(GDScript *p_script, const GDScriptP
 					prop_info.hint_string = export_info.hint_string;
 					prop_info.usage = export_info.usage;
 				}
+				if (variable->persistent) {
+					prop_info.usage |= PROPERTY_USAGE_PERSISTENCE;
+					if (!variable->persistence_tags.is_empty()) {
+						if (prop_info.hint_string.is_empty()) {
+							prop_info.hint_string = variable->persistence_tags;
+						} else {
+							prop_info.hint_string = variable->persistence_tags + "|" + prop_info.hint_string;
+						}
+					}
+				}
 				prop_info.usage |= PROPERTY_USAGE_SCRIPT_VARIABLE;
 				minfo.property_info = prop_info;
 

@@ -604,6 +604,8 @@
 		<member name="debug/gdscript/warnings/onready_with_export" type="int" setter="" getter="" default="2">
 			When set to [b]Warn[/b] or [b]Error[/b], produces a warning or an error respectively when the [code]@onready[/code] annotation is used together with the [code]@export[/code] annotation, since it may not behave as expected.
 		</member>
+		<member name="debug/gdscript/warnings/persistent_without_type" type="int" setter="" getter="" default="2">
+		</member>
 		<member name="debug/gdscript/warnings/redundant_await" type="int" setter="" getter="" default="1">
 			When set to [b]Warn[/b] or [b]Error[/b], produces a warning or an error respectively when a function that is not a coroutine is called with await.
 		</member>
@@ -3618,6 +3620,24 @@
 		</member>
 		<member name="xr/shaders/enabled" type="bool" setter="" getter="" default="false">
 			If [code]true[/code], Godot will compile shaders required for XR.
+		</member>
+		<member name="application/persistence/backup_enabled" type="bool" setter="" getter="" default="true">
+		</member>
+		<member name="application/persistence/compression_enabled" type="bool" setter="" getter="" default="true">
+			If [code]true[/code], enables ZSTD compression for binary save files ([code].data[/code]). This reduces save file size significantly at a minor CPU cost during saving and loading.
+		</member>
+		<member name="application/persistence/encryption_key" type="String" setter="" getter="" default="&quot;&quot;">
+			The encryption key used to protect binary save files ([code].data[/code]). If left empty or reset, a unique key is automatically generated.
+			[b]Note:[/b] This only affects binary saves. Text-based saves ([code].tres[/code]) are never encrypted.
+		</member>
+		<member name="application/persistence/integrity_check_level" type="int" setter="" getter="" default="1">
+		</member>
+		<member name="application/persistence/save_format" type="int" setter="" getter="" default="0">
+			The file format used by [SaveServer] when creating snapshots.
+			- [b]Text[/b] ([code]0[/code]): Saves as human-readable [code].tres[/code] files. Best for development, version control, and debugging.
+			- [b]Binary[/b] ([code]1[/code]): Saves as [code].data[/code] files. Supports encryption and compression. Best for production releases to protect player data.
+		</member>
+		<member name="application/persistence/save_path" type="String" setter="" getter="" default="&quot;user://saves/&quot;">
 		</member>
 	</members>
 	<signals>

@@ -784,6 +784,21 @@
 				[/codeblock]
 			</description>
 		</annotation>
+		<annotation name="@persistent" qualifiers="vararg">
+			<return type="void" />
+			<param index="0" name="tag" type="String" default="&quot;&quot;" />
+			<description>
+				Mark the following property as persistent. Persistent properties are automatically collected by the [SaveServer] when saving a node snapshot, and restored when loading.
+				[codeblock]
+				extends Node
+
+				@persistent var health: int = 100
+				@persistent var current_inventory: Array = []
+				[/codeblock]
+				[b]Note:[/b] [annotation @persistent] can only be used in classes that inherit [Node].
+				[b]Note:[/b] Persistent properties do not need to be exported to the Inspector, although they can be both.
+			</description>
+		</annotation>
 		<annotation name="@rpc">
 			<return type="void" />
 			<param index="0" name="mode" type="String" default="&quot;authority&quot;" />

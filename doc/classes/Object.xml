@@ -245,6 +245,13 @@
 				Moves the iterator to the next iteration. [param iter] stores the iteration state. Since GDScript does not support passing arguments by reference, a single-element array is used as a wrapper. Returns [code]true[/code] so long as the iterator has not reached the end.
 			</description>
 		</method>
+		<method name="_load_persistence" qualifiers="virtual">
+			<return type="void" />
+			<param index="0" name="data" type="Dictionary" />
+			<description>
+				Virtual hook called when the object needs to restore its persistent state. The [param data] dictionary contains the data previously stored by the [method _save_state] hook.
+			</description>
+		</method>
 		<method name="_notification" qualifiers="virtual">
 			<return type="void" />
 			<param index="0" name="what" type="int" />
@@ -286,6 +293,15 @@
 				Override this method to customize the given [param property]'s revert behavior. Should return the default value for the [param property]. If the default value differs from the [param property]'s current value, a revert icon is displayed in the Inspector dock.
 				[b]Note:[/b] [method _property_can_revert] must also be overridden for this method to be called.
 				[b]Note:[/b] Unlike other virtual methods, this method is called automatically for every script that overrides it. This means that the base implementation should not be called via [code]super[/code] in GDScript or its equivalents in other languages. The bottom-most sub-class will be called first, with subsequent calls ascending the class hierarchy. The call chain will stop on the first class that returns a non-[code]null[/code] value.
+			</description>
+		</method>
+		<method name="_save_state" qualifiers="virtual const">
+			<return type="void" />
+			<param index="0" name="state" type="Dictionary" />
+			<param index="1" name="tags" type="Array" />
+			<description>
+				Virtual hook called by the persistence system to collect custom data. The [param state] dictionary should be filled with the extra values you want to save.
+				[b]Note:[/b] Properties marked with the [annotation @GDScript.@persistent] annotation in GDScript are collected automatically before this method is called, and their values will already be present in [param state].
 			</description>
 		</method>
 		<method name="_set" qualifiers="virtual">
@@ -796,6 +812,20 @@
 				Returns [code]true[/code] if the [method Node.queue_free] method was called for the object.
 			</description>
 		</method>
+		<method name="load_all_persistence">
+			<return type="void" />
+			<param index="0" name="data" type="Dictionary" />
+			<description>
+				Restores the persistent state of the object and potentially its children (in classes that support it, like [Node]).
+			</description>
+		</method>
+		<method name="load_persistence">
+			<return type="void" />
+			<param index="0" name="data" type="Dictionary" />
+			<description>
+				Public method to inject the loaded state into the object. Triggers the [method _load_persistence] virtual hook.
+			</description>
+		</method>
 		<method name="notification">
 			<return type="void" />
 			<param index="0" name="what" type="int" />
@@ -831,6 +861,20 @@
 			<return type="void" />
 			<description>
 				Emits the [signal property_list_changed] signal. This is mainly used to refresh the editor, so that the Inspector and editor plugins are properly updated.
+			</description>
+		</method>
+		<method name="save_all_persistence" qualifiers="const">
+			<return type="Dictionary" />
+			<param index="0" name="tags" type="Array" default="[]" />
+			<description>
+				Recursively saves the state of the object. For [Node], this includes the entire branch. Can be filtered by [param tags].
+			</description>
+		</method>
+		<method name="save_persistence" qualifiers="const">
+			<return type="Dictionary" />
+			<param index="0" name="tags" type="Array" default="[]" />
+			<description>
+				Captures the persistent state of this object only. Includes properties marked with the [annotation @GDScript.@persistent] annotation and data filled by the [method _save_state] hook. Can be filtered by [param tags].
 			</description>
 		</method>
 		<method name="property_can_revert" qualifiers="const">
@@ -884,6 +928,14 @@
 				[/csharp]
 				[/codeblocks]
 				[b]Note:[/b] In C#, [param property] must be in snake_case when referring to built-in Godot properties. Prefer using the names exposed in the [code]PropertyName[/code] class to avoid allocating a new [StringName] on each call.
+			</description>
+		</method>
+		<method name="set_persistence_for_property">
+			<return type="void" />
+			<param index="0" name="property" type="StringName" />
+			<param index="1" name="enabled" type="bool" />
+			<description>
+				Sets whether a specific property should be included in the object's persistent state.
 			</description>
 		</method>
 		<method name="set_block_signals">
@@ -1013,6 +1065,14 @@
 			</description>
 		</method>
 	</methods>
+	<members>
+		<member name="persistence_id" type="StringName" setter="set_persistence_id" getter="get_persistence_id" default="&amp;&quot;&quot;">
+			Unique ID for persistence. If set, [SaveServer] will use this ID to identify the object's data.
+		</member>
+		<member name="save_policy" type="int" setter="set_persist_policy" getter="get_persist_policy" enum="Object.SavePolicy" default="1">
+			Defines how this object should be treated by the save system.
+		</member>
+	</members>
 	<signals>
 		<signal name="property_list_changed">
 			<description>
@@ -1062,6 +1122,30 @@
 				test_signal.connect(prints.unbind(1), CONNECT_APPEND_SOURCE_OBJECT)
 				test_signal.emit("emit_arg_1", "emit_arg_2") # Prints emit_arg_1 &lt;Object#35332818393&gt;
 			[/codeblock]
+		</constant>
+		<constant name="SAVE_POLICY_INHERIT" value="0" enum="SavePolicy">
+			Inherits the save policy from the parent (useful only in classes like Node).
+		</constant>
+		<constant name="SAVE_POLICY_ALWAYS" value="1" enum="SavePolicy">
+			Always participates in the save process.
+		</constant>
+		<constant name="SAVE_POLICY_NEVER" value="2" enum="SavePolicy">
+			Never saved.
+		</constant>
+		<constant name="SAVE_POLICY_CUSTOM" value="3" enum="SavePolicy">
+			Saving depends on custom logic.
+		</constant>
+		<constant name="NOTIFICATION_SAVE_PREPARE" value="5000">
+			Sent immediately before data collection by [SaveServer].
+		</constant>
+		<constant name="NOTIFICATION_SAVE_COMPLETED" value="5001">
+			Sent after the object's data has been captured.
+		</constant>
+		<constant name="NOTIFICATION_LOAD_STARTED" value="5002">
+			Sent before the injection of loaded data.
+		</constant>
+		<constant name="NOTIFICATION_LOAD_COMPLETED" value="5003">
+			Sent after the restoration of the persistent state is complete.
 		</constant>
 	</constants>
 </class>

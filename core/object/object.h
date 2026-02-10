@@ -127,6 +127,7 @@ enum PropertyUsageFlags {
 	PROPERTY_USAGE_EDITOR_BASIC_SETTING = 1 << 27, //for project or editor settings, show when basic settings are selected.
 	PROPERTY_USAGE_READ_ONLY = 1 << 28, // Mark a property as read-only in the inspector.
 	PROPERTY_USAGE_SECRET = 1 << 29, // Export preset credentials that should be stored separately from the rest of the export config.
+	PROPERTY_USAGE_PERSISTENCE = 1 << 30, // Property should be saved/loaded by the persistence system.
 
 	PROPERTY_USAGE_DEFAULT = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_EDITOR,
 	PROPERTY_USAGE_NO_EDITOR = PROPERTY_USAGE_STORAGE,
@@ -579,6 +580,26 @@ public:
 		CONNECT_INHERITED = 32, // Used in editor builds.
 	};
 
+	enum SavePolicy : unsigned int {
+		SAVE_POLICY_INHERIT,
+		SAVE_POLICY_ALWAYS,
+		SAVE_POLICY_NEVER,
+		SAVE_POLICY_CUSTOM,
+	};
+
+	enum {
+		NOTIFICATION_POSTINITIALIZE = 0,
+		NOTIFICATION_PREDELETE = 1,
+		NOTIFICATION_EXTENSION_RELOADED = 2,
+		// Internal notification to send after NOTIFICATION_PREDELETE, not bound to scripting.
+		NOTIFICATION_PREDELETE_CLEANUP = 3,
+
+		NOTIFICATION_SAVE_PREPARE = 5000,
+		NOTIFICATION_SAVE_COMPLETED = 5001,
+		NOTIFICATION_LOAD_STARTED = 5002,
+		NOTIFICATION_LOAD_COMPLETED = 5003,
+	};
+
 	// Store on each object a bitfield to quickly test whether it is derived from some "key" classes
 	// that are commonly tested in performance sensitive code.
 	// Ensure unsigned to bitpack.
@@ -648,6 +669,11 @@ private:
 	ObjectID _instance_id;
 	bool _predelete();
 	void _initialize();
+
+	StringName persistence_id;
+	SavePolicy save_policy = SAVE_POLICY_ALWAYS;
+	HashSet<StringName> persistent_properties;
+
 	void _postinitialize();
 
 	uint32_t _ancestry : 15;
@@ -749,6 +775,9 @@ protected:
 	bool _property_get_revert(const StringName &p_name, Variant &r_property) const { return false; }
 	void _notification(int p_notification) {}
 
+	virtual void _save_persistence(Dictionary &r_state, const Array &p_tags) const {}
+	virtual void _load_persistence(const Dictionary &p_state) {}
+
 	_FORCE_INLINE_ static void (*_get_bind_methods())() {
 		return &Object::_bind_methods;
 	}
@@ -828,6 +857,20 @@ public:
 	void detach_from_objectdb();
 	_FORCE_INLINE_ ObjectID get_instance_id() const { return _instance_id; }
 
+	void set_persistence_id(const StringName &p_id);
+	StringName get_persistence_id() const;
+
+	void set_persist_policy(SavePolicy p_policy);
+	SavePolicy get_persist_policy() const;
+
+	void set_persistence_for_property(const StringName &p_property, bool p_persistent);
+
+	virtual Dictionary save_persistence(const Array &p_tags = Array()) const;
+	virtual void load_persistence(const Dictionary &p_data);
+
+	virtual Dictionary save_all_persistence(const Array &p_tags = Array()) const;
+	virtual void load_all_persistence(const Dictionary &p_data);
+
 	template <typename T, typename O>
 	static T *cast_to(O *p_object) {
 		// This is like dynamic_cast, but faster.
@@ -850,14 +893,6 @@ public:
 	static const T *cast_to(const Object *p_object) {
 		return p_object && p_object->template derives_from<T, Object>() ? static_cast<const T *>(p_object) : nullptr;
 	}
-
-	enum {
-		NOTIFICATION_POSTINITIALIZE = 0,
-		NOTIFICATION_PREDELETE = 1,
-		NOTIFICATION_EXTENSION_RELOADED = 2,
-		// Internal notification to send after NOTIFICATION_PREDELETE, not bound to scripting.
-		NOTIFICATION_PREDELETE_CLEANUP = 3,
-	};
 
 	/* TYPE API */
 	static void assign_type_static(GDType **type_ptr, const char *p_name, const GDType *super_type);

@@ -2110,6 +2110,55 @@ int32_t Node::get_unique_scene_id() const {
 	return data.unique_scene_id;
 }
 
+Dictionary Node::save_all_persistence(const Array &p_tags) const {
+	Dictionary branch_data;
+
+	if (get_persist_policy() == SAVE_POLICY_NEVER) {
+		return branch_data;
+	}
+
+	Dictionary node_data = save_persistence(p_tags);
+	if (!node_data.is_empty() || !get_persistence_id().is_empty()) {
+		branch_data["snapshot"] = node_data;
+		if (!get_persistence_id().is_empty()) {
+			branch_data[".id"] = get_persistence_id();
+		}
+	}
+
+	Dictionary children_data;
+	for (int i = 0; i < get_child_count(); i++) {
+		Node *c = get_child(i);
+		Dictionary child_branch = c->save_all_persistence(p_tags);
+		if (!child_branch.is_empty()) {
+			children_data[c->get_name()] = child_branch;
+		}
+	}
+
+	if (!children_data.is_empty()) {
+		branch_data[".children"] = children_data;
+	}
+
+	return branch_data;
+}
+
+void Node::load_all_persistence(const Dictionary &p_data) {
+	if (p_data.has("snapshot")) {
+		load_persistence(p_data["snapshot"]);
+	}
+
+	if (p_data.has(".children")) {
+		Dictionary children_data = p_data[".children"];
+		Array child_names = children_data.keys();
+		for (int i = 0; i < child_names.size(); i++) {
+			StringName child_name = child_names[i];
+			Node *child = get_node_or_null(NodePath(child_name));
+			if (child) {
+				child->load_all_persistence(children_data[child_name]);
+			}
+		}
+	}
+}
+
 Window *Node::get_window() const {
 	ERR_THREAD_GUARD_V(nullptr);
 	Viewport *vp = get_viewport();

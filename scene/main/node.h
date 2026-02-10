@@ -541,6 +541,9 @@ public:
 	void set_unique_scene_id(int32_t p_unique_id);
 	int32_t get_unique_scene_id() const;
 
+	virtual Dictionary save_all_persistence(const Array &p_tags = Array()) const override;
+	virtual void load_all_persistence(const Dictionary &p_data) override;
+
 	Window *get_window() const;
 	Window *get_non_popup_window() const;
 	Window *get_last_exclusive_window() const;

@@ -706,6 +706,108 @@ Variant Object::property_get_revert(const StringName &p_name) const {
 	return Variant();
 }
 
+void Object::set_persistence_id(const StringName &p_id) {
+	persistence_id = p_id;
+}
+
+StringName Object::get_persistence_id() const {
+	return persistence_id;
+}
+
+void Object::set_persist_policy(SavePolicy p_policy) {
+	save_policy = p_policy;
+}
+
+Object::SavePolicy Object::get_persist_policy() const {
+	return save_policy;
+}
+
+void Object::set_persistence_for_property(const StringName &p_property, bool p_persistent) {
+	if (p_persistent) {
+		persistent_properties.insert(p_property);
+	} else {
+		persistent_properties.erase(p_property);
+	}
+}
+
+Dictionary Object::save_persistence(const Array &p_tags) const {
+	Dictionary res;
+	bool use_tags = p_tags.size() > 0;
+
+	// 1. Static/Metadata properties
+	List<PropertyInfo> props;
+	get_property_list(&props);
+	for (const PropertyInfo &E : props) {
+		if (E.usage & PROPERTY_USAGE_PERSISTENCE) {
+			if (use_tags) {
+				// Protocol: Tags are stored in the hint_string as a comma-separated list.
+				String tags_str = E.hint_string;
+				if (tags_str.contains("|")) {
+					tags_str = tags_str.get_slice("|", 0);
+				}
+				Vector<String> property_tags = tags_str.split(",");
+				bool tag_found = false;
+				for (int i = 0; i < p_tags.size(); i++) {
+					if (property_tags.has(p_tags[i])) {
+						tag_found = true;
+						break;
+					}
+				}
+				if (!tag_found) {
+					continue;
+				}
+			}
+			res[E.name] = get(E.name);
+		}
+	}
+
+	// 2. Dynamic properties set via code
+	for (const StringName &E : persistent_properties) {
+		if (!use_tags) {
+			res[E] = get(E);
+		}
+	}
+
+	// 3. Script hook
+	if (script_instance) {
+		Callable::CallError ce;
+		Variant v_res = res;
+		Variant v_tags = p_tags;
+		const Variant *args[2] = { &v_res, &v_tags };
+		script_instance->callp("_save_persistence", args, 2, ce);
+		res = v_res;
+	}
+	_save_persistence(res, p_tags);
+
+	return res;
+}
+
+void Object::load_persistence(const Dictionary &p_data) {
+	// Restore properties
+	Array keys = p_data.keys();
+	for (int i = 0; i < keys.size(); i++) {
+		Variant key = keys[i];
+		bool valid;
+		set(key, p_data[key], &valid);
+	}
+
+	if (script_instance) {
+		Callable::CallError ce;
+		Variant v_data = p_data;
+		const Variant *args[1] = { &v_data };
+		script_instance->callp("_load_persistence", args, 1, ce);
+	}
+	_load_persistence(p_data);
+}
+
+Dictionary Object::save_all_persistence(const Array &p_tags) const {
+	return save_persistence(p_tags);
+}
+
+void Object::load_all_persistence(const Dictionary &p_data) {
+	load_persistence(p_data);
+}
+
 void Object::get_method_list(List<MethodInfo> *p_list) const {
 	ClassDB::get_method_list(get_class_name(), p_list);
 	if (script_instance) {
@@ -2001,6 +2103,16 @@ void Object::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_queued_for_deletion"), &Object::is_queued_for_deletion);
 	ClassDB::bind_method(D_METHOD("cancel_free"), &Object::cancel_free);
 
+	ClassDB::bind_method(D_METHOD("set_persistence_id", "id"), &Object::set_persistence_id);
+	ClassDB::bind_method(D_METHOD("get_persistence_id"), &Object::get_persistence_id);
+	ClassDB::bind_method(D_METHOD("set_persist_policy", "policy"), &Object::set_persist_policy);
+	ClassDB::bind_method(D_METHOD("get_persist_policy"), &Object::get_persist_policy);
+	ClassDB::bind_method(D_METHOD("set_persistence_for_property", "property", "enabled"), &Object::set_persistence_for_property);
+	ClassDB::bind_method(D_METHOD("save_persistence", "tags"), &Object::save_persistence, DEFVAL(Array()));
+	ClassDB::bind_method(D_METHOD("load_persistence", "data"), &Object::load_persistence);
+	ClassDB::bind_method(D_METHOD("save_all_persistence", "tags"), &Object::save_all_persistence, DEFVAL(Array()));
+	ClassDB::bind_method(D_METHOD("load_all_persistence", "data"), &Object::load_all_persistence);
+
 	ClassDB::add_virtual_method("Object", MethodInfo("free"), false);
 
 	ADD_SIGNAL(MethodInfo("script_changed"));
@@ -2010,6 +2122,13 @@ void Object::_bind_methods() {
 	::ClassDB::add_virtual_method(get_class_static(), m_method, true, Vector<String>(), true);
 
 	BIND_OBJ_CORE_METHOD(MethodInfo("_init"));
+
+	ADD_GROUP("Persistence", "persistence_");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "persistence_id"), "set_persistence_id", "get_persistence_id");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "save_policy", PROPERTY_HINT_ENUM, "Inherit,Always,Never,Custom"), "set_persist_policy", "get_persist_policy");
+
+	BIND_OBJ_CORE_METHOD(MethodInfo(Variant::NIL, "_save_persistence", PropertyInfo(Variant::DICTIONARY, "state"), PropertyInfo(Variant::ARRAY, "tags")));
+	BIND_OBJ_CORE_METHOD(MethodInfo(Variant::NIL, "_load_persistence", PropertyInfo(Variant::DICTIONARY, "data")));
 
 	BIND_OBJ_CORE_METHOD(MethodInfo(Variant::STRING, "_to_string"));
 
@@ -2072,6 +2191,16 @@ void Object::_bind_methods() {
 	BIND_CONSTANT(NOTIFICATION_POSTINITIALIZE);
 	BIND_CONSTANT(NOTIFICATION_PREDELETE);
 	BIND_CONSTANT(NOTIFICATION_EXTENSION_RELOADED);
+
+	BIND_CONSTANT(NOTIFICATION_SAVE_PREPARE);
+	BIND_CONSTANT(NOTIFICATION_SAVE_COMPLETED);
+	BIND_CONSTANT(NOTIFICATION_LOAD_STARTED);
+	BIND_CONSTANT(NOTIFICATION_LOAD_COMPLETED);
+
+	BIND_ENUM_CONSTANT(SAVE_POLICY_INHERIT);
+	BIND_ENUM_CONSTANT(SAVE_POLICY_ALWAYS);
+	BIND_ENUM_CONSTANT(SAVE_POLICY_NEVER);
+	BIND_ENUM_CONSTANT(SAVE_POLICY_CUSTOM);
 
 	BIND_ENUM_CONSTANT(CONNECT_DEFERRED);
 	BIND_ENUM_CONSTANT(CONNECT_PERSIST);

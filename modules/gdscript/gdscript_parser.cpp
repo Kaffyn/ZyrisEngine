@@ -152,6 +152,9 @@ GDScriptParser::GDScriptParser() {
 		register_annotation(MethodInfo("@abstract"), AnnotationInfo::SCRIPT | AnnotationInfo::CLASS | AnnotationInfo::FUNCTION, &GDScriptParser::abstract_annotation);
 		// Onready annotation.
 		register_annotation(MethodInfo("@onready"), AnnotationInfo::VARIABLE, &GDScriptParser::onready_annotation);
+		// Persistence annotation.
+		register_annotation(MethodInfo("@persistent", PropertyInfo(Variant::STRING, "tag")), AnnotationInfo::VARIABLE, &GDScriptParser::persistent_annotation, varray(""), true);
+
 		// Export annotations.
 		register_annotation(MethodInfo("@export"), AnnotationInfo::VARIABLE, &GDScriptParser::export_annotations<PROPERTY_HINT_NONE, Variant::NIL>);
 		register_annotation(MethodInfo("@export_enum", PropertyInfo(Variant::STRING, "names")), AnnotationInfo::VARIABLE, &GDScriptParser::export_annotations<PROPERTY_HINT_ENUM, Variant::NIL>, varray(), true);
@@ -4499,6 +4502,38 @@ bool GDScriptParser::onready_annotation(AnnotationNode *p_annotation, Node *p_ta
 	}
 	variable->onready = true;
 	current_class->onready_used = true;
+	return true;
+}
+
+bool GDScriptParser::persistent_annotation(AnnotationNode *p_annotation, Node *p_target, ClassNode *p_class) {
+	ERR_FAIL_COND_V_MSG(p_target->type != Node::VARIABLE, false, R"("@persistent" annotation can only be applied to class variables.)");
+
+	VariableNode *variable = static_cast<VariableNode *>(p_target);
+	if (variable->is_static) {
+		push_error(R"("@persistent" annotation cannot be applied to a static variable.)", p_annotation);
+		return false;
+	}
+	if (variable->persistent) {
+		push_error(R"("@persistent" annotation can only be used once per variable.)", p_annotation);
+		return false;
+	}
+	variable->persistent = true;
+
+	if (p_annotation->arguments.size() > 0) {
+		ExpressionNode *arg = p_annotation->arguments[0];
+		if (arg->type == Node::LITERAL) {
+			variable->persistence_tags = static_cast<LiteralNode *>(arg)->value;
+		} else {
+			push_error(R"(Argument for "@persistent" must be a string literal.)", arg);
+			return false;
+		}
+	}
+
+#ifdef DEBUG_ENABLED
+	if (variable->datatype_specifier == nullptr) {
+		push_warning(variable, GDScriptWarning::PERSISTENT_WITHOUT_TYPE, variable->identifier->name);
+	}
+#endif // DEBUG_ENABLED
 	return true;
 }
 
