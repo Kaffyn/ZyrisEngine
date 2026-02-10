@@ -24,8 +24,8 @@ func reset():
 	direction = Vector2.RIGHT
 	next_direction = Vector2.RIGHT
 
-	# Initial segments
-	for i in range(3):
+	# Initial segments (start from behind the head)
+	for i in range(1, 4):
 		add_segment(position - Vector2(i * step_size, 0))
 
 func add_segment(pos: Vector2):

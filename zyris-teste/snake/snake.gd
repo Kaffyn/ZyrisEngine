@@ -22,7 +22,7 @@ func _process(delta):
 		return
 
 	handle_input()
-	
+
 	tick_timer += delta
 	if tick_timer >= tick_speed:
 		tick_timer = 0.0
@@ -40,14 +40,14 @@ func handle_input():
 
 func move_snake():
 	var new_head = snake[0] + direction
-	
+
 	# Check collisions
 	if new_head.x < 0 or new_head.x >= grid_size or new_head.y < 0 or new_head.y >= grid_size or new_head in snake:
 		end_game()
 		return
-		
+
 	snake.insert(0, new_head)
-	
+
 	if new_head == food_pos:
 		score += 10
 		spawn_food()
@@ -55,7 +55,7 @@ func move_snake():
 		tick_speed = max(0.05, tick_speed - 0.002)
 	else:
 		snake.pop_back()
-	
+
 	queue_redraw()
 
 func spawn_food():
@@ -81,10 +81,10 @@ func reset_game():
 func _draw():
 	# Draw background
 	draw_rect(Rect2(0, 0, grid_size * 20, grid_size * 20), Color(0.1, 0.1, 0.1), true)
-	
+
 	# Draw food
 	draw_rect(Rect2(food_pos.x * 20, food_pos.y * 20, 20, 20), Color.RED, true)
-	
+
 	# Draw snake
 	for i in range(snake.size()):
 		var color = Color.GREEN if i == 0 else Color.DARK_GREEN

@@ -14,4 +14,11 @@ collision_mask = 3
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Head"]
 shape = SubResource("RectangleShape2D_head")
 
+[node name="ColorRect" type="ColorRect" parent="Head"]
+offset_left = -9.0
+offset_top = -9.0
+offset_right = 9.0
+offset_bottom = 9.0
+color = Color(0.56, 0.93, 0.56, 1)
+
 [connection signal="area_entered" from="Head" to="." method="_on_head_area_entered"]

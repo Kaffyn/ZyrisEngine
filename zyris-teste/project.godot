@@ -14,7 +14,6 @@ config/name="Zyris Teste"
 run/main_scene="res://core/lss_root.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 persistence/encryption_key="7056b80fced9dcf8a10408c9135a7f72"
-config/icon="res://icon.svg"
 
 [display]
 

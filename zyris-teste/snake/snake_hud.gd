@@ -8,4 +8,4 @@ func update_score(value: int):
 
 func show_game_over(final_score: int):
 	$Control/GameOverPanel.show()
-	$Control/GameOverPanel/FinalScoreLabel.text = "Final: " + str(final_score)
+	$Control/GameOverPanel/VBox/FinalScoreLabel.text = "Final: " + str(final_score)
