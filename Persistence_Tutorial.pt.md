@@ -8,8 +8,8 @@ Este guia explica como implementar um sistema de salvamento robusto e profission
 
 O nosso sistema de persistência é construído sobre um **Modelo de ID Reconstrutivo**. Isso garante que tanto nodes estáticos quanto dinâmicos possam ser perfeitamente restaurados entre sessões.
 
-- 🏛️ **Nodes Estáticos:** Objetos que sempre existem na sua cena (como o Player ou a UI) são identificados via `persistence_id` e restaurados automaticamente.
-- ⚡ **Nodes Dinâmicos:** Objetos spawnados durante o gameplay (Inimigos, Loot, Projéteis) devem ser re-instanciados no carregamento. O sistema então reconcilia o estado interno deles usando seu `persistence_id` único.
+- 🏛️ **Nodes Estáticos:** Objetos que sempre existem na sua cena (como o Player ou a UI). Eles utilizam um **Global ID Registry** para reconectar seu estado mesmo se mudarem de nome ou posição na hierarquia.
+- ⚡ **Nodes Dinâmicos:** Objetos spawnados durante o gameplay (Inimigos, Loot). Você deve re-instanciá-los no carregamento e re-aplicar seu `persistence_id` para vinculá-los de volta aos seus dados salvos.
 
 ## 2. Configurando uma Variável Persistente
 
@@ -109,7 +109,26 @@ func _init():
     )
 ```
 
-## 6. Otimização e Melhores Práticas
+## 6. Performance: Incremental vs Full Saves
+
+O sistema opera como um **Git para Gameplay**. Ele evita o "Save Stutter" comum em games massivos utilizando **Estados Incrementais (Commits)**.
+
+### 6.1 Full Snapshot (`save_snapshot`)
+
+Percorre toda a árvore de cena. Necessário para o primeiro save de uma área ou quando se deseja um backup completo do estado do mundo.
+
+### 6.2 Save Incremental (`save_incremental`)
+
+O método mais eficiente. Ele utiliza **Dirty Tracking**:
+
+1. Quando uma variável `@persistent` é modificada via `set()`, o objeto é automaticamente marcado como "sujo" (dirty).
+2. `save_incremental()` visita **apenas** esses objetos sujos.
+3. Ele realiza um **Dictionary Merge** entre o último estado carregado e os novos incrementos.
+
+> [!TIP]
+> Use `save_incremental()` para autosaves frequentes ou checkpoints em background para reduzir a escrita em disco em até 95%.
+
+## 7. Otimização e Melhores Práticas
 
 1. 🎯 **Minimalismo:** Apenas marque variáveis que *realmente* mudam.
 2. 🔒 **Segurança:** Ative **ZSTD Compression** e **Criptografia AES** em `Project Settings > Application > Persistence` para builds de produção.

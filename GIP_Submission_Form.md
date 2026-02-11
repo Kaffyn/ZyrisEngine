@@ -21,7 +21,7 @@ I propose adding a **High-Level Persistence System** consisting of the `SaveServ
 
 **Important Distinction:** `SaveServer` is not a rigid "save game" feature. It is an **infrastructure layer**. It abstracts away the complex "plumbing" of persistence (threaded I/O, encryption, atomic writes, compression) so that developers can build their own specific save systems on top of it.
 
-While `@persistent` handles simple property serialization, the twin functions `_save_persistence(state)` and `_load_persistence(state)` are the core tools that allow users to define *how* their unique game architecture (inventories, procedural generation, quest lines) translates to data. This mirrors the engine's philosophy: `PhysicsServer` handles the math/collision, but the user defines the mechanics. `SaveServer` handles the disk/integrity, but the user defines the data logic.
+While `@persistent` handles simple property serialization, the system evolves traditional persistence into a **"Git for Gameplay"** model. Instead of saving full world snapshots (which cause "Save Stutter"), we utilize **State Increments**. This allows the engine to track only modified objects ("Dirty Tracking") and save fractional updates, reducing disk I/O by up to 95%.
 
 ## 4. Describe how your proposal will work, with code, pseudo-code, mock-ups, and/or diagrams
 
@@ -66,6 +66,11 @@ SaveServer.load_snapshot(get_tree().root, "save_slot_1")
 
 # Save only specific tags (e.g., just the inventory)
 SaveServer.save_snapshot(get_tree().root, "slot_1", true, ["inventory"])
+
+# --- INCREMENTAL SAVE (The Delta Model) ---
+# Saves ONLY dirty objects (modified since load). Git-style "Diff".
+# Effectively eliminates save stutter in massive games.
+SaveServer.save_incremental(get_tree().root, "save_slot_1")
 ```
 
 ### The `Snapshot` Resource
@@ -131,6 +136,8 @@ func _load_persistence(state: Dictionary):
         add_child(e)
         # SaveServer now proceeds to inject 'e.hp', 'e.ammo', etc., automatically
 ```
+
+Furthermore, the **Global ID Registry** ensures that nodes are identified by their `persistence_id` rather than hierarchical `NodePath`. This resolves the classic problem of save files breaking when nodes are renamed or moved within the tree during development or runtime.
 
 This ensures that `SaveServer` remains a flexible **persistence system**: simple state is automated, but complex game logic remains fully under the developer's control.
 

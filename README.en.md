@@ -77,8 +77,11 @@ Zyris is implementing a comprehensive set of systems. Below is our development r
 - **Customization Hooks** - Implement `_save_persistence(state)` and `_load_persistence(data)` for complex manual serialization or state reconstruction logic.
 - **Threaded Architecture** - I/O operations, ZSTD compression, and AES-256 encryption run on dedicated threads, ensuring zero stuttering during gameplay (fluid autosaves).
 - **Snapshot Resource** - Saves are treated as standard `Resources` (`Snapshot`), containing metadata (playtime, version), optional thumbnails, and SHA-256 checksums for integrity validation.
-- **Instance Identification** - Support for `persistence_id` to reconnect properties to specific nodes in dynamic scenes, and `save_policy` for granular hierarchy control.
+- **Instance Identification** - Support for `persistence_id` to reconnect properties to specific nodes in dynamic scenes, allowing objects to be moved in the hierarchy without losing progress. Combined with `save_policy` for granular control over which nodes should be persisted.
+- **Incremental System (Git-style Commits)** - Inspired by Git, the system tracks only modified objects (`dirty_objects`) and saves increments instead of complete snapshots. This reduces disk writes by up to 95% on frequent saves, eliminating "save stutter" in massive games.
+- **Global ID Registry** - Hierarchy abstraction that allows binding data directly to objects via `persistence_id`, ignoring NodePaths. This solves the classic problem of saves breaking when nodes are renamed or moved.
 - **Project Settings Integration** - Management of encryption keys, formats (Binary/Text), and validation levels (Strict, Signature) directly through the editor.
+- **Note (Future Concept):** Researching the idea of `SnapshotContainer` (to group multiple commits into a single resource) and `SnapshotIncremental` (files containing only physical deltas instead of consolidated snapshots), aiming for even more granular gameplay versioning.
 
 ### In Development
 

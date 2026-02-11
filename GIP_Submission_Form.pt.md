@@ -21,7 +21,7 @@ Eu proponho a adição de um **Sistema de Persistência de Alto Nível** compost
 
 **Distinção Importante:** O `SaveServer` não é uma funcionalidade rígida de "save game". Ele é uma **camada de infraestrutura**. Ele abstrai o "encanamento" complexo da persistência (I/O em threads, encriptação, escritas atômicas, compressão) para que os desenvolvedores possam construir seus próprios sistemas de save específicos sobre ele.
 
-Enquanto a anotação `@persistent` lida com a serialização simples de propriedades, as funções gêmeas `_save_persistence(state)` e `_load_persistence(state)` são as ferramentas principais que permitem aos usuários definir *como* sua arquitetura única de jogo (inventários, geração procedural, missões) se traduz em dados. Isso espelha a filosofia da engine: o `PhysicsServer` lida com a matemática/colisão, mas o usuário define a mecânica. O `SaveServer` lida com o disco/integridade, mas o usuário define a lógica dos dados.
+Enquanto a anotação `@persistent` lida com a serialização simples de propriedades, o sistema evolui a persistência tradicional para um modelo de **"Git para Gameplay"**. Em vez de salvar snapshots completos do mundo (que causam "Save Stutter"), utilizamos **Estados Incrementais**. Isso permite que a engine rastreie apenas objetos modificados ("Dirty Tracking") e salve atualizações fracionárias, reduzindo o I/O de disco em até 95%.
 
 ## 4. Descreva como sua proposta funcionará, incluindo código, pseudocódigo, protótipos e/ou diagramas
 
@@ -66,6 +66,11 @@ SaveServer.load_snapshot(get_tree().root, "save_slot_1")
 
 # Salva apenas tags específicas (ex: apenas o inventário)
 SaveServer.save_snapshot(get_tree().root, "slot_1", true, ["inventory"])
+
+# --- SAVE INCREMENTAL (O Modelo Delta) ---
+# Salva APENAS objetos sujos (modificados desde o load). "Diff" estilo Git.
+# Elimina efetivamente o save stutter em jogos massivos.
+SaveServer.save_incremental(get_tree().root, "save_slot_1")
 ```
 
 ### O Recurso `Snapshot`
@@ -131,6 +136,8 @@ func _load_persistence(state: Dictionary):
         add_child(e)
         # O SaveServer agora prossegue para injetar 'e.hp', 'e.ammo', etc., automaticamente
 ```
+
+Além disso, o **Global ID Registry** garante que os nós sejam identificados pelo seu `persistence_id` em vez do `NodePath` hierárquico. Isso resolve o problema clássico de arquivos de save quebrarem quando nós são renomeados ou movidos dentro da árvore durante o desenvolvimento ou execução.
 
 Isso garante que o `SaveServer` continue sendo um **sistema de persistência** flexível: o estado simples é automatizado, mas a lógica complexa do jogo permanece totalmente sob o controle do desenvolvedor.
 

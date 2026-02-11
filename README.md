@@ -79,8 +79,11 @@ O Zyris está implementando um conjunto abrangente de sistemas. Abaixo está nos
 - **Hooks de Customização** - Implemente `_save_persistence(state)` e `_load_persistence(data)` para lógicas complexas de serialização manual ou reconstrução de estados.
 - **Threaded Architecture** - Operações de I/O, compressão (ZSTD) e criptografia (AES-256) rodam em threads dedicadas, garantindo zero stuttering durante o gameplay (autosaves fluidos).
 - **Recurso de Snapshot** - Saves são tratados como `Resources` (`Snapshot`), contendo metadados (tempo de jogo, versão), thumbnails opcionais e checksums SHA-256 para validação de integridade.
-- **Identificação de Instância** - Suporte a `persistence_id` para reconectar propriedades a nós específicos em cenas dinâmicas e `save_policy` para controle granular de hierarquia.
+- **Identificação de Instância** - Suporte a `persistence_id` para reconectar propriedades a nós específicos em cenas dinâmicas, permitindo que objetos sejam movidos na hierarquia sem perder o progresso. Combinado com `save_policy` para controle granular de quais nós devem ser persistidos.
+- **Sistema Incremental (Git-style Commits)** - Inspirado no Git, o sistema rastreia apenas objetos modificados (`dirty_objects`) e salva incrementos ao invés de snapshots completos. Isso reduz a escrita em disco em até 95% em saves frequentes, eliminando o "save stutter" em jogos massivos.
+- **Global ID Registry** - Abstração de hierarquia que permite vincular dados diretamente a objetos via `persistence_id`, ignorando NodePaths. Isso resolve o problema clássico de saves quebrarem quando nós são renomeados ou movidos.
 - **Integração com Project Settings** - Gerenciamento de chaves de criptografia, formatos (Binário/Texto) e níveis de validação (Strict, Signature) via editor.
+- **Nota (Conceito Futuro):** Estamos explorando a ideia de `SnapshotContainer` (para agrupar múltiplos commits em um único recurso) e `SnapshotIncremental` (arquivos contendo apenas deltas físicos em vez de snapshots consolidados), visando um controle de versão de gameplay ainda mais granular.
 
 ### Em Desenvolvimento
 

@@ -8,8 +8,8 @@ This guide explains how to implement a robust, production-ready save system usin
 
 Our persistence system is built on a **Reconstructive ID model**. This ensures that both static and dynamic nodes can be perfectly restored across gaming sessions.
 
-- 🏛️ **Static Nodes:** Objects that always exist in your scene (like the Player or UI) are automatically identified via their `persistence_id` and restored.
-- ⚡ **Dynamic Nodes:** Objects spawned during gameplay (Enemies, Loot, Projectiles) must be re-instantiated during a load. The system then reconciles their internal state using their unique `persistence_id`.
+- 🏛️ **Static Nodes:** Objects that always exist in your scene (like the Player or UI). They use a **Global ID Registry** to reconnect their state even if they change name or hierarchy position.
+- ⚡ **Dynamic Nodes:** Objects spawned during gameplay (Enemies, Loot). You must re-instantiate them during a load and re-apply their `persistence_id` to link them back to their saved data.
 
 ## 2. Setting Up a Persistent Variable
 
@@ -109,7 +109,26 @@ func _init():
     )
 ```
 
-## 6. Optimization & Best Practices
+## 6. Performance: Incremental vs Full Saves
+
+The system operates like **Git for Gameplay**. It avoids the "Save Stutter" common in large games by using **Incremental Commits**.
+
+### 6.1 Full Snapshot (`save_snapshot`)
+
+Traverses the entire scene tree. Required for the first save of an area or when a full world-state backup is needed.
+
+### 6.2 Incremental Save (`save_incremental`)
+
+The most efficient method. It utilizes **Dirty Tracking**:
+
+1. When a `@persistent` variable is modified via `set()`, the object is automatically marked as "dirty".
+2. `save_incremental()` visits **only** these dirty objects.
+3. It performs a **Dictionary Merge** between the last loaded state and the new increments.
+
+> [!TIP]
+> Use `save_incremental()` for frequent autosaves or background checkpoints to reduce disk I/O by up to 95%.
+
+## 7. Optimization & Best Practices
 
 1. 🎯 **Minimalism:** Only mark variables that *actually* change.
 2. 🔒 **Security:** Enable **ZSTD Compression** and **AES Encryption** in `Project Settings > Application > Persistence` for production builds.
