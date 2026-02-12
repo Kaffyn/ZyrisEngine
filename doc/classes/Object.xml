@@ -249,7 +249,7 @@
 			<return type="void" />
 			<param index="0" name="data" type="Dictionary" />
 			<description>
-				Virtual hook called when the object needs to restore its persistent state. The [param data] dictionary contains the data previously stored by the [method _save_state] hook.
+				Virtual hook called when the object needs to restore its persistent state. The [param data] dictionary contains the data previously stored by the [method _save_persistence] hook.
 			</description>
 		</method>
 		<method name="_notification" qualifiers="virtual">
@@ -295,7 +295,7 @@
 				[b]Note:[/b] Unlike other virtual methods, this method is called automatically for every script that overrides it. This means that the base implementation should not be called via [code]super[/code] in GDScript or its equivalents in other languages. The bottom-most sub-class will be called first, with subsequent calls ascending the class hierarchy. The call chain will stop on the first class that returns a non-[code]null[/code] value.
 			</description>
 		</method>
-		<method name="_save_state" qualifiers="virtual const">
+		<method name="_save_persistence" qualifiers="virtual const">
 			<return type="void" />
 			<param index="0" name="state" type="Dictionary" />
 			<param index="1" name="tags" type="Array" />
@@ -666,6 +666,12 @@
 				Returns the object's metadata entry names as an [Array] of [StringName]s.
 			</description>
 		</method>
+		<method name="get_persist_policy" qualifiers="const">
+			<return type="int" enum="Object.SavePolicy" />
+			<description>
+				Returns the current save policy for this object.
+			</description>
+		</method>
 		<method name="get_method_argument_count" qualifiers="const">
 			<return type="int" />
 			<param index="0" name="method" type="StringName" />
@@ -826,6 +832,18 @@
 				Public method to inject the loaded state into the object. Triggers the [method _load_persistence] virtual hook.
 			</description>
 		</method>
+		<method name="get_persistence_id" qualifiers="const">
+			<return type="StringName" />
+			<description>
+				Returns the unique persistence ID of this object.
+			</description>
+		</method>
+		<method name="get_persist_policy" qualifiers="const">
+			<return type="int" enum="Object.SavePolicy" />
+			<description>
+				Returns the current save policy for this object.
+			</description>
+		</method>
 		<method name="notification">
 			<return type="void" />
 			<param index="0" name="what" type="int" />
@@ -874,7 +892,7 @@
 			<return type="Dictionary" />
 			<param index="0" name="tags" type="Array" default="[]" />
 			<description>
-				Captures the persistent state of this object only. Includes properties marked with the [annotation @GDScript.@persistent] annotation and data filled by the [method _save_state] hook. Can be filtered by [param tags].
+				Captures the persistent state of this object only. Includes properties marked with the [annotation @GDScript.@persistent] annotation and data filled by the [method _save_persistence] hook. Can be filtered by [param tags].
 			</description>
 		</method>
 		<method name="property_can_revert" qualifiers="const">
@@ -1017,6 +1035,20 @@
 				[b]Note:[/b] Metadata that has a name starting with an underscore ([code]_[/code]) is considered editor-only. Editor-only metadata is not displayed in the Inspector and should not be edited, although it can still be found by this method.
 			</description>
 		</method>
+		<method name="set_persist_policy">
+			<return type="void" />
+			<param index="0" name="policy" type="int" enum="Object.SavePolicy" />
+			<description>
+				Sets the save policy for this object. See [enum SavePolicy] for available options.
+			</description>
+		</method>
+		<method name="set_persistence_id">
+			<return type="void" />
+			<param index="0" name="id" type="StringName" />
+			<description>
+				Sets a global unique persistence ID for this object. Allows the object to be uniquely identified and restored by the [SaveServer], even if its position in a hierarchy or ownership changes. This ID is registered in the [SaveServer] for cross-hierarchy lookups.
+			</description>
+		</method>
 		<method name="set_script">
 			<return type="void" />
 			<param index="0" name="script" type="Variant" />
@@ -1067,10 +1099,10 @@
 	</methods>
 	<members>
 		<member name="persistence_id" type="StringName" setter="set_persistence_id" getter="get_persistence_id" default="&amp;&quot;&quot;">
-			Unique ID for persistence. If set, [SaveServer] will use this ID to identify the object's data.
+			Global unique ID for persistence. Allows the object to be uniquely identified and restored by the [SaveServer], even if its position in a hierarchy or ownership changes. This is registered in the [SaveServer] for cross-hierarchy lookups.
 		</member>
 		<member name="save_policy" type="int" setter="set_persist_policy" getter="get_persist_policy" enum="Object.SavePolicy" default="1">
-			Defines how this object should be treated by the save system.
+			Defines how this object should be treated by the save system. See [enum SavePolicy] for available options. For [Node]s, this can be inherited from the parent branch.
 		</member>
 	</members>
 	<signals>

@@ -670,8 +670,8 @@ private:
 	bool _predelete();
 	void _initialize();
 
-	StringName persistence_id;
 	SavePolicy save_policy = SAVE_POLICY_ALWAYS;
+	StringName persistence_id;
 	HashSet<StringName> persistent_properties;
 
 	void _postinitialize();
@@ -857,10 +857,10 @@ public:
 	void detach_from_objectdb();
 	_FORCE_INLINE_ ObjectID get_instance_id() const { return _instance_id; }
 
-	void set_persistence_id(const StringName &p_id);
+	virtual void set_persistence_id(const StringName &p_id);
 	StringName get_persistence_id() const;
 
-	void set_persist_policy(SavePolicy p_policy);
+	virtual void set_persist_policy(SavePolicy p_policy);
 	SavePolicy get_persist_policy() const;
 
 	void set_persistence_for_property(const StringName &p_property, bool p_persistent);

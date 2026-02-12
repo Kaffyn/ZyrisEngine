@@ -544,6 +544,11 @@ public:
 	virtual Dictionary save_all_persistence(const Array &p_tags = Array()) const override;
 	virtual void load_all_persistence(const Dictionary &p_data) override;
 
+	void set_persistence_id(const StringName &p_id) override;
+	_FORCE_INLINE_ StringName get_persistence_id() const { return Object::get_persistence_id(); }
+
+	virtual void set_persist_policy(SavePolicy p_policy) override;
+
 	Window *get_window() const;
 	Window *get_non_popup_window() const;
 	Window *get_last_exclusive_window() const;

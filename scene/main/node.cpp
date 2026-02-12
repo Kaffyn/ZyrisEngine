@@ -49,6 +49,7 @@ STATIC_ASSERT_INCOMPLETE_TYPE(class, Engine);
 #include "scene/main/multiplayer_api.h"
 #include "scene/main/window.h"
 #include "scene/resources/packed_scene.h"
+#include "servers/save/save_server.h"
 #include "viewport.h"
 
 #ifdef DEBUG_ENABLED
@@ -2151,11 +2152,54 @@ void Node::load_all_persistence(const Dictionary &p_data) {
 		Array child_names = children_data.keys();
 		for (int i = 0; i < child_names.size(); i++) {
 			StringName child_name = child_names[i];
-			Node *child = get_node_or_null(NodePath(child_name));
+			Dictionary child_dict = children_data[child_name];
+
+			Node *child = nullptr;
+
+			// 1. Try by global Persistence ID if available
+			if (child_dict.has(".id")) {
+				StringName pid = child_dict[".id"];
+				Object *obj = SaveServer::get_singleton()->get_object_by_id(pid);
+				child = Object::cast_to<Node>(obj);
+			}
+
+			// 2. Fallback to hierarchy (NodePath)
+			if (!child) {
+				child = get_node_or_null(NodePath(child_name));
+			}
+
 			if (child) {
-				child->load_all_persistence(children_data[child_name]);
+				child->load_all_persistence(child_dict);
 			}
 		}
+	}
+}
+
+void Node::set_persistence_id(const StringName &p_id) {
+	if (get_persistence_id() == p_id) {
+		return;
+	}
+
+	if (!get_persistence_id().is_empty()) {
+		SaveServer::get_singleton()->unregister_id(get_persistence_id());
+	}
+
+	Object::set_persistence_id(p_id);
+
+	// Register ID if save policy permits
+	if (!get_persistence_id().is_empty() && get_persist_policy() != SAVE_POLICY_NEVER) {
+		SaveServer::get_singleton()->register_id(get_persistence_id(), get_instance_id());
+	}
+}
+
+void Node::set_persist_policy(SavePolicy p_policy) {
+	Object::set_persist_policy(p_policy);
+
+	// Update ID registry based on policy
+	if (p_policy == SAVE_POLICY_NEVER && !get_persistence_id().is_empty()) {
+		SaveServer::get_singleton()->unregister_id(get_persistence_id());
+	} else if (p_policy != SAVE_POLICY_NEVER && !get_persistence_id().is_empty()) {
+		SaveServer::get_singleton()->register_id(get_persistence_id(), get_instance_id());
 	}
 }
 
@@ -3966,6 +4010,9 @@ void Node::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("update_configuration_warnings"), &Node::update_configuration_warnings);
 
+	ClassDB::bind_method(D_METHOD("set_persistence_id", "id"), &Node::set_persistence_id);
+	ClassDB::bind_method(D_METHOD("get_persistence_id"), &Node::get_persistence_id);
+
 	{
 		MethodInfo mi;
 		mi.name = "call_deferred_thread_group";
@@ -4088,6 +4135,9 @@ void Node::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "owner", PROPERTY_HINT_RESOURCE_TYPE, "Node", PROPERTY_USAGE_NONE), "set_owner", "get_owner");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "multiplayer", PROPERTY_HINT_RESOURCE_TYPE, "MultiplayerAPI", PROPERTY_USAGE_NONE), "", "get_multiplayer");
 
+	ADD_GROUP("Persistence", "persistence_");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "persistence_id"), "set_persistence_id", "get_persistence_id");
+
 	ADD_GROUP("Process", "process_");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "process_mode", PROPERTY_HINT_ENUM, "Inherit,Pausable,When Paused,Always,Disabled"), "set_process_mode", "get_process_mode");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "process_priority"), "set_process_priority", "get_process_priority");
@@ -4185,6 +4235,10 @@ Node::~Node() {
 
 	ERR_FAIL_COND(data.parent);
 	ERR_FAIL_COND(data.children_cache.size());
+
+	if (!get_persistence_id().is_empty()) {
+		SaveServer::get_singleton()->unregister_id(get_persistence_id());
+	}
 
 #ifdef DEBUG_ENABLED
 	total_node_count.decrement();

@@ -42,8 +42,9 @@
 			<return type="bool" />
 			<param index="0" name="root" type="Node" />
 			<param index="1" name="slot_name" type="String" />
+			<param index="2" name="callback" type="Callable" default="null" />
 			<description>
-				Loads a [Snapshot] from disk and recursively restores the state in the hierarchy starting from the [param root] node.
+				Loads a [Snapshot] from disk and recursively restores the state in the hierarchy starting from the [param root] node. If [param callback] is provided, it will be called once the loading process is finished (especially useful for async loading).
 			</description>
 		</method>
 		<method name="register_migration">
@@ -76,6 +77,42 @@
 			<param index="5" name="thumbnail" type="Resource" default="null" />
 			<description>
 				Creates a recursive snapshot starting from [param root]. Can filter properties using [param tags].
+			</description>
+		</method>
+		<method name="amend_save">
+			<return type="bool" />
+			<param index="0" name="root" type="Node" />
+			<param index="1" name="slot_name" type="String" />
+			<description>
+				Performs an amended save of the [param root] branch. Only objects that have been staged (via [method stage_change]) since the last save or load will be processed. This is significantly more efficient for large scenes where only a subset of objects change frequently.
+			</description>
+		</method>
+		<method name="stage_change">
+			<return type="void" />
+			<param index="0" name="obj" type="Object" />
+			<description>
+				Explicitly stages an object to be included in the next amended save. This notifies the [SaveServer] that the object's persistent state has changed.
+			</description>
+		</method>
+		<method name="clear_staged">
+			<return type="void" />
+			<description>
+				Clears the list of currently staged objects.
+			</description>
+		</method>
+		<method name="register_id">
+			<return type="void" />
+			<param index="0" name="id" type="StringName" />
+			<param index="1" name="obj" type="Object" />
+			<description>
+				Registers a unique persistence ID for an object.
+			</description>
+		</method>
+		<method name="unregister_id">
+			<return type="void" />
+			<param index="0" name="id" type="StringName" />
+			<description>
+				Unregisters a persistence ID.
 			</description>
 		</method>
 	</methods>

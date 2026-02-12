@@ -96,6 +96,7 @@ private:
 	Semaphore semaphore;
 	SafeFlag exit_thread;
 	List<SaveTask> queue;
+	mutable Mutex staged_mutex;
 
 	// Configuration
 	SaveFormat current_format = FORMAT_TEXT;
@@ -103,6 +104,12 @@ private:
 	bool compression_enabled = true;
 	bool backup_enabled = true;
 	IntegrityCheckLevel integrity_level = INTEGRITY_SIGNATURE;
+
+	// Modular/Incremental Persistence
+	Ref<Snapshot> base_snapshot;
+	HashMap<StringName, ObjectID> id_registry;
+	HashSet<ObjectID> staged_objects;
+
 	String save_path = "user://saves/";
 
 	struct Migration {
@@ -144,6 +151,16 @@ public:
 
 	// Migrations
 	void register_migration(const String &p_from, const String &p_to, const Callable &p_callback);
+
+	// ID and Delta Management
+	void register_id(const StringName &p_id, ObjectID p_obj);
+	void unregister_id(const StringName &p_id);
+	Object *get_object_by_id(const StringName &p_id) const;
+
+	void stage_change(ObjectID p_obj);
+	void clear_staged();
+
+	bool amend_save(Node *p_root, const String &p_slot_name);
 
 	// Configuration
 	void set_save_format(SaveFormat p_format);

@@ -2102,7 +2102,6 @@ void Object::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("is_queued_for_deletion"), &Object::is_queued_for_deletion);
 	ClassDB::bind_method(D_METHOD("cancel_free"), &Object::cancel_free);
-
 	ClassDB::bind_method(D_METHOD("set_persistence_id", "id"), &Object::set_persistence_id);
 	ClassDB::bind_method(D_METHOD("get_persistence_id"), &Object::get_persistence_id);
 	ClassDB::bind_method(D_METHOD("set_persist_policy", "policy"), &Object::set_persist_policy);
@@ -2505,6 +2504,8 @@ void Object::_construct_object(bool p_reference) {
 	// ObjectDB::add_instance relies on AncestralClass::REF_COUNTED
 	// being already set in the case of references.
 	_ancestry = p_reference ? (uint32_t)AncestralClass::REF_COUNTED : 0;
+
+	save_policy = SAVE_POLICY_INHERIT;
 
 	_instance_id = ObjectDB::add_instance(this);
 
