@@ -2,139 +2,139 @@
 trigger: always_on
 ---
 
-# Core Persistence System (v2)
+# Sistema Central de Persistência (v2)
 
-## 1. Engine Context
+## 1. Contexto da Engine
 
-The persistence system is built on three fundamental engine pillars:
+O sistema de persistência é construído sobre três pilares fundamentais da engine:
 
-1. **Hierarchy and Behavior Inheritance:** The engine works as a behavior ladder. The base `Object` provides life to objects; `Node` allows them to exist in the scene; and `Resource` serves to store data. When you use something like `CanvasItem` (for 2D and Control) or `Node3D`, they are simply extending these bases and adding position logic. This allows any functionality injected into the base (like persistence) to be inherited by everything that comes after.
+1. **Hierarquia e Herança de Comportamento:** A engine funciona como uma escada de comportamento. A base `Object` fornece vida aos objetos; `Node` permite que existam na cena; e `Resource` serve para armazenar dados. Quando você usa algo como `CanvasItem` (for 2D e Control) ou `Node3D`, eles estão simplesmente estendendo essas bases e adicionando lógica de posição. Isso permite que qualquer funcionalidade injetada na base (como persistência) seja herdada por tudo que vier depois.
 
-2. **Server-Based Architecture (Microservices):** To avoid overloading the game, heavy tasks are delegated to "specialists". The `AudioServer` focuses only on playing sound and managing volumes, while the `PhysicsServer` exclusively handles collisions. The `SaveServer` follows this same model: it is a dedicated engine for saving data in the background, without freezing your game.
+2. **Arquitetura Baseada em Servidores (Microsserviços):** Para evitar sobrecarregar o jogo, tarefas pesadas são delegadas a "especialistas". O `AudioServer` foca apenas em tocar som e gerenciar volumes, enquanto o `PhysicsServer` lida exclusivamente com colisões. O `SaveServer` segue este mesmo modelo: é um motor dedicado para salvar dados em segundo plano, sem congelar o seu jogo.
 
-3. **Abstraction via Integrated Language:** GDScript is not just for making the character walk; it is a tool that "intertwines" with the heart of the engine. It allows us to use "tags" (annotations like `@persistent`) and special methods that send complex orders to the system very simply, hiding all the math and heavy processing behind a single line of code.
+3. **Abstração via Linguagem Integrada:** GDScript não serve apenas para fazer o personagem andar; é uma ferramenta que se "entrelaça" com o coração da engine. Ela nos permite usar "tags" (anotações como `@persistent`) e métodos especiais que enviam ordens complexas ao sistema de forma muito simples, escondendo toda a matemática e processamento pesado por trás de uma única linha de código.
 
-## 2. Script Interface (GDScript)
+## 2. Interface de Script (GDScript)
 
-Persistence is primarily declarative, minimizing boilerplate code.
+A persistência é primariamente declarativa, minimizando código repetitivo (boilerplate).
 
-### 2.1 Declarative Annotations
+### 2.1 Anotações Declarativas
 
-- **`@persistent`**: Marks a variable for automatic inclusion in the save system.
-  - **Note:** For performance and security reasons, variables marked as `@persistent` **must** have explicit typing. The compiler will emit a warning if typing is omitted.
+- **`@persistent`**: Marca uma variável para inclusão automática no sistema de salvamento.
+  - **Nota:** Por razões de performance e segurança, variáveis marcadas como `@persistent` **devem** ter tipagem explícita. O compilador emitirá um aviso se a tipagem for omitida.
 
     ```gdscript
     @persistent var health: int = 100
     @persistent var current_inventory: Array = []
     ```
 
-### 2.2 The `_save_persistence` Hook
+### 2.2 O Gancho `_save_persistence`
 
-For complex cases (like custom transformations or states that are not simple properties), the developer can implement this virtual hook.
+Para casos complexos (como transformações customizadas ou estados que não são propriedades simples), o desenvolvedor pode implementar este gancho virtual.
 
-- **Signature:** `func _save_persistence(state: Dictionary, tags: Array)`
-- **Usage:** The system passes a `state` dictionary that should be filled with the additional data you want to persist.
+- **Assinatura:** `func _save_persistence(state: Dictionary, tags: Array)`
+- **Uso:** O sistema passa um dicionário `state` que deve ser preenchido com os dados adicionais que você deseja persistir.
 
   ```gdscript
   func _save_persistence(state: Dictionary, tags: Array):
       state["last_position"] = global_position
   ```
 
-### 2.3 The `_load_persistence` Hook
+### 2.3 O Gancho `_load_persistence`
 
-- **Signature:** `func _load_persistence(data: Dictionary)`
-- **Usage:** Called after automatic property restoration to process custom data received from the snapshot.
+- **Assinatura:** `func _load_persistence(data: Dictionary)`
+- **Uso:** Chamado após a restauração automática de propriedades para processar dados customizados recebidos do snapshot.
 
-## 3. Node API (C++)
+## 3. API de Node (C++)
 
-The `SaveServer` extends the base `Node` class to provide granular control over what is persisted.
+O `SaveServer` estende a classe base `Node` para fornecer controle granular sobre o que é persistido.
 
-### 3.1 Identification and Policy
+### 3.1 Identificação e Política
 
-- **`persistence_id` (StringName):** Global unique ID. Allows the node to be restored even if it changes name or position in the hierarchy. This ID is automatically registered in the `SaveServer` when set, enabling cross-hierarchy lookups.
+- **`persistence_id` (StringName):** ID único global. Permite que o nó seja restaurado mesmo se mudar de nome ou posição na hierarquia. Este ID é automaticamente registrado no `SaveServer` quando definido, permitindo buscas através da hierarquia.
 
 - **`save_policy` (Enum):**
-  - `SAVE_POLICY_INHERIT`: Follows the parent node's policy.
-  - `SAVE_POLICY_ALWAYS`: Always tries to save this node.
-  - `SAVE_POLICY_NEVER`: Ignores this node and all its children (ideal for static decoration).
-  - `SAVE_POLICY_CUSTOM`: Reserved for future custom implementations.
+  - `SAVE_POLICY_INHERIT`: Segue a política do nó pai.
+  - `SAVE_POLICY_ALWAYS`: Sempre tenta salvar este nó.
+  - `SAVE_POLICY_NEVER`: Ignora este nó e todos os seus filhos (ideal para decoração estática).
+  - `SAVE_POLICY_CUSTOM`: Reservado para futuras implementações customizadas.
 
-**Key Behavior:** When a node's `save_policy` is set to `NEVER`, its `persistence_id` is automatically unregistered from the `SaveServer`. When changed back to a permissive policy, it is re-registered.
+**Comportamento Chave:** Quando a `save_policy` de um nó é definida como `NEVER`, seu `persistence_id` é automaticamente desregistrado do `SaveServer`. Quando alterada de volta para uma política permissiva, ele é reregistrado.
 
-### 3.2 Dynamic Management
+### 3.2 Gerenciamento Dinâmico
 
-- `set_persistence_for_property(property, enabled)`: Allows toggling persistence of specific properties at runtime.
+- `set_persistence_for_property(property, enabled)`: Permite alternar a persistência de propriedades específicas em tempo de execução.
 
-## 4. Orchestration by SaveServer
+## 4. Orquestração pelo SaveServer
 
-The `SaveServer` is not just a file writer; it is the choreographer of data collection in the scene.
+O `SaveServer` não é apenas um escritor de arquivos; é o coreógrafo da coleta de dados na cena.
 
-### 4.1 Recursive Snapshots
+### 4.1 Snapshots Recursivos
 
-- **`save_snapshot(root, slot_name, async, tags, metadata, thumbnail)`**: Initiates recursive collection from the `root` node. The entire tree is traversed and states are captured.
-- **`load_snapshot(root, slot_name, callback)`**: Restores the state of the entire branch from the file on disk.
+- **`save_snapshot(root, slot_name, async, tags, metadata, thumbnail)`**: Inicia a coleta recursiva a partir do nó `root`. A árvore inteira é percorrida e os estados são capturados.
+- **`load_snapshot(root, slot_name, callback)`**: Restaura o estado da ramificação inteira a partir do arquivo em disco.
 
-**Snapshot Structure:**
+**Estrutura do Snapshot:**
 
-- `snapshot`: Automatic properties and return from `_save_persistence`.
-- `.id`: The persistence ID, if present.
-- `.children`: Recursive dictionary with the state of children.
+- `snapshot`: Propriedades automáticas e retorno de `_save_persistence`.
+- `.id`: O ID de persistência, se presente.
+- `.children`: Dicionário recursivo com o estado dos filhos.
 
-#### 4.1.1 Partial Persistence (Tags)
+#### 4.1.1 Persistência Parcial (Tags)
 
-The system allows saving only subsets of data using tags.
+O sistema permite salvar apenas subconjuntos de dados usando tags.
 
-- **`save_snapshot(root, slot, async, tags: Array[String])`**: If provided, only properties marked with `@persistent(tag_name)` or included in `_save_persistence` dictionaries that match the tags will be processed.
+- **`save_snapshot(root, slot, async, tags: Array[String])`**: Se fornecido, apenas propriedades marcadas com `@persistent(tag_name)` ou incluídas nos dicionários de `_save_persistence` que correspondam às tags serão processadas.
 
-### 4.2 The `Snapshot` Resource
+### 4.2 O Recurso `Snapshot`
 
-Internally, the system uses a dedicated resource to encapsulate saved data:
+Internamente, o sistema usa um recurso dedicado para encapsular os dados salvos:
 
-- **`Snapshot` (Resource)**: This resource has the following main properties:
-  - `snapshot` (Dictionary): The serialized state of the node tree.
-  - `version` (String): The game version (`application/config/version`) captured at save time.
-  - `metadata` (Dictionary): Lightweight data for quick visualization (e.g., playtime, coins, area name).
-  - `thumbnail` (Texture2D): Optional screen capture at save time.
-  - `checksum` (String): SHA-256 hash automatically generated to validate data integrity.
+- **`Snapshot` (Resource)**: Este recurso possui as seguintes propriedades principais:
+  - `snapshot` (Dictionary): O estado serializado da árvore de nós.
+  - `version` (String): A versão do jogo (`application/config/version`) capturada no momento do salvamento.
+  - `metadata` (Dictionary): Dados leves para visualização rápida (ex: tempo de jogo, moedas, nome da área).
+  - `thumbnail` (Texture2D): Captura de tela opcional no momento do salvamento.
+  - `checksum` (String): Hash SHA-256 gerado automaticamente para validar a integridade dos dados.
 
-### 4.3 Global Settings (Project Settings)
+### 4.3 Configurações Globais (Configurações do Projeto)
 
-The `SaveServer` behavior is controlled via `Project Settings > Application > Persistence`:
+O comportamento do `SaveServer` é controlado via `Project Settings > Application > Persistence`:
 
 - **`save_format`**:
-  - `Text (0)`: Generates `.tres` files (readable). Ideal for development and debugging.
-  - `Binary (1)`: Generates `.data` files (binary). Ideal for production, supporting encryption and compression.
+  - `Text (0)`: Gera arquivos `.tres` (legíveis). Ideal para desenvolvimento e depuração.
+  - `Binary (1)`: Gera arquivos `.data` (binários). Ideal para produção, suportando criptografia e compressão.
 
-- **`encryption_key`**: 32-character key used to protect `.data` files.
-  - **Auto-generation**: If the field is empty or reset in the Editor, the engine automatically generates a unique random key for the project.
-  - **Critical Security**: If the key changes after release, old saves become unreadable. Use version control systems (Git) to back up `project.godot`.
+- **`encryption_key`**: Chave de 32 caracteres usada para proteger arquivos `.data`.
+  - **Auto-geração**: Se o campo estiver vazio ou for resetado no Editor, a engine gera automaticamente uma chave aleatória única para o projeto.
+  - **Segurança Crítica**: Se a chave mudar após o lançamento, saves antigos tornam-se ilegíveis. Use sistemas de controle de versão (Git) para fazer backup do `project.godot`.
 
-- **`compression_enabled`**: When active, uses **ZSTD** compression on `.data` files, reducing disk size with minimal CPU cost.
+- **`compression_enabled`**: Quando ativo, usa compressão **ZSTD** em arquivos `.data`, reduzindo o tamanho em disco com custo mínimo de CPU.
 
-- **`backup_enabled`**: When active, the system maintains a `.bak` file of the previous save. If loading the main save fails (corruption or crash during write), the backup is automatically restored.
+- **`backup_enabled`**: Quando ativo, o sistema mantém um arquivo `.bak` do save anterior. Se o carregamento do save principal falhar (corrupção ou crash durante a escrita), o backup é restaurado automaticamente.
 
 - **`integrity_check_level`**:
-  - `NONE`: Fast loading without validation.
-  - `SIGNATURE`: Verifies if the Checksum matches the content (prevents simple manual editing).
-  - `STRICT`: Validates Checksum and Versioning before any data injection.
+  - `NONE`: Carregamento rápido sem validação.
+  - `SIGNATURE`: Verifica se o Checksum corresponde ao conteúdo (previne edição manual simples).
+  - `STRICT`: Valida Checksum e Versionamento antes de qualquer injeção de dados.
 
-### 4.4 Disk Persistence
+### 4.4 Persistência em Disco
 
-Location and extension depend on the chosen format:
+Localização e extensão dependem do formato escolhido:
 
-- **Location**: Generally stored in `user://saves/`.
-- **Extensions**: `.tres` for text mode and `.data` for binary mode.
+- **Localização**: Geralmente armazenado em `user://saves/`.
+- **Extensões**: `.tres` para modo texto e `.data` para modo binário.
 
-## 5. Technical Integration (Core Flags)
+## 5. Integração Técnica (Flags do Core)
 
-The system uses the global flag **`PROPERTY_USAGE_PERSISTENCE`** (1 << 30) defined in `object.h`. Any engine system (C++ or GDScript) can mark properties with this bit so that `Node` automatically includes them in the save state.
+O sistema usa a flag global **`PROPERTY_USAGE_PERSISTENCE`** (1 << 30) definida em `object.h`. Qualquer sistema da engine (C++ ou GDScript) pode marcar propriedades com este bit para que `Node` as inclua automaticamente no estado de salvamento.
 
-## 6. Data Evolution (Migrations)
+## 6. Evolução de Dados (Migrações)
 
-To manage changes in data structure between game versions:
+Para gerenciar mudanças na estrutura de dados entre versões do jogo:
 
-1. **`register_migration(from, to, callable)`**: Allows defining data transformations at runtime.
-2. At `load_snapshot` time, if the captured version is lower than the current one, the `SaveServer` executes the registered migration chain before calling `_load_persistence` on nodes.
+1. **`register_migration(from, to, callable)`**: Permite definir transformações de dados em tempo de execução.
+2. No momento do `load_snapshot`, se a versão capturada for menor que a atual, o `SaveServer` executa a cadeia de migrações registrada antes de chamar `_load_persistence` nos nós.
 
 ```gdscript
 func _init():
@@ -143,22 +143,22 @@ func _init():
     )
 ```
 
-## 7. Incremental Persistence (Commit System)
+## 7. Persistência Incremental (Sistema de Commit)
 
-The engine supports an incremental save model that avoids full scene traversals:
+A engine suporta um modelo de salvamento incremental que evita percorrer a cena completa:
 
-### 7.1 Dirty Object Tracking
+### 7.1 Rastreamento de Objetos "Sujos" (Dirty)
 
-When a persistent property changes via `set()`, the object automatically registers itself in the `SaveServer`'s `dirty_objects` list.
+Quando uma propriedade persistente muda via `set()`, o objeto se registra automaticamente na lista `dirty_objects` do `SaveServer`.
 
-### 7.2 Incremental Save
+### 7.2 Salvamento Incremental
 
-- **`save_incremental(root, slot_name)`**: Instead of traversing the entire tree, only visits objects marked as dirty.
-- If no base snapshot exists, performs a full save.
-- Consolidates changes with the base snapshot and saves the merged state.
+- **`save_incremental(root, slot_name)`**: Em vez de percorrer toda a árvore, visita apenas objetos marcados como sujos ("dirty").
+- Se nenhum snapshot base existir, realiza um salvamento completo.
+- Consolida as mudanças com o snapshot base e salva o estado mesclado.
 
-This approach is analogous to version control systems: the engine maintains a "base commit" (loaded state) and only saves "increments" (modified objects), significantly reducing I/O overhead in large scenes.
+Esta abordagem é análoga a sistemas de controle de versão: a engine mantém um "commit base" (estado carregado) e salva apenas "incrementos" (objetos modificados), reduzindo significativamente a sobrecarga de E/S em cenas grandes.
 
 ---
 
-_This protocol standardizes persistence in the engine, focusing on simplicity for the user and raw performance in the backend._
+_Este protocolo padroniza a persistência na engine, focando na simplicidade para o usuário e performance bruta no backend._
