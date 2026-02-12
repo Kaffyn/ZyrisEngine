@@ -24,6 +24,9 @@ func _ready():
 func save_game():
 	SaveServer.save_snapshot(self, "zyris_save", true)
 
+func save_incremental():
+	SaveServer.amend_save(self, "zyris_save")
+
 func load_game():
 	SaveServer.load_snapshot(self, "zyris_save")
 
@@ -32,7 +35,7 @@ func transition_to_scene(scene_path: String, next_state: GameState = GameState.G
 	current_state = GameState.TRANSITION
 
 	# Save current state before switching
-	save_game()
+	save_incremental()
 
 	# Clear current world (Hub or Game) - keeping LSSRoot-governed nodes like PetData
 	for child in get_children():
@@ -48,4 +51,4 @@ func transition_to_scene(scene_path: String, next_state: GameState = GameState.G
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
-		save_game()
+		save_incremental()
