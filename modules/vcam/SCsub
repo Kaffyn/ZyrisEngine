@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+
+Import("env")
+
+env_vcam = env.Clone()
+
+module_obj = []
+
+env_vcam.add_source_files(module_obj, "*.cpp")
+
+env.modules_sources += module_obj
