@@ -84,17 +84,6 @@ Zyris is implementing a comprehensive set of systems. Below is our development r
 
 ### In Development
 
-- [ ] **Library (Bottom Panel)** - Grid-based Content Manager
-  - **Native Coexistence** - Functions as an additional panel to the traditional FileSystem, focused on productivity without altering the file structure.
-  - **Grid View** - Direct content display organized by specialized tabs (Resources, Scenes, Scripts, Assets), eliminating deep folder navigation.
-  - **Context Focusing** - Intelligent filtering that displays only what is relevant to the current development moment.
-
-- [ ] **Level Streaming System (LSS)** - World and State Orchestration
-  - **GSM (Game State Machine)** - The `LSSServer` manages the application lifecycle through deterministic states (`BOOT`, `MENU`, `LOADING`, `GAMEPLAY`, `TRANSITION`).
-  - **StreamingZone** - System of spatial volumes that manage asynchronous loading of world chunks based on player position.
-  - **Super Node Architecture** - The `LSSRoot` allows the coexistence of multiple worlds or isolated "universes", facilitating map transitions without interrupting core logic.
-  - **State Hydration** - Integrated with the Save Server to ensure loaded zones recover their exact state instantly.
-
 - [ ] **Gameplay Ability System (GAS)** - Data-Oriented Gameplay Framework
 
     A high-performance native implementation of the GAS pattern, designed to scale from simple mechanics to complex RPG combat systems.
@@ -116,7 +105,7 @@ Zyris is implementing a comprehensive set of systems. Below is our development r
   - **Determinism** - Optimized for multiplayer games with prediction and reconciliation.
   - **Data-Driven** - Designers can create entire ability variations just by changing configurations in the Editor.
 
-- [ ] **Behavior Tree System** - Modular and Reactive AI
+- [ ] **Behavior Tree** - Modular and Reactive AI
 
     A robust node-based AI implementation, focused on creating complex behaviors through simple and reusable visual logic.
 
@@ -180,21 +169,6 @@ Zyris is implementing a comprehensive set of systems. Below is our development r
 
     These improvements elevate Zyris audio to a modern, reactive, and scalable level, maintaining conceptual compatibility with the base engine.
 
-- [ ] **Sounds Engine** - Audio Middleware & Design
-
-    Native middleware solution that revolutionizes the audio workflow, replacing direct file playback ("Play Sound") with an architecture based on **Logical Events**, similar to FMOD Studio and Wwise.
-
-    **System Philosophy:**
-    Instead of the programmer choosing *which* file to play, they only signal *what* happened (e.g., `PlayEvent("Footsteps")`). The Sounds Engine decides the auditory result based on logic pre-configured by the Sound Designer.
-
-    **Key Features:**
-  - **Probabilistic and Conditional Logic** - Sound changes dynamically depending on game parameters (e.g., Floor surface, player health, wind speed) without extra code.
-  - **Automatic Variation** - Pitch, Volume, and Container randomization system to avoid the "machine gun effect" (robotic repetition) in repetitive sounds.
-  - **Hierarchical Mixing** - Professional Bus (Group) and VCA systems with Sidechaining (e.g., lowering music volume when someone speaks) and mixing snapshots.
-  - **Real-Time Profiler** - Connect the editor to the running game to adjust volume curves, effects, and visualize voice consumption live.
-
-    This ensures total independence for the audio team and gameplay code agnostic to sound implementation.
-
 - [ ] **AOT Export System** - SDK-based Architecture
 
     The AOT Export System is one of the central pillars of the Zyris vision, designed to deliver high-performance native execution without altering Godot's development flow.
@@ -215,24 +189,6 @@ Zyris is implementing a comprehensive set of systems. Below is our development r
   - Architecture aligned with professional SDK models (Android SDK, NDK)
 
     The SDK uses Python as an orchestration layer, responsible for coordinating complex compilation pipelines, IR transformation, and integration with native toolchains.
-
-## Project Showcase
-
-To demonstrate the full power of the Zyris Engine, we maintain a set of projects that serve both as stress tests and as a showcase of the implemented technologies. Our strategy follows the cycle: **GDScript Prototyping → Validation → Native C++ Implementation → Game Refactoring.**
-
-### 1. NeonShooter (2D GAS Showcase)
-
-**Status:** Functional (GAS Lite Implementation)
-
-- **Technologies:** GAS Lite (GDScript), SaveServer, Virtual Input Devices, Screen Shake System.
-- **Highlight:** Demonstrates how complex ability and persistence systems can be seamlessly integrated into a high-speed 2D environment.
-
-### 3. Horizon Zero (3D Cyber-Movement Shooter)
-
-**Status:** Planned / In Development
-
-- **Technologies:** Jolt Physics, 3D GAS, Behavior Tree (AI), vCam (Virtual Camera), Particle Stress Test.
-- **Highlight:** Focused on validating the performance of physics-based movement (Wall-run, momentum) and complex reactive AIs, exploring the full potential of the Forward+ renderer.
 
 ## Contribution
 

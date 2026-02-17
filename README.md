@@ -1,7 +1,7 @@
 # Zyris Engine
 
 [![Godot Version](https://img.shields.io/badge/Godot-4.6--stable-blue.svg)](https://github.com/godotengine/godot)
-[![Zyris Version](https://img.shields.io/badge/4.6.0-zyris.1-orange.svg)](https://github.com/Kaffyn/ZyrisEngine/tree/Zyris)
+[![Zyris Version](https://img.shields.io/badge/4.6.0-zyris.2-orange.svg)](https://github.com/Kaffyn/ZyrisEngine/tree/Zyris)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.txt)
 
 > [!TIP]
@@ -39,7 +39,7 @@ Atualizações menores não são acompanhadas.
 
 - **N** - Incremento de subversão do Zyris (ex: `zyris.1`, `zyris.2`)
 
-**Versão Atual** - `4.6.0-zyris.1`
+**Versão Atual** - `4.6.0-zyris.2`
 
 ## Roadmap
 
@@ -86,17 +86,6 @@ O Zyris está implementando um conjunto abrangente de sistemas. Abaixo está nos
 
 ### Em Desenvolvimento
 
-- [ ] **Library (Bottom Panel)** - Gerenciador de conteúdo baseado em Grid
-  - **Coexistência Nativa** - Funciona como um painel adicional ao FileSystem tradicional, focado em produtividade sem alterar a estrutura de arquivos.
-  - **Visualização em Grid** - Exibição direta de conteúdo organizada por abas especializadas (Resources, Scenes, Scripts, Assets), eliminando a navegação profunda em pastas.
-  - **Focagem por Contexto** - Filtragem inteligente que exibe apenas o que é relevante para o momento de desenvolvimento.
-
-- [ ] **Level Streaming System (LSS)** - Orquestração de Mundo e Estados
-  - **GSM (Game State Machine)** - O `LSSServer` gerencia o ciclo de vida da aplicação através de estados determinísticos (`BOOT`, `MENU`, `LOADING`, `GAMEPLAY`, `TRANSITION`).
-  - **StreamingZone** - Sistema de volumes espaciais que gerenciam o carregamento assíncrono de chunks do mundo com base na posição do jogador.
-  - **Arquitetura Super Node** - O `LSSRoot` permite a coexistência de múltiplos mundos ou "universos" isolados, facilitando transições de mapa sem interrupção de lógica core.
-  - **State Hydration** - Integrado ao Save Server para garantir que zonas carregadas recuperem seu estado exato instantaneamente.
-
 - [ ] **Gameplay Ability System (GAS)** - Framework de Gameplay Orientado a Dados
 
     Uma implementação nativa de alto desempenho do padrão GAS, projetada para escalar de mecânicas simples a sistemas de combate RPG complexos.
@@ -118,7 +107,7 @@ O Zyris está implementando um conjunto abrangente de sistemas. Abaixo está nos
   - **Determinismo** - Otimizado para jogos multiplayer com previsão e reconciliação.
   - **Data-Driven** - Designers podem criar variações de habilidades inteiras apenas alterando configurações no Editor.
 
-- [ ] **Behavior Tree System** - IA Modular e Reativa
+- [ ] **Behavior Tree** - IA Modular e Reativa
 
     Uma implementação robusta de IA baseada em nós, focada em criar comportamentos complexos através de lógica visual simples e reutilizável.
 
@@ -182,21 +171,6 @@ O Zyris está implementando um conjunto abrangente de sistemas. Abaixo está nos
 
     Essas melhorias elevam o áudio do Zyris a um nível moderno, reativo e escalável, mantendo compatibilidade conceitual com a engine base.
 
-- [ ] **Sounds Engine** - Audio Middleware & Design
-
-    Solução de middleware nativa que revoluciona o fluxo de trabalho de áudio, substituindo a reprodução direta de arquivos ("Play Sound") por uma arquitetura baseada em **Eventos Lógicos**, similar ao FMOD Studio e Wwise.
-
-    **Filosofia do Sistema:**
-    Ao invés do programador escolher *qual* arquivo tocar, ele apenas sinaliza *o que* aconteceu (ex: `PlayEvent("Passos")`). O Sounds Engine decide o resultado sonoro baseado em lógica pré-configurada pelo Sound Designer.
-
-    **Funcionalidades Principais:**
-  - **Lógica Probabilística e Condicional** - O som muda dinamicamente dependendo de parâmetros do jogo (ex: Superfície do chão, vida do jogador, velocidade do vento) sem código extra.
-  - **Variação Automática** - Sistema de randomização de Pitch, Volume e Containers para evitar o "efeito metralhadora" (repetição robótica) em sons repetitivos.
-  - **Mixagem Hierárquica** - Sistema de Buses (Grupos) e VCAs profissionais com Sidechaining (ex: baixar o volume da música quando alguém fala) e snapshots de mixagem.
-  - **Profiler em Tempo Real** - Conecte o editor ao jogo rodando para ajustar curvas de volume, efeitos e visualizar o consumo de vozes ao vivo.
-
-    Isso garante total independência para a equipe de áudio e um código de gameplay agnóstico à implementação sonora.
-
 - [ ] **AOT Export System** - Arquitetura baseada em SDK
 
     O AOT Export System é um dos pilares centrais da visão do Zyris, projetado para entregar execução nativa de alto desempenho sem alterar o fluxo de desenvolvimento da Godot.
@@ -217,48 +191,6 @@ O Zyris está implementando um conjunto abrangente de sistemas. Abaixo está nos
   - Arquitetura alinhada ao modelo de SDKs profissionais (Android SDK, NDK)
 
     O SDK utiliza Python como camada de orquestração, responsável por coordenar pipelines complexos de compilação, transformação de IR e integração com toolchains nativas.
-
-## Vitrine de Projetos (Showcase)
-
-Para demonstrar o poder total da Zyris Engine, mantemos um conjunto de projetos que servem tanto para testes de estresse quanto como vitrine das tecnologias implementadas. Nossa estratégia segue o ciclo: **Prototipagem em GDScript → Validação → Implementação Nativa em C++ → Refatoração do Jogo.**
-
-### 1. NeonShooter (2D GAS Showcase)
-
-**Status:** Funcional (Implementação GAS Lite)
-
-- **Tecnologias:** GAS Lite (GDScript), SaveServer, Virtual Input Devices, Screen Shake System.
-- **Destaque:** Demonstra como sistemas complexos de habilidades e persistência podem ser integrados de forma fluida em um ambiente 2D de alta velocidade.
-
-### 2. Horizon Zero (3D Cyber-Movement Shooter)
-
-**Status:** Planejado / Em Desenvolvimento
-
-- **Tecnologias:** Jolt Physics, 3D GAS, Behavior Tree (IA), vCam (Câmera Virtual), Particle Stress Test.
-- **Destaque:** Focado em validar a performance da movimentação baseada em física (Wall-run, momentum) e IAs reativas complexas, explorando o máximo do renderizador Forward+.
-
-## Contribuição
-
-O Zyris recebe contribuições de desenvolvedores que compartilham nossa visão de criar uma engine de jogo de classe mundial.
-
-### Filosofia de Desenvolvimento
-
-Seguimos o **"Godot Way"** para o desenvolvimento do core da engine:
-
-- Adesão estrita às diretrizes de estilo C++ da Godot
-- Uso de tipos da engine (`Vector<T>`, `String`, `Ref<T>`)
-- Abordagem focada em performance com otimização de localidade de cache
-- Documentação abrangente para todas as APIs públicas
-
-Veja nosso [Manifesto de Desenvolvimento](.github/DEVELOPMENT.md) para diretrizes detalhadas.
-
-### Pré-requisitos
-
-Para contribuir com o desenvolvimento da engine, você precisará das seguintes ferramentas instaladas:
-
-- **Git**: Para controle de versão.
-- **Python 3.x**: Necessário para o sistema de build (SCons).
-- **SCons**: Sistema de construção utilizado.
-- **Pre-commit**: Para garantir a formatação e estilo do código antes do commit.
 
 ## Licença
 
