@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AbilitySystemTagContainer" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		Collection of unique gameplay tags.
+	</brief_description>
+	<description>
+		[AbilitySystemTagContainer] manages a set of tags and provides methods for hierarchical matching.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="add_tag">
+			<return type="void" />
+			<param index="0" name="tag" type="StringName" />
+			<description>
+			</description>
+		</method>
+		<method name="clear">
+			<return type="void" />
+			<description>
+				Removes all tags from the container.
+			</description>
+		</method>
+		<method name="get_all_tags" qualifiers="const">
+			<return type="StringName[]" />
+			<description>
+			</description>
+		</method>
+		<method name="has_all_tags" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="tags" type="StringName[]" />
+			<param index="1" name="exact" type="bool" default="false" />
+			<description>
+			</description>
+		</method>
+		<method name="has_any_tags" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="tags" type="StringName[]" />
+			<param index="1" name="exact" type="bool" default="false" />
+			<description>
+			</description>
+		</method>
+		<method name="has_tag" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="tag" type="StringName" />
+			<param index="1" name="exact" type="bool" default="false" />
+			<description>
+			</description>
+		</method>
+		<method name="remove_tag">
+			<return type="void" />
+			<param index="0" name="tag" type="StringName" />
+			<description>
+			</description>
+		</method>
+	</methods>
+</class>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AbilitySystemTag" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		Unique identifier for gameplay states.
+	</brief_description>
+	<description>
+		[AbilitySystemTag] represents a hierarchical tag name (e.g. [code]state.debuff.poison[/code]).
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="tag_name" type="StringName" setter="set_tag_name" getter="get_tag_name" default="&amp;&quot;&quot;">
+		</member>
+	</members>
+</class>

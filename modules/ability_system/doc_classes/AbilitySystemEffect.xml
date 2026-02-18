@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AbilitySystemEffect" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		Resource defining modifications to attributes and tags.
+	</brief_description>
+	<description>
+		[AbilitySystemEffect] defines how attributes and tags are modified over time or instantly.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="add_modifier">
+			<return type="void" />
+			<param index="0" name="attribute" type="StringName" />
+			<param index="1" name="operation" type="int" enum="AbilitySystemEffect.ModifierOp" />
+			<param index="2" name="magnitude" type="float" />
+			<param index="3" name="custom_magnitude" type="AbilitySystemMagnitudeCalculation" default="null" />
+			<description>
+				Adds a new attribute modifier to the effect.
+			</description>
+		</method>
+		<method name="get_modifier_attribute" qualifiers="const">
+			<return type="StringName" />
+			<param index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="get_modifier_count" qualifiers="const">
+			<return type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="get_modifier_custom_magnitude" qualifiers="const">
+			<return type="AbilitySystemMagnitudeCalculation" />
+			<param index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="get_modifier_magnitude" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="get_modifier_operation" qualifiers="const">
+			<return type="int" enum="AbilitySystemEffect.ModifierOp" />
+			<param index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="blocked_tags" type="StringName[]" setter="set_blocked_tags" getter="get_blocked_tags" default="[]">
+			Tags that are blocked while this effect is active.
+		</member>
+		<member name="cue_tags" type="StringName[]" setter="set_cue_tags" getter="get_cue_tags" default="[]">
+			Tags used to trigger gameplay cues when this effect is applied.
+		</member>
+		<member name="duration_magnitude" type="float" setter="set_duration_magnitude" getter="get_duration_magnitude" default="0.0">
+			The duration value (if policy is DURATION).
+		</member>
+		<member name="duration_policy" type="int" setter="set_duration_policy" getter="get_duration_policy" enum="AbilitySystemEffect.DurationPolicy" default="0">
+			How the effect duration is handled (INSTANT, DURATION, INFINITE).
+		</member>
+		<member name="granted_tags" type="StringName[]" setter="set_granted_tags" getter="get_granted_tags" default="[]">
+			Tags granted to the actor while this effect is active.
+		</member>
+		<member name="removed_tags" type="StringName[]" setter="set_removed_tags" getter="get_removed_tags" default="[]">
+			Tags removed from the actor when this effect is applied.
+		</member>
+	</members>
+	<constants>
+		<constant name="INSTANT" value="0" enum="DurationPolicy">
+			Effect is applied instantly and has no duration.
+		</constant>
+		<constant name="DURATION" value="1" enum="DurationPolicy">
+			Effect stays active for a specified duration.
+		</constant>
+		<constant name="INFINITE" value="2" enum="DurationPolicy">
+			Effect stays active until explicitly removed.
+		</constant>
+		<constant name="ADD" value="0" enum="ModifierOp">
+			Value is added to the attribute base.
+		</constant>
+		<constant name="MULTIPLY" value="1" enum="ModifierOp">
+			Value is multiplied with the attribute.
+		</constant>
+		<constant name="DIVIDE" value="2" enum="ModifierOp">
+			Value is divided from the attribute.
+		</constant>
+		<constant name="OVERRIDE" value="3" enum="ModifierOp">
+			Value replaces the current attribute value.
+		</constant>
+	</constants>
+</class>

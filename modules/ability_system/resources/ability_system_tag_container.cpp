@@ -1,0 +1,99 @@
+/**************************************************************************/
+/*  ability_system_tag_container.cpp                                      */
+/**************************************************************************/
+/*                         This file is part of:                          */
+/*                             GODOT ENGINE                               */
+/*                        https://godotengine.org                         */
+/**************************************************************************/
+/* Copyright (c) 2014-present Godot Engine contributors (see AUTHORS.md). */
+/* Copyright (c) 2007-2014 Juan Linietsky, Ariel Manzur.                  */
+/*                                                                        */
+/* Permission is hereby granted, free of charge, to any person obtaining  */
+/* a copy of this software and associated documentation files (the        */
+/* "Software"), to deal in the Software without restriction, including    */
+/* without limitation the rights to use, copy, modify, merge, publish,    */
+/* distribute, sublicense, and/or sell copies of the Software, and to     */
+/* permit persons to whom the Software is furnished to do so, subject to  */
+/* the following conditions:                                              */
+/*                                                                        */
+/* The above copyright notice and this permission notice shall be         */
+/* included in all copies or substantial portions of the Software.        */
+/*                                                                        */
+/* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,        */
+/* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF     */
+/* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. */
+/* IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY   */
+/* CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,   */
+/* TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE      */
+/* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
+/**************************************************************************/
+
+#include "ability_system_tag_container.h"
+#include "modules/ability_system/core/ability_system.h"
+
+void AbilitySystemTagContainer::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("has_tag", "tag", "exact"), &AbilitySystemTagContainer::has_tag, DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("has_any_tags", "tags", "exact"), &AbilitySystemTagContainer::has_any_tags, DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("has_all_tags", "tags", "exact"), &AbilitySystemTagContainer::has_all_tags, DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("add_tag", "tag"), &AbilitySystemTagContainer::add_tag);
+	ClassDB::bind_method(D_METHOD("remove_tag", "tag"), &AbilitySystemTagContainer::remove_tag);
+	ClassDB::bind_method(D_METHOD("clear"), &AbilitySystemTagContainer::clear);
+	ClassDB::bind_method(D_METHOD("get_all_tags"), &AbilitySystemTagContainer::get_all_tags);
+}
+
+bool AbilitySystemTagContainer::has_tag(const StringName &p_tag, bool p_exact) const {
+	if (p_exact) {
+		return tags.has(p_tag);
+	}
+
+	for (const StringName &T : tags) {
+		if (AbilitySystem::tag_matches(T, p_tag, false)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool AbilitySystemTagContainer::has_any_tags(const TypedArray<StringName> &p_tags, bool p_exact) const {
+	for (int i = 0; i < p_tags.size(); i++) {
+		if (has_tag(p_tags[i], p_exact)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool AbilitySystemTagContainer::has_all_tags(const TypedArray<StringName> &p_tags, bool p_exact) const {
+	for (int i = 0; i < p_tags.size(); i++) {
+		if (!has_tag(p_tags[i], p_exact)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+void AbilitySystemTagContainer::add_tag(const StringName &p_tag) {
+	tags.insert(p_tag);
+}
+
+void AbilitySystemTagContainer::remove_tag(const StringName &p_tag) {
+	tags.erase(p_tag);
+}
+
+void AbilitySystemTagContainer::clear() {
+	tags.clear();
+}
+
+TypedArray<StringName> AbilitySystemTagContainer::get_all_tags() const {
+	TypedArray<StringName> res;
+	for (const StringName &T : tags) {
+		res.push_back(T);
+	}
+	return res;
+}
+
+AbilitySystemTagContainer::AbilitySystemTagContainer() {
+}
+
+AbilitySystemTagContainer::~AbilitySystemTagContainer() {
+}

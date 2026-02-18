@@ -1,7 +1,7 @@
 # Zyris Engine
 
 [![Godot Version](https://img.shields.io/badge/Godot-4.6.0--stable-blue.svg)](https://github.com/godotengine/godot)
-[![Zyris Version](https://img.shields.io/badge/4.6.0-zyris.1-orange.svg)](https://github.com/Kaffyn/ZyrisEngine/tree/Zyris)
+[![Zyris Version](https://img.shields.io/badge/4.6.0-zyris.3-orange.svg)](https://github.com/Kaffyn/ZyrisEngine/tree/Zyris)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.txt)
 
 > [!TIP]
@@ -39,7 +39,7 @@ Minor updates are not tracked.
 
 - **N** - Zyris subversion increment (e.g., `zyris.1`, `zyris.2`)
 
-**Current Version** - `4.6.0-zyris.1`
+**Current Version** - `4.6.0-zyris.3`
 
 ## Roadmap
 
@@ -82,28 +82,31 @@ Zyris is implementing a comprehensive set of systems. Below is our development r
 - **Data Evolution (Migrations)** - Versioning system that allows registering data transformations (`register_migration`) to maintain compatibility with legacy saves.
 - **Safety and Integrity** - Rotative backup system, SHA-256 checksum validation, and *Flush* mechanism on shutdown to prevent data corruption.
 
-### In Development
-
-- [ ] **Gameplay Ability System (GAS)** - Data-Oriented Gameplay Framework
+- [x] **Ability System (GAS)** - Data-Oriented Gameplay Framework
 
     A high-performance native implementation of the GAS pattern, designed to scale from simple mechanics to complex RPG combat systems.
 
     **Architecture:**
   - `AbilitySystemComponent`: The central processor attached to entities (Player, Enemies).
   - `AttributeSet`: Defines vital statistics (HP, Mana, Stamina) with replication and modifier calculations.
-  - `GameplayAbility`: Modular ability logic (Jump, Shoot, Magic).
+  - `GameplayAbility`: Modular ability logic (Jump, Shoot, Magic) with **Costs & Cooldowns**.
   - `GameplayEffect`: Attribute alteration rules (Damage, Healing, Buffs/Debuffs).
+  - `GameplayCue`: Visual/audio feedback system (VFX, SFX, screen shake).
+  - **Gameplay Tasks**: Asynchronous actions for complex abilities (e.g., waiting for input, projectiles).
+  - **Target Data**: Complete targeting pipeline with server validation.
+  - **MMC/GEE**: Dynamic mathematical calculations for attribute modification.
+  - **Attribute Events**: Signals for attribute changes (ideal for UI and triggers).
 
-    **Editor Integration (EditorPlugin):**
-    GAS uses a **Modal Editor (Popup)** triggered via Inspector, similar to the `AudioStreamInteractive` system.
-  - **Floating Graph Window** - Abilities are edited in a dedicated overlaid window, allowing quick visual access without losing the context of the main 3D/2D scene.
-  - **Edit Button** - The inspector provides direct access to the visual editor when an ability Resource is selected.
-  - **Tag Management** - Visual `GameplayTags` selector to define complex interactions (e.g., "Stun" cancels "Casting") without hard-coding.
-  - **Live Debug** - Real-time visualization of ability execution flow and effect stacks.
+    **Editor Integration:**
+    Focused on maintaining Godot's native workflow:
+  - **Custom Property Editors** - Specialized selectors for `GameplayTags` and Attributes integrated directly into the Inspector.
+  - **Project Settings** - Centralized tag management via the [AbilitySystem] singleton.
 
     **Differentials:**
-  - **Determinism** - Optimized for multiplayer games with prediction and reconciliation.
+  - **Native Multiplayer** - Client prediction and server Net State correction (Robust Netcode).
   - **Data-Driven** - Designers can create entire ability variations just by changing configurations in the Editor.
+
+### In Development
 
 - [ ] **Behavior Tree** - Modular and Reactive AI
 

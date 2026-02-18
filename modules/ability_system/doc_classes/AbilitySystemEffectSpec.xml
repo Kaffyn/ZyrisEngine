@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AbilitySystemEffectSpec" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		Runtime instance of an ability system effect.
+	</brief_description>
+	<description>
+		[AbilitySystemEffectSpec] represents an instance of a [AbilitySystemEffect] being applied, storing remaining duration and dynamic magnitudes.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="calculate_modifier_magnitude" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="index" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="get_duration_remaining" qualifiers="const">
+			<return type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="get_effect" qualifiers="const">
+			<return type="AbilitySystemEffect" />
+			<description>
+			</description>
+		</method>
+		<method name="get_level" qualifiers="const">
+			<return type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="get_magnitude" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="name" type="StringName" />
+			<description>
+			</description>
+		</method>
+		<method name="get_source_component" qualifiers="const">
+			<return type="AbilitySystemComponent" />
+			<description>
+			</description>
+		</method>
+		<method name="get_target_component" qualifiers="const">
+			<return type="AbilitySystemComponent" />
+			<description>
+			</description>
+		</method>
+		<method name="get_total_duration" qualifiers="const">
+			<return type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="init">
+			<return type="void" />
+			<param index="0" name="effect" type="AbilitySystemEffect" />
+			<param index="1" name="level" type="float" default="1.0" />
+			<description>
+			</description>
+		</method>
+		<method name="set_duration_remaining">
+			<return type="void" />
+			<param index="0" name="value" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="set_level">
+			<return type="void" />
+			<param index="0" name="level" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="set_magnitude">
+			<return type="void" />
+			<param index="0" name="name" type="StringName" />
+			<param index="1" name="value" type="float" />
+			<description>
+			</description>
+		</method>
+	</methods>
+</class>

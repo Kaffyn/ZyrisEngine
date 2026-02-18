@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AbilitySystemCue" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		Resource for visual and audio feedback.
+	</brief_description>
+	<description>
+		[AbilitySystemCue] is used to trigger VFX, SFX, and animations in response to gameplay events.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_on_active" qualifiers="virtual">
+			<return type="void" />
+			<param index="0" name="owner" type="Object" />
+			<param index="1" name="data" type="Dictionary" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_execute" qualifiers="virtual">
+			<return type="void" />
+			<param index="0" name="owner" type="Object" />
+			<param index="1" name="data" type="Dictionary" />
+			<description>
+			</description>
+		</method>
+		<method name="_on_remove" qualifiers="virtual">
+			<return type="void" />
+			<param index="0" name="owner" type="Object" />
+			<param index="1" name="data" type="Dictionary" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="cue_tag" type="StringName" setter="set_cue_tag" getter="get_cue_tag" default="&amp;&quot;&quot;">
+		</member>
+		<member name="event_type" type="int" setter="set_event_type" getter="get_event_type" enum="AbilitySystemCue.CueEventType" default="0">
+		</member>
+	</members>
+	<constants>
+		<constant name="ON_EXECUTE" value="0" enum="CueEventType">
+		</constant>
+		<constant name="ON_ACTIVE" value="1" enum="CueEventType">
+		</constant>
+		<constant name="ON_REMOVE" value="2" enum="CueEventType">
+		</constant>
+	</constants>
+</class>

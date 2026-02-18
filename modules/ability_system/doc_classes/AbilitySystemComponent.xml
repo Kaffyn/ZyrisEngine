@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AbilitySystemComponent" inherits="Node" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		Core component for managing abilities, attributes, and effects on an actor.
+	</brief_description>
+	<description>
+		The [AbilitySystemComponent] (ASC) is the central hub for all gameplay-related logic on an actor. It manages abilities, attributes, and effects.
+		[b]Example Usage:[/b]
+		[codeblock]
+		func _ready():
+			asc.give_ability(fireball_ability)
+			asc.try_activate_ability_by_tag("ability.fireball")
+		[/codeblock]
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="add_attribute_set">
+			<return type="void" />
+			<param index="0" name="set" type="AbilitySystemAttributeSet" />
+			<description>
+				Adds an attribute set to this component.
+			</description>
+		</method>
+		<method name="add_tag">
+			<return type="void" />
+			<param index="0" name="tag" type="StringName" />
+			<description>
+				Adds a gameplay tag to this actor.
+			</description>
+		</method>
+		<method name="apply_gameplay_effect_spec_to_self">
+			<return type="void" />
+			<param index="0" name="spec" type="AbilitySystemEffectSpec" />
+			<description>
+				Applies a gameplay effect to this actor.
+			</description>
+		</method>
+		<method name="execute_cue">
+			<return type="void" />
+			<param index="0" name="tag" type="StringName" />
+			<param index="1" name="data" type="Dictionary" default="{}" />
+			<description>
+				Triggers a gameplay cue.
+			</description>
+		</method>
+		<method name="get_attribute_value" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="attribute_name" type="StringName" />
+			<description>
+				Returns the current value of an attribute.
+			</description>
+		</method>
+		<method name="get_cue_resource" qualifiers="const">
+			<return type="AbilitySystemCue" />
+			<param index="0" name="tag" type="StringName" />
+			<description>
+				Returns the registered cue resource for the given tag, or null if not found.
+			</description>
+		</method>
+		<method name="get_owned_tags" qualifiers="const">
+			<return type="AbilitySystemTagContainer" />
+			<description>
+				Returns the container of tags owned by this actor.
+			</description>
+		</method>
+		<method name="give_ability">
+			<return type="void" />
+			<param index="0" name="ability" type="AbilitySystemAbility" />
+			<param index="1" name="level" type="int" default="1" />
+			<description>
+				Grants a new ability to the actor.
+			</description>
+		</method>
+		<method name="has_tag" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="tag" type="StringName" />
+			<description>
+				Returns true if the actor has the specified tag.
+			</description>
+		</method>
+		<method name="is_montage_playing" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="name" type="String" />
+			<description>
+				Returns true if the given animation is currently playing on a sibling animation node.
+			</description>
+		</method>
+		<method name="make_outgoing_spec">
+			<return type="AbilitySystemEffectSpec" />
+			<param index="0" name="effect" type="AbilitySystemEffect" />
+			<param index="1" name="level" type="float" default="1.0" />
+			<description>
+				Creates an effect spec that can be applied later.
+			</description>
+		</method>
+		<method name="play_montage">
+			<return type="void" />
+			<param index="0" name="name" type="String" />
+			<description>
+				Plays an animation on sibling animation nodes.
+			</description>
+		</method>
+		<method name="register_cue_resource">
+			<return type="void" />
+			<param index="0" name="cue" type="AbilitySystemCue" />
+			<description>
+				Registers a cue resource to be dispatched when its tag is triggered via [method execute_cue].
+			</description>
+		</method>
+		<method name="register_task">
+			<return type="void" />
+			<param index="0" name="task" type="AbilitySystemTask" />
+			<description>
+				Registers and activates an asynchronous gameplay task.
+			</description>
+		</method>
+		<method name="remove_tag">
+			<return type="void" />
+			<param index="0" name="tag" type="StringName" />
+			<description>
+				Removes a gameplay tag from the actor.
+			</description>
+		</method>
+		<method name="set_attribute_base_value">
+			<return type="void" />
+			<param index="0" name="name" type="StringName" />
+			<param index="1" name="value" type="float" />
+			<description>
+				Sets the base value of an attribute.
+			</description>
+		</method>
+		<method name="try_activate_ability_by_tag">
+			<return type="bool" />
+			<param index="0" name="tag" type="StringName" />
+			<description>
+				Tries to activate an ability that matches the given tag.
+			</description>
+		</method>
+		<method name="unregister_cue_resource">
+			<return type="void" />
+			<param index="0" name="tag" type="StringName" />
+			<description>
+				Unregisters the cue resource associated with the given tag.
+			</description>
+		</method>
+	</methods>
+	<signals>
+		<signal name="ability_activated">
+			<param index="0" name="ability_spec" type="AbilitySystemAbilitySpec" />
+			<description>
+				Emitted when an ability starts.
+			</description>
+		</signal>
+		<signal name="ability_ended">
+			<param index="0" name="ability_spec" type="AbilitySystemAbilitySpec" />
+			<param index="1" name="was_cancelled" type="bool" />
+			<description>
+				Emitted when an ability ends.
+			</description>
+		</signal>
+		<signal name="ability_failed">
+			<param index="0" name="ability_name" type="StringName" />
+			<param index="1" name="reason" type="String" />
+			<description>
+				Emitted when an ability fails to activate.
+			</description>
+		</signal>
+		<signal name="attribute_changed">
+			<param index="0" name="attribute_name" type="StringName" />
+			<param index="1" name="old_value" type="float" />
+			<param index="2" name="new_value" type="float" />
+			<description>
+				Emitted when an attribute value changes.
+			</description>
+		</signal>
+		<signal name="cooldown_ended">
+			<param index="0" name="ability_tag" type="StringName" />
+			<description>
+				Emitted when a cooldown period ends.
+			</description>
+		</signal>
+		<signal name="cooldown_started">
+			<param index="0" name="ability_tag" type="StringName" />
+			<param index="1" name="duration" type="float" />
+			<description>
+				Emitted when a cooldown period starts.
+			</description>
+		</signal>
+		<signal name="effect_applied">
+			<param index="0" name="effect_spec" type="AbilitySystemEffectSpec" />
+			<description>
+				Emitted when a gameplay effect is applied.
+			</description>
+		</signal>
+		<signal name="effect_removed">
+			<param index="0" name="effect_spec" type="AbilitySystemEffectSpec" />
+			<description>
+				Emitted when a gameplay effect is removed.
+			</description>
+		</signal>
+		<signal name="gameplay_event_received">
+			<param index="0" name="event_tag" type="StringName" />
+			<param index="1" name="data" type="Dictionary" />
+			<description>
+				Emitted when a gameplay event or cue is received.
+			</description>
+		</signal>
+		<signal name="tag_changed">
+			<param index="0" name="tag_name" type="StringName" />
+			<param index="1" name="is_present" type="bool" />
+			<description>
+				Emitted when a tag is added or removed.
+			</description>
+		</signal>
+	</signals>
+</class>

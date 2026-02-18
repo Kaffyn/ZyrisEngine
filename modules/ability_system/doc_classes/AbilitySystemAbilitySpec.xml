@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AbilitySystemAbilitySpec" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		Runtime instance of an ability system ability.
+	</brief_description>
+	<description>
+		[AbilitySystemAbilitySpec] represents a granted ability with instance-specific data like level and active state.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_ability" qualifiers="const">
+			<return type="AbilitySystemAbility" />
+			<description>
+			</description>
+		</method>
+		<method name="get_is_active" qualifiers="const">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="get_level" qualifiers="const">
+			<return type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="init">
+			<return type="void" />
+			<param index="0" name="ability" type="AbilitySystemAbility" />
+			<param index="1" name="level" type="int" default="1" />
+			<description>
+			</description>
+		</method>
+		<method name="set_is_active">
+			<return type="void" />
+			<param index="0" name="active" type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="set_level">
+			<return type="void" />
+			<param index="0" name="level" type="int" />
+			<description>
+			</description>
+		</method>
+	</methods>
+</class>

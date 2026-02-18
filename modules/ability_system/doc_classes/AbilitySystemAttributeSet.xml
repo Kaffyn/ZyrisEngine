@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AbilitySystemAttributeSet" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		Container for actor attributes (HP, MP, etc.).
+	</brief_description>
+	<description>
+		[AbilitySystemAttributeSet] holds the data for character attributes and handles base/current value logic.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_attribute_base_value" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="name" type="StringName" />
+			<description>
+			</description>
+		</method>
+		<method name="get_attribute_current_value" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="name" type="StringName" />
+			<description>
+			</description>
+		</method>
+		<method name="get_attribute_list" qualifiers="const">
+			<return type="StringName[]" />
+			<description>
+			</description>
+		</method>
+		<method name="has_attribute" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="name" type="StringName" />
+			<description>
+			</description>
+		</method>
+		<method name="reset_current_values">
+			<return type="void" />
+			<description>
+				Resets all current values to their respective base values.
+			</description>
+		</method>
+		<method name="set_attribute_base_value">
+			<return type="void" />
+			<param index="0" name="name" type="StringName" />
+			<param index="1" name="value" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="set_attribute_current_value">
+			<return type="void" />
+			<param index="0" name="name" type="StringName" />
+			<param index="1" name="value" type="float" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<signals>
+		<signal name="attribute_changed">
+			<param index="0" name="attribute_name" type="StringName" />
+			<param index="1" name="old_value" type="float" />
+			<param index="2" name="new_value" type="float" />
+			<description>
+				Emitted when an attribute value has been changed.
+			</description>
+		</signal>
+		<signal name="attribute_pre_change">
+			<param index="0" name="attribute_name" type="StringName" />
+			<param index="1" name="old_value" type="float" />
+			<param index="2" name="new_value" type="float" />
+			<description>
+				Emitted before an attribute value is about to change.
+			</description>
+		</signal>
+	</signals>
+</class>
