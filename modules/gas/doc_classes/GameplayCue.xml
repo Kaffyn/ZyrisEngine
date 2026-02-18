@@ -1,1 +1,47 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<class name="GameplayCue" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		A resource that defines visual and audio feedback for gameplay events.
+	</brief_description>
+	<description>
+		[GameplayCue] resources are "Data" that describe WHAT should happen visually/audibly (VFX, SFX, Animation) when a specific event occurs.
+		They are executed by the [AbilitySystemComponent].
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_execute_cue" qualifiers="virtual">
+			<return type="void" />
+			<param index="0" name="asc" type="Object" />
+			<param index="1" name="location" type="Vector3" />
+			<description>
+				Override this method to implement custom logic (e.g., spawn particles, play sound) in GDScript.
+			</description>
+		</method>
+		<method name="execute">
+			<return type="void" />
+			<param index="0" name="asc" type="AbilitySystemComponent" />
+			<param index="1" name="location" type="Vector3" />
+			<description>
+				Executes the cue logic (GDScript override). The visual/audio properties are handled automatically by the system (Spec).
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="animation_name" type="StringName" setter="set_animation_name" getter="get_animation_name" default="&amp;&quot;&quot;">
+			Name of the animation to play on the sibling AnimationPlayer.
+		</member>
+		<member name="camera_shake_intensity" type="float" setter="set_camera_shake_intensity" getter="get_camera_shake_intensity" default="0.0">
+			Intensity of camera shake (if supported by camera system).
+		</member>
+		<member name="cue_tag" type="StringName" setter="set_cue_tag" getter="get_cue_tag" default="&amp;&quot;&quot;">
+			Tag identifying this cue (for lookup or networking).
+		</member>
+		<member name="sfx" type="AudioStream" setter="set_sfx" getter="get_sfx">
+			AudioStream to play (2D or 3D).
+		</member>
+		<member name="vfx_scene" type="PackedScene" setter="set_vfx_scene" getter="get_vfx_scene">
+			PackedScene (VFX) to instantiate at the location.
+		</member>
+	</members>
+</class>

@@ -1,1 +1,69 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<class name="GameplayTagContainer" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		A resource that stores a collection of gameplay tags.
+	</brief_description>
+	<description>
+		The [GameplayTagContainer] stores a collection of unique tags (StringNames) and provides methods for efficient querying and hierarchical comparison.
+		Can be used to define tag requirements for abilities or effects.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="add_container">
+			<return type="void" />
+			<param index="0" name="container" type="GameplayTagContainer" />
+			<description>
+				Adds all tags from another container to this one.
+			</description>
+		</method>
+		<method name="add_tag">
+			<return type="void" />
+			<param index="0" name="tag" type="StringName" />
+			<description>
+				Adds a tag to the container.
+			</description>
+		</method>
+		<method name="get_tags" qualifiers="const">
+			<return type="StringName[]" />
+			<description>
+				Returns all tags currently in the container.
+			</description>
+		</method>
+		<method name="has_all" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="container" type="GameplayTagContainer" />
+			<description>
+				Returns true if this container has ALL tags from the other container.
+			</description>
+		</method>
+		<method name="has_any" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="container" type="GameplayTagContainer" />
+			<description>
+				Returns true if this container has ANY tags from the other container.
+			</description>
+		</method>
+		<method name="has_tag" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="tag" type="StringName" />
+			<description>
+				Returns true if the container has the exact tag.
+			</description>
+		</method>
+		<method name="has_tag_hierarchical" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="tag" type="StringName" />
+			<description>
+				Returns true if the container has the tag or any parent tag in the hierarchy.
+			</description>
+		</method>
+		<method name="remove_tag">
+			<return type="void" />
+			<param index="0" name="tag" type="StringName" />
+			<description>
+				Removes a tag from the container.
+			</description>
+		</method>
+	</methods>
+</class>

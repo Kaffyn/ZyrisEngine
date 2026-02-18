@@ -1,1 +1,57 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<class name="GameplayEffect" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		A resource that modifies attributes and gameplay tags.
+	</brief_description>
+	<description>
+		[GameplayEffect] (GE) is the mechanism to change attributes (e.g., damage, healing) and add/remove tags.
+		Effects can be instant, have a fixed duration, or be infinite (until removed).
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="add_modifier">
+			<return type="void" />
+			<param index="0" name="attribute" type="StringName" />
+			<param index="1" name="op" type="int" enum="GameplayEffect.GameplayEffectModifierOp" />
+			<param index="2" name="value" type="float" />
+			<description>
+				Adds a modifier to an attribute.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="duration" type="float" setter="set_duration" getter="get_duration" default="0.0">
+			Duration of the effect in seconds. Ignored if type is Instant or Infinite.
+		</member>
+		<member name="duration_type" type="int" setter="set_duration_type" getter="get_duration_type" enum="GameplayEffect.GameplayEffectDurationType" default="0">
+			Type of duration: Instant (0), Has Duration (1), Infinite (2).
+		</member>
+		<member name="granted_tags" type="GameplayTagContainer" setter="set_granted_tags" getter="get_granted_tags">
+			Tags granted to the target while this effect is active.
+		</member>
+	</members>
+	<constants>
+		<constant name="GE_DURATION_INSTANT" value="0" enum="GameplayEffectDurationType">
+			Applied instantly and discarded.
+		</constant>
+		<constant name="GE_DURATION_HAS_DURATION" value="1" enum="GameplayEffectDurationType">
+			Persists for a set duration.
+		</constant>
+		<constant name="GE_DURATION_INFINITE" value="2" enum="GameplayEffectDurationType">
+			Persists until manually removed.
+		</constant>
+		<constant name="GE_MOD_ADD" value="0" enum="GameplayEffectModifierOp">
+			Adds value to attribute base.
+		</constant>
+		<constant name="GE_MOD_MULTIPLY" value="1" enum="GameplayEffectModifierOp">
+			Multiplies attribute base.
+		</constant>
+		<constant name="GE_MOD_DIVIDE" value="2" enum="GameplayEffectModifierOp">
+			Divides attribute base.
+		</constant>
+		<constant name="GE_MOD_OVERRIDE" value="3" enum="GameplayEffectModifierOp">
+			Overrides attribute base.
+		</constant>
+	</constants>
+</class>

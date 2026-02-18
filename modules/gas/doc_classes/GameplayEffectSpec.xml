@@ -1,1 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<class name="GameplayEffectSpec" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		Active instance of a GameplayEffect.
+	</brief_description>
+	<description>
+		The [GameplayEffectSpec] represents an effect that has been applied to an ASC and is being processed (time tracking).
+	</description>
+	<methods>
+		<method name="is_expired">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the effect has expired its duration.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="duration_remaining" type="float" setter="set_duration_remaining" getter="get_duration_remaining">
+			Remaining time until the effect expires.
+		</member>
+	</members>
+</class>

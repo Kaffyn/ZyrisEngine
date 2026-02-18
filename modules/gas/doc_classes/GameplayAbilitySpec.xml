@@ -1,1 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<class name="GameplayAbilitySpec" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		Instance of an ability granted to an ASC.
+	</brief_description>
+	<description>
+		The [GameplayAbilitySpec] stores information about an ability that an actor "owns", regardless of whether it is currently active.
+	</description>
+	<members>
+		<member name="active" type="bool" setter="set_active" getter="is_active">
+			Indicates whether the ability is currently executing.
+		</member>
+	</members>
+</class>

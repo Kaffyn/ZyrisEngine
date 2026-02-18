@@ -1,1 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<class name="GameplayTag" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		A resource representing a hierarchical gameplay tag.
+	</brief_description>
+	<description>
+		[GameplayTag] is a simple object that encapsulates a [StringName] representing a tag (e.g., [code]state.buff.speed[/code]).
+		It allows checking hierarchical matching between tags.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_hierarchy" qualifiers="const">
+			<return type="StringName[]" />
+			<description>
+				Returns all tags in the hierarchy of this tag (e.g. for "a.b" returns ["a", "a.b"]).
+			</description>
+		</method>
+		<method name="matches" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="other" type="GameplayTag" />
+			<description>
+				Returns true if this tag matches the other tag (exact match).
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="name" type="StringName" setter="set_name" getter="get_name" default="&amp;&quot;&quot;">
+			The full name of the tag (e.g. "state.buff").
+		</member>
+	</members>
+</class>

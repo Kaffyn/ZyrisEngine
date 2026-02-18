@@ -1,1 +1,151 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<class name="AbilitySystemComponent" inherits="Node" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		The central component of the Gameplay Ability System.
+	</brief_description>
+	<description>
+		The [AbilitySystemComponent] (ASC) acts as the central hub for the GAS. It manages:
+		- [GameplayAbility]s (granting, activating).
+		- [GameplayEffect]s (applying, managing duration).
+		- [AttributeSet]s (storing and modifying attributes).
+		- [GameplayTag]s (tracking active states).
+		It also integrates with sibling components like AudioStreamPlayer and AnimationPlayer.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="add_attribute_set">
+			<return type="void" />
+			<param index="0" name="set" type="AttributeSet" />
+			<description>
+				Adds an attribute set to the component.
+			</description>
+		</method>
+		<method name="add_tag">
+			<return type="void" />
+			<param index="0" name="tag" type="StringName" />
+			<description>
+				Adds a gameplay tag to the component.
+			</description>
+		</method>
+		<method name="apply_gameplay_effect_to_self">
+			<return type="void" />
+			<param index="0" name="effect" type="GameplayEffect" />
+			<description>
+				Applies an effect to the component itself.
+			</description>
+		</method>
+		<method name="execute_gameplay_cue">
+			<return type="void" />
+			<param index="0" name="cue" type="GameplayCue" />
+			<param index="1" name="location" type="Vector3" />
+			<description>
+				Executes a GameplayCue at the specified location.
+			</description>
+		</method>
+		<method name="get_animation_player_path" qualifiers="const">
+			<return type="NodePath" />
+			<description>
+			</description>
+		</method>
+		<method name="get_attribute_value" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="name" type="StringName" />
+			<description>
+				Returns the current value of an attribute by name.
+			</description>
+		</method>
+		<method name="get_audio_player_path" qualifiers="const">
+			<return type="NodePath" />
+			<description>
+			</description>
+		</method>
+		<method name="give_ability">
+			<return type="void" />
+			<param index="0" name="ability" type="GameplayAbility" />
+			<description>
+				Grants an ability to the component.
+			</description>
+		</method>
+		<method name="has_tag" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="tag" type="StringName" />
+			<description>
+				Returns [code]true[/code] if the component has the specified tag (hierarchical).
+			</description>
+		</method>
+		<method name="remove_active_effect">
+			<return type="void" />
+			<param index="0" name="effect" type="GameplayEffect" />
+			<description>
+				Removes an active effect.
+			</description>
+		</method>
+		<method name="remove_tag">
+			<return type="void" />
+			<param index="0" name="tag" type="StringName" />
+			<description>
+				Removes a gameplay tag from the component.
+			</description>
+		</method>
+		<method name="set_animation_player_path">
+			<return type="void" />
+			<param index="0" name="path" type="NodePath" />
+			<description>
+			</description>
+		</method>
+		<method name="set_audio_player_path">
+			<return type="void" />
+			<param index="0" name="path" type="NodePath" />
+			<description>
+			</description>
+		</method>
+		<method name="try_activate_ability">
+			<return type="bool" />
+			<param index="0" name="ability" type="GameplayAbility" />
+			<description>
+				Tries to activate the specified ability.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="animation_player_path" type="NodePath" setter="set_animation_player_path" getter="get_animation_player_path" default="NodePath(&quot;&quot;)">
+			Path to a sibling AnimationPlayer node.
+		</member>
+		<member name="audio_player_path" type="NodePath" setter="set_audio_player_path" getter="get_audio_player_path" default="NodePath(&quot;&quot;)">
+			Path to a sibling AudioStreamPlayer node (2D or 3D).
+		</member>
+	</members>
+	<signals>
+		<signal name="ability_activated">
+			<param index="0" name="ability" type="GameplayAbility" />
+			<description>
+				Emitted when an ability is successfully activated.
+			</description>
+		</signal>
+		<signal name="ability_ended">
+			<param index="0" name="ability" type="GameplayAbility" />
+			<description>
+				Emitted when an ability ends.
+			</description>
+		</signal>
+		<signal name="effect_applied">
+			<param index="0" name="effect" type="GameplayEffect" />
+			<description>
+				Emitted when a gameplay effect is applied.
+			</description>
+		</signal>
+		<signal name="tag_added">
+			<param index="0" name="tag" type="StringName" />
+			<description>
+				Emitted when a gameplay tag is added.
+			</description>
+		</signal>
+		<signal name="tag_removed">
+			<param index="0" name="tag" type="StringName" />
+			<description>
+				Emitted when a gameplay tag is removed.
+			</description>
+		</signal>
+	</signals>
+</class>

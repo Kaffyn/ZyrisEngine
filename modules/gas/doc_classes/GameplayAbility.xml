@@ -1,1 +1,76 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<class name="GameplayAbility" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		A resource that defines a gameplay action or skill.
+	</brief_description>
+	<description>
+		[GameplayAbility] is a resource that defines the behavior of an action (such as jumping, attacking, or casting a spell).
+		It includes costs (attributes), cooldowns, tags requirements, and the logic itself (override [code]_activate_ability[/code]).
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_activate_ability" qualifiers="virtual">
+			<return type="void" />
+			<description>
+				Override this method to implement the ability logic (e.g., spawn projectile, play animation).
+			</description>
+		</method>
+		<method name="_can_activate" qualifiers="virtual const">
+			<return type="bool" />
+			<param index="0" name="asc" type="Object" />
+			<description>
+				Override this check custom activation conditions. Return true if can activate.
+			</description>
+		</method>
+		<method name="activate_ability">
+			<return type="void" />
+			<param index="0" name="asc" type="AbilitySystemComponent" />
+			<description>
+				Activates the ability on the given ASC. Checks costs and cooldowns internally unless bypassed.
+			</description>
+		</method>
+		<method name="can_activate" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="asc" type="AbilitySystemComponent" />
+			<description>
+				Returns true if the ability can be currently activated (checking tags, costs, cooldowns).
+			</description>
+		</method>
+		<method name="end_ability">
+			<return type="void" />
+			<description>
+				Call this to end the ability execution. Important for abilities with duration or state.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="ability_tags" type="GameplayTagContainer" setter="set_ability_tags" getter="get_ability_tags">
+			Tags that identify this ability.
+		</member>
+		<member name="activation_blocked_tags" type="GameplayTagContainer" setter="set_activation_blocked_tags" getter="get_activation_blocked_tags">
+			Tags that, if present on the owner, prevent this ability from activating.
+		</member>
+		<member name="activation_required_tags" type="GameplayTagContainer" setter="set_activation_required_tags" getter="get_activation_required_tags">
+			Tags that must be present on the owner for this ability to activate.
+		</member>
+		<member name="block_tags" type="GameplayTagContainer" setter="set_block_tags" getter="get_block_tags">
+			Tags granted to the owner while this ability is active, which might block other abilities.
+		</member>
+		<member name="cancel_tags" type="GameplayTagContainer" setter="set_cancel_tags" getter="get_cancel_tags">
+			Tags that, if applied to the owner, will cancel this ability while it is running.
+		</member>
+		<member name="cooldown_duration" type="float" setter="set_cooldown_duration" getter="get_cooldown_duration" default="0.0">
+			Duration of the cooldown in seconds.
+		</member>
+		<member name="cooldown_tag" type="StringName" setter="set_cooldown_tag" getter="get_cooldown_tag" default="&amp;&quot;&quot;">
+			Tag to apply during cooldown. While present, the ability cannot be reactivated.
+		</member>
+		<member name="costs" type="Dictionary" setter="set_costs" getter="get_costs" default="{}">
+			Dictionary of Attribute Name -> Cost Value. Deducted upon activation.
+		</member>
+		<member name="cue_resource" type="GameplayCue" setter="set_cue_resource" getter="get_cue_resource">
+			GameplayCue resource to execute upon activation (Visual/Audio).
+		</member>
+	</members>
+</class>

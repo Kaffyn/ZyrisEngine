@@ -1,1 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<class name="GameplayEditorPlugin" inherits="EditorPlugin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		The editor plugin for the Gameplay Ability System.
+	</brief_description>
+	<description>
+		This plugin handles editor-specific integrations for the GAS, such as custom inspectors for GameplayTagContainers, GameplayAbilities, and AttributeSets. It also manages Project Settings related to the system.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+	</methods>
+</class>
