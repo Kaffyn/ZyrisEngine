@@ -4,6 +4,7 @@ major = 4
 minor = 6
 patch = 0
 status = "stable"
+build = "GAS"
 module_config = ""
 website = "https://zyrisengine.com"
 docs = "4.6"

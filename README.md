@@ -1,7 +1,7 @@
 # Zyris Engine
 
 [![Godot Version](https://img.shields.io/badge/Godot-4.6--stable-blue.svg)](https://github.com/godotengine/godot)
-[![Zyris Version](https://img.shields.io/badge/4.6.0-zyris.2-orange.svg)](https://github.com/Kaffyn/ZyrisEngine/tree/Zyris)
+[![Zyris Version](https://img.shields.io/badge/4.6.0-zyris.3-orange.svg)](https://github.com/Kaffyn/ZyrisEngine/tree/Zyris)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.txt)
 
 > [!TIP]
@@ -39,7 +39,7 @@ Atualizações menores não são acompanhadas.
 
 - **N** - Incremento de subversão do Zyris (ex: `zyris.1`, `zyris.2`)
 
-**Versão Atual** - `4.6.0-zyris.2`
+**Versão Atual** - `4.6.0-zyris.3`
 
 ## Roadmap
 
@@ -84,28 +84,32 @@ O Zyris está implementando um conjunto abrangente de sistemas. Abaixo está nos
 - **Evolução de Dados (Migrações)** - Sistema de versionamento que permite registrar transformações de dados (`register_migration`) para manter compatibilidade com saves antigos.
 - **Segurança e Integridade** - Sistema de backups rotativos, validação por checksum SHA-256 e mecanismo de *Flush* no encerramento para evitar corrupção de dados.
 
-### Em Desenvolvimento
-
-- [ ] **Gameplay Ability System (GAS)** - Framework de Gameplay Orientado a Dados
+- [x] **Gameplay Ability System (GAS)** - Framework de Gameplay Orientado a Dados
 
     Uma implementação nativa de alto desempenho do padrão GAS, projetada para escalar de mecânicas simples a sistemas de combate RPG complexos.
 
     **Arquitetura:**
   - `AbilitySystemComponent`: O processador central anexado a entidades (Player, Inimigos).
   - `AttributeSet`: Define estatísticas vitais (HP, Mana, Stamina) com replicação e cálculos de modificadores.
-  - `GameplayAbility`: Lógica modular de habilidades (Pular, Atirar, Magia).
+  - `GameplayAbility`: Lógica modular de habilidades (Pular, Atirar, Magia) com **Costs & Cooldowns**.
   - `GameplayEffect`: Regras de alteração de atributos (Dano, Cura, Buffs/Debuffs).
+  - `GameplayCue`: Sistema de feedback visual/sonoro (VFX, SFX, screen shake).
+  - **Gameplay Tasks**: Ações assíncronas para habilidades complexas (ex: aguardar input, projéteis).
+  - **Target Data**: Pipeline completo de seleção de alvos e validação do servidor.
+  - **MMC/GEE (Magnitude Calculation)**: Cálculos matemáticos dinâmicos para atributos e efeitos.
+  - **Attribute Events**: Signals para mudanças de atributos (ideal para UI e triggers).
 
-    **Integração com Editor (EditorPlugin):**
-    O GAS utiliza um **Editor Modal (Popup)** acionado via Inspector, similar ao sistema `AudioStreamInteractive`.
-  - **Janela Flutuante de Grafo** - Habilidades são editadas em uma janela dedicada sobreposta, permitindo acesso visual rápido sem perder o contexto da cena principal 3D/2D.
-  - **Botão de Edição** - O inspetor fornece acesso direto ao editor visual quando um Resource de habilidade é selecionado.
-  - **Tag Management** - Seletor visual de `GameplayTags` para definir interações complexas (ex: "Stun" cancela "Casting") sem hard-coding.
-  - **Live Debug** - Visualização em tempo real do fluxo de execução de habilidades e pilhas de efeitos.
+    **Integração com Editor (GAS Studio):**
+    O **GAS Studio** é um editor modal completo integrado ao Inspector:
+  - **Janela Flutuante de Grafo** - Edição visual rápida sem perder o contexto da cena.
+  - **Tag Management** - Seletor visual hierárquico de `GameplayTags`.
+  - **Live Debug** - Visualização em tempo real do fluxo de efeitos e atributos.
 
     **Diferenciais:**
-  - **Determinismo** - Otimizado para jogos multiplayer com previsão e reconciliação.
+  - **Multiplayer Nativo** - Predição do cliente e reconciliação do servidor (Netcode robusto).
   - **Data-Driven** - Designers podem criar variações de habilidades inteiras apenas alterando configurações no Editor.
+
+### Em Desenvolvimento
 
 - [ ] **Behavior Tree** - IA Modular e Reativa
 
