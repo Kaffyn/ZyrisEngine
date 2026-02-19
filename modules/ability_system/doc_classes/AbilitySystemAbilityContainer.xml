@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AbilitySystemAbilityContainer" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		Master container for an Ability System configuration, grouping abilities, effects, and attributes.
+	</brief_description>
+	<description>
+		[AbilitySystemAbilityContainer] serves as a data definition for a character archetype or class configuration. It holds references to:
+		- Abilities to be granted.
+		- Innate effects (passives) to be applied.
+		- Initial attribute values (base stats).
+		- Gameplay Cues to be registered.
+
+		This resource is typically applied to an [AbilitySystemComponent] upon initialization or class change.
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="cues" type="AbilitySystemCue[]" setter="set_cues" getter="get_cues" default="[]">
+			List of [AbilitySystemCue] resources associated with this container. These cues listen for gameplay events.
+		</member>
+		<member name="granted_abilities" type="AbilitySystemAbility[]" setter="set_granted_abilities" getter="get_granted_abilities" default="[]">
+			List of [AbilitySystemAbility] resources that will be granted to the owner.
+		</member>
+		<member name="initial_attributes" type="Dictionary" setter="set_initial_attributes" getter="get_initial_attributes" default="{}">
+			Dictionary mapping attribute names (StringName/String) to their initial base values (float).
+			Example: { "health": 100.0, "mana": 50.0 }
+		</member>
+		<member name="innate_effects" type="AbilitySystemEffect[]" setter="set_innate_effects" getter="get_innate_effects" default="[]">
+			List of [AbilitySystemEffect] resources that will be applied automatically (usually Infinite duration).
+		</member>
+	</members>
+</class>

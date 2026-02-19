@@ -86,25 +86,22 @@ Zyris is implementing a comprehensive set of systems. Below is our development r
 
     A high-performance native implementation of the GAS pattern, designed to scale from simple mechanics to complex RPG combat systems.
 
-    **Architecture:**
-  - `AbilitySystemComponent`: The central processor attached to entities (Player, Enemies).
-  - `AttributeSet`: Defines vital statistics (HP, Mana, Stamina) with replication and modifier calculations.
-  - `GameplayAbility`: Modular ability logic (Jump, Shoot, Magic) with **Costs & Cooldowns**.
-  - `GameplayEffect`: Attribute alteration rules (Damage, Healing, Buffs/Debuffs).
-  - `GameplayCue`: Visual/audio feedback system (VFX, SFX, screen shake).
-  - **Gameplay Tasks**: Asynchronous actions for complex abilities (e.g., waiting for input, projectiles).
-  - **Target Data**: Complete targeting pipeline with server validation.
-  - **MMC/GEE**: Dynamic mathematical calculations for attribute modification.
-  - **Attribute Events**: Signals for attribute changes (ideal for UI and triggers).
+    **Core Components:**
+  - `AbilitySystemComponent` - The central processor attached to entities (Player, Enemies).
+  - `AbilitySystemAbilityContainer` - Archetype resource defining the base configuration of an entity (Abilities, Attributes, Effects).
+  - `AbilitySystemAttributeSet` - Defines vital statistics (HP, Mana, Stamina) with replication and modifier calculations.
+  - `AbilitySystemAbility` - Modular ability logic (Jump, Shoot, Magic) with **Costs & Cooldowns**.
+  - `AbilitySystemEffect` - Attribute alteration rules (Damage, Healing, Buffs/Debuffs).
+  - `AbilitySystemCue` - Visual/audio feedback system (VFX, SFX, screen shake).
 
-    **Editor Integration:**
-    Focused on maintaining Godot's native workflow:
-  - **Custom Property Editors** - Specialized selectors for `GameplayTags` and Attributes integrated directly into the Inspector.
-  - **Project Settings** - Centralized tag management via the [AbilitySystem] singleton.
-
-    **Differentials:**
+    **Key Features:**
   - **Native Multiplayer** - Client prediction and server Net State correction (Robust Netcode).
-  - **Data-Driven** - Designers can create entire ability variations just by changing configurations in the Editor.
+  - **Editor Workflow** - specialized selectors for `GameplayTags` and Attributes integrated directly into the Inspector.
+  - **Data-Driven Design** - Designers can create entire ability variations just by changing configurations in the Editor.
+  - **Gameplay Tasks** - Asynchronous actions for complex abilities (e.g., waiting for input, projectiles).
+  - **Target Data Pipeline** - Complete targeting validation between client and server.
+  - **Advanced Math (MMC/GEE)** - Dynamic mathematical calculations for attribute modification.
+  - **Global Tag System** - Centralized tag management via Project Settings.
 
 ### In Development
 

@@ -46,6 +46,17 @@ O "cérebro" do Ator. Deve ser anexado a um `CharacterBody2D/3D`.
   - `attribute_changed(name, old, new)`: Para UI e Feedback.
   - `tag_changed(name, present)`: Para mudanças de estado visual.
 
+### 2.1.1 AbilitySystemAbilityContainer (Resource)
+
+Define o arquétipo de um personagem, agrupando habilidades e atributos iniciais.
+
+- **Propósito:** Configuração base de classes (Guerreiro, Mago) ou inimigos.
+- **Conteúdo:**
+  - `granted_abilities`: Lista de habilidades concedidas.
+  - `innate_effects`: Efeitos passivos aplicados ao iniciar.
+  - `initial_attributes`: Valores base para atributos (Força, Vigor).
+  - `cues`: Mapeamento de cues visuais/sonoros.
+
 ### 2.2 AbilitySystemAttributeSet
 
 Define os dados brutos (HP, Mana, Stamina, Força).

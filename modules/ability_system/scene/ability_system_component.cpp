@@ -33,6 +33,7 @@
 #include "modules/ability_system/core/ability_system_ability_spec.h"
 #include "modules/ability_system/core/ability_system_effect_spec.h"
 #include "modules/ability_system/core/ability_system_task.h"
+#include "modules/ability_system/resources/ability_system_ability_container.h"
 #include "modules/ability_system/resources/ability_system_attribute_set.h"
 #include "modules/ability_system/resources/ability_system_cue.h"
 #include "modules/ability_system/resources/ability_system_tag_container.h"
@@ -58,6 +59,7 @@
 
 void AbilitySystemComponent::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("give_ability", "ability", "level"), &AbilitySystemComponent::give_ability, DEFVAL(1));
+	ClassDB::bind_method(D_METHOD("apply_ability_container", "container", "level"), &AbilitySystemComponent::apply_ability_container, DEFVAL(1));
 	ClassDB::bind_method(D_METHOD("try_activate_ability_by_tag", "tag"), &AbilitySystemComponent::try_activate_ability_by_tag);
 	ClassDB::bind_method(D_METHOD("make_outgoing_spec", "effect", "level"), &AbilitySystemComponent::make_outgoing_spec, DEFVAL(1.0f));
 	ClassDB::bind_method(D_METHOD("apply_gameplay_effect_spec_to_self", "spec"), &AbilitySystemComponent::apply_gameplay_effect_spec_to_self);
@@ -75,6 +77,11 @@ void AbilitySystemComponent::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("unregister_cue_resource", "tag"), &AbilitySystemComponent::unregister_cue_resource);
 	ClassDB::bind_method(D_METHOD("get_cue_resource", "tag"), &AbilitySystemComponent::get_cue_resource);
 	ClassDB::bind_method(D_METHOD("get_owned_tags"), &AbilitySystemComponent::get_owned_tags);
+
+	ClassDB::bind_method(D_METHOD("set_ability_container", "container"), &AbilitySystemComponent::set_ability_container);
+	ClassDB::bind_method(D_METHOD("get_ability_container"), &AbilitySystemComponent::get_ability_container);
+
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "ability_container", PROPERTY_HINT_RESOURCE_TYPE, "AbilitySystemAbilityContainer"), "set_ability_container", "get_ability_container");
 
 	ADD_SIGNAL(MethodInfo("attribute_changed", PropertyInfo(Variant::STRING_NAME, "attribute_name"), PropertyInfo(Variant::FLOAT, "old_value"), PropertyInfo(Variant::FLOAT, "new_value")));
 	ADD_SIGNAL(MethodInfo("tag_changed", PropertyInfo(Variant::STRING_NAME, "tag_name"), PropertyInfo(Variant::BOOL, "is_present")));
@@ -101,6 +108,9 @@ void AbilitySystemComponent::_notification(int p_what) {
 
 		case NOTIFICATION_READY: {
 			_update_cache();
+			if (ability_container.is_valid()) {
+				apply_ability_container(ability_container);
+			}
 			set_process(true);
 		} break;
 		case NOTIFICATION_PROCESS: {
@@ -251,6 +261,50 @@ void AbilitySystemComponent::give_ability(Ref<AbilitySystemAbility> p_ability, i
 	spec.instantiate();
 	spec->init(p_ability, p_level);
 	granted_abilities.push_back(spec);
+}
+
+void AbilitySystemComponent::apply_ability_container(Ref<AbilitySystemAbilityContainer> p_container, int p_level) {
+	ERR_FAIL_COND(p_container.is_null());
+
+	// 1. Grant Abilities
+	TypedArray<AbilitySystemAbility> abilities = p_container->get_granted_abilities();
+	for (int i = 0; i < abilities.size(); i++) {
+		Ref<AbilitySystemAbility> ability = abilities[i];
+		if (ability.is_valid()) {
+			give_ability(ability, p_level);
+		}
+	}
+
+	// 2. Apply Innate Effects
+	TypedArray<AbilitySystemEffect> effects = p_container->get_innate_effects();
+	for (int i = 0; i < effects.size(); i++) {
+		Ref<AbilitySystemEffect> effect = effects[i];
+		if (effect.is_valid()) {
+			Ref<AbilitySystemEffectSpec> spec = make_outgoing_spec(effect, p_level);
+			apply_gameplay_effect_spec_to_self(spec);
+		}
+	}
+
+	// 3. Set Initial Attributes
+	Dictionary attributes = p_container->get_initial_attributes();
+	Array keys = attributes.keys();
+	for (int i = 0; i < keys.size(); i++) {
+		StringName key = keys[i];
+		float value = attributes[key];
+		set_attribute_base_value(key, value);
+	}
+
+	// 4. Register Cues
+	TypedArray<AbilitySystemCue> cues = p_container->get_cues();
+	for (int i = 0; i < cues.size(); i++) {
+		Ref<AbilitySystemCue> cue = cues[i];
+		if (cue.is_valid()) {
+			register_cue_resource(cue);
+		}
+	}
+
+	// Force update of current values after setting base values
+	_update_attribute_current_values();
 }
 
 bool AbilitySystemComponent::try_activate_ability_by_tag(const StringName &p_tag) {
@@ -495,6 +549,15 @@ Ref<AbilitySystemTagContainer> AbilitySystemComponent::get_owned_tags() const {
 	return owned_tags;
 }
 
+void AbilitySystemComponent::set_ability_container(Ref<AbilitySystemAbilityContainer> p_container) {
+	ability_container = p_container;
+	update_configuration_warnings();
+}
+
+Ref<AbilitySystemAbilityContainer> AbilitySystemComponent::get_ability_container() const {
+	return ability_container;
+}
+
 Dictionary AbilitySystemComponent::get_net_state() const {
 	Dictionary d;
 	Dictionary attrs;
@@ -537,6 +600,10 @@ PackedStringArray AbilitySystemComponent::get_configuration_warnings() const {
 		}
 	} else {
 		warnings.push_back("AbilitySystemComponent requires a CharacterBody2D or CharacterBody3D parent.");
+	}
+
+	if (ability_container.is_null()) {
+		warnings.push_back("AbilitySystemComponent requires an AbilitySystemAbilityContainer to be valid.");
 	}
 
 	return warnings;

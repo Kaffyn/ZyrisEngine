@@ -13,23 +13,27 @@
 			<return type="float" />
 			<param index="0" name="name" type="StringName" />
 			<description>
+				Returns the base value of the specified attribute.
 			</description>
 		</method>
 		<method name="get_attribute_current_value" qualifiers="const">
 			<return type="float" />
 			<param index="0" name="name" type="StringName" />
 			<description>
+				Returns the current (modified) value of the specified attribute.
 			</description>
 		</method>
 		<method name="get_attribute_list" qualifiers="const">
 			<return type="StringName[]" />
 			<description>
+				Returns a list of all attribute names in this set.
 			</description>
 		</method>
 		<method name="has_attribute" qualifiers="const">
 			<return type="bool" />
 			<param index="0" name="name" type="StringName" />
 			<description>
+				Checks if an attribute exists in this set.
 			</description>
 		</method>
 		<method name="reset_current_values">
@@ -43,6 +47,7 @@
 			<param index="0" name="name" type="StringName" />
 			<param index="1" name="value" type="float" />
 			<description>
+				Sets the base value for an attribute.
 			</description>
 		</method>
 		<method name="set_attribute_current_value">
@@ -50,6 +55,7 @@
 			<param index="0" name="name" type="StringName" />
 			<param index="1" name="value" type="float" />
 			<description>
+				Sets the current value for an attribute.
 			</description>
 		</method>
 	</methods>

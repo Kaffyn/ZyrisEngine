@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  ability_system_editor_plugin.h                                        */
+/*  ability_system_ability_container.h                                    */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -30,59 +30,38 @@
 
 #pragma once
 
-#include "editor/inspector/editor_inspector.h"
-#include "editor/plugins/editor_plugin.h"
-#include "scene/gui/box_container.h"
-#include "scene/gui/button.h"
+#include "core/io/resource.h"
+#include "core/variant/typed_array.h"
 
-/**
- * EditorPropertyGameplayTag
- * Custom property editor for selecting Gameplay Tags from a list.
- */
-class EditorPropertyGameplayTag : public EditorProperty {
-	GDCLASS(EditorPropertyGameplayTag, EditorProperty);
+class AbilitySystemAbility;
+class AbilitySystemEffect;
+class AbilitySystemCue;
 
-	HBoxContainer *container = nullptr;
-	Button *tag_button = nullptr;
-	Button *edit_button = nullptr; // Future: Open Tag Manager
+class AbilitySystemAbilityContainer : public Resource {
+	GDCLASS(AbilitySystemAbilityContainer, Resource);
 
-	void _tag_selected(int p_idx, PopupMenu *p_popup);
-	void _search_tag_closed();
-	void _button_pressed();
+private:
+	TypedArray<AbilitySystemAbility> granted_abilities;
+	TypedArray<AbilitySystemEffect> innate_effects;
+	Dictionary initial_attributes;
+	TypedArray<AbilitySystemCue> cues;
 
 protected:
-	virtual void _set_read_only(bool p_read_only) override;
+	static void _bind_methods();
 
 public:
-	virtual void update_property() override;
-	void setup(const String &p_base_type);
+	void set_granted_abilities(const TypedArray<AbilitySystemAbility> &p_abilities) { granted_abilities = p_abilities; }
+	TypedArray<AbilitySystemAbility> get_granted_abilities() const { return granted_abilities; }
 
-	EditorPropertyGameplayTag();
-};
+	void set_innate_effects(const TypedArray<AbilitySystemEffect> &p_effects) { innate_effects = p_effects; }
+	TypedArray<AbilitySystemEffect> get_innate_effects() const { return innate_effects; }
 
-/**
- * AbilitySystemInspectorPlugin
- * Responsible for intercepting and customizing how Ability System properties
- * are shown in the Inspector.
- */
-class AbilitySystemInspectorPlugin : public EditorInspectorPlugin {
-	GDCLASS(AbilitySystemInspectorPlugin, EditorInspectorPlugin);
+	void set_initial_attributes(const Dictionary &p_attributes) { initial_attributes = p_attributes; }
+	Dictionary get_initial_attributes() const { return initial_attributes; }
 
-public:
-	virtual bool can_handle(Object *p_object) override;
-	virtual bool parse_property(Object *p_object, const Variant::Type p_type, const String &p_path, const PropertyHint p_hint, const String &p_hint_text, const BitField<PropertyUsageFlags> p_usage, const bool p_wide = false) override;
-};
+	void set_cues(const TypedArray<AbilitySystemCue> &p_cues) { cues = p_cues; }
+	TypedArray<AbilitySystemCue> get_cues() const { return cues; }
 
-/**
- * AbilitySystemEditorPlugin
- * Entry point for all Editor-side customizations of the Ability System.
- */
-class AbilitySystemEditorPlugin : public EditorPlugin {
-	GDCLASS(AbilitySystemEditorPlugin, EditorPlugin);
-
-public:
-	virtual String get_plugin_name() const override { return "AbilitySystem"; }
-
-	AbilitySystemEditorPlugin();
-	~AbilitySystemEditorPlugin();
+	AbilitySystemAbilityContainer();
+	~AbilitySystemAbilityContainer();
 };

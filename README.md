@@ -88,24 +88,22 @@ O Zyris está implementando um conjunto abrangente de sistemas. Abaixo está nos
 
     Uma implementação nativa de alto desempenho do padrão GAS, projetada para escalar de mecânicas simples a sistemas de combate RPG complexos.
 
-    **Arquitetura:**
-  - `AbilitySystemComponent`: O processador central anexado a entidades (Player, Inimigos).
-  - `AttributeSet`: Define estatísticas vitais (HP, Mana, Stamina) com replicação e cálculos de modificadores.
-  - `GameplayAbility`: Lógica modular de habilidades (Pular, Atirar, Magia) com **Costs & Cooldowns**.
-  - `GameplayEffect`: Regras de alteração de atributos (Dano, Cura, Buffs/Debuffs).
-  - `GameplayCue`: Sistema de feedback visual/sonoro (VFX, SFX, screen shake).
-  - **Gameplay Tasks**: Ações assíncronas para habilidades complexas (ex: aguardar input, projéteis).
-  - **Target Data**: Pipeline completo de seleção de alvos e validação do servidor.
-  - **MMC/GEE (Magnitude Calculation)**: Cálculos matemáticos dinâmicos para atributos e efeitos.
-  - **Attribute Events**: Signals para mudanças de atributos (ideal para UI e triggers).
+    **Componentes Centrais:**
+  - `AbilitySystemComponent` - O processador central anexado a entidades (Player, Inimigos).
+  - `AbilitySystemAbilityContainer` - Recurso de arquétipo que define a configuração base de uma entidade (Habilidades, Atributos, Efeitos).
+  - `AbilitySystemAttributeSet` - Define estatísticas vitais (HP, Mana, Stamina) com replicação e cálculos de modificadores.
+  - `AbilitySystemAbility` - Lógica modular de habilidades (Pular, Atirar, Magia) com **Costs & Cooldowns**.
+  - `AbilitySystemEffect` - Regras de alteração de atributos (Dano, Cura, Buffs/Debuffs).
+  - `AbilitySystemCue` - Sistema de feedback visual/sonoro (VFX, SFX, screen shake).
 
-    **Integração com Editor:**
-  - **Custom Property Editors** - Seletores especializados para `GameplayTags` e Atributos integrados diretamente ao Inspector.
-  - **Project Settings** - Gerenciamento centralizado de tags através do singleton [AbilitySystem].
-
-    **Diferenciais:**
+    **Recursos Principais:**
   - **Multiplayer Nativo** - Predição do cliente e correção de Net State pelo servidor (Netcode robusto).
-  - **Data-Driven** - Designers podem criar variações de habilidades inteiras apenas alterando configurações no Editor.
+  - **Fluxo de Editor** - Seletores especializados para `GameplayTags` e Atributos integrados diretamente ao Inspector.
+  - **Design Orientado a Dados** - Designers podem criar variações de habilidades inteiras apenas alterando configurações no Editor.
+  - **Gameplay Tasks** - Ações assíncronas para habilidades complexas (ex: aguardar input, projéteis).
+  - **Pipeline de Target Data** - Validação completa de alvos entre cliente e servidor.
+  - **Cálculos Avançados (MMC/GEE)** - Cálculos matemáticos dinâmicos para modificação de atributos.
+  - **Sistema Global de Tags** - Gerenciamento centralizado de tags através das Configurações do Projeto.
 
 ### Em Desenvolvimento
 

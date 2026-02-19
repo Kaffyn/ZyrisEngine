@@ -41,6 +41,7 @@ class AbilitySystemEffect;
 class AbilitySystemEffectSpec;
 class AbilitySystemTask;
 class AbilitySystemCue;
+class AbilitySystemAbilityContainer;
 
 class CharacterBody2D;
 class CharacterBody3D;
@@ -91,6 +92,7 @@ public:
 	Vector<Ref<AbilitySystemTask>> active_tasks;
 	Ref<AbilitySystemTagContainer> owned_tags;
 	Vector<Ref<AbilitySystemCue>> registered_cues;
+	Ref<AbilitySystemAbilityContainer> ability_container;
 
 protected:
 	static void _bind_methods();
@@ -107,6 +109,7 @@ protected:
 public:
 	// API intended for GDScript usage as seen in tutorials
 	void give_ability(Ref<AbilitySystemAbility> p_ability, int p_level = 1);
+	void apply_ability_container(Ref<AbilitySystemAbilityContainer> p_container, int p_level = 1);
 	bool try_activate_ability_by_tag(const StringName &p_tag);
 
 	Ref<AbilitySystemEffectSpec> make_outgoing_spec(Ref<AbilitySystemEffect> p_effect, float p_level = 1.0f);
@@ -130,6 +133,9 @@ public:
 	Ref<class AbilitySystemCue> get_cue_resource(const StringName &p_tag) const;
 
 	Ref<AbilitySystemTagContainer> get_owned_tags() const;
+
+	void set_ability_container(Ref<AbilitySystemAbilityContainer> p_container);
+	Ref<AbilitySystemAbilityContainer> get_ability_container() const;
 
 	// Multiplayer & Determinism (Netcode)
 	Dictionary get_net_state() const;

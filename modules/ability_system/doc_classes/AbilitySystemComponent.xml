@@ -29,6 +29,14 @@
 				Adds a gameplay tag to this actor.
 			</description>
 		</method>
+		<method name="apply_ability_container">
+			<return type="void" />
+			<param index="0" name="container" type="AbilitySystemAbilityContainer" />
+			<param index="1" name="level" type="int" default="1" />
+			<description>
+				Applies the given ability container to this component, granting abilities, effects, and attributes.
+			</description>
+		</method>
 		<method name="apply_gameplay_effect_spec_to_self">
 			<return type="void" />
 			<param index="0" name="spec" type="AbilitySystemEffectSpec" />
@@ -145,6 +153,12 @@
 			</description>
 		</method>
 	</methods>
+	<members>
+		<member name="ability_container" type="AbilitySystemAbilityContainer" setter="set_ability_container" getter="get_ability_container">
+			The [AbilitySystemAbilityContainer] that defines the base configuration (abilities, effects, attributes) for this component.
+			[b]Note:[/b] This property is mandatory. A configuration warning will be issued if it is not set.
+		</member>
+	</members>
 	<signals>
 		<signal name="ability_activated">
 			<param index="0" name="ability_spec" type="AbilitySystemAbilitySpec" />

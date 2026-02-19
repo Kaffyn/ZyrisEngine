@@ -29,25 +29,96 @@
 /**************************************************************************/
 
 #include "ability_system_editor_plugin.h"
+#include "modules/ability_system/core/ability_system.h"
 #include "modules/ability_system/resources/ability_system_ability.h"
+#include "modules/ability_system/resources/ability_system_ability_container.h"
+#include "modules/ability_system/resources/ability_system_cue.h"
 #include "modules/ability_system/resources/ability_system_effect.h"
 #include "modules/ability_system/scene/ability_system_component.h"
+#include "scene/gui/popup_menu.h"
+
+// --- EditorPropertyGameplayTag ---
+
+EditorPropertyGameplayTag::EditorPropertyGameplayTag() {
+	container = memnew(HBoxContainer);
+	container->set_h_size_flags(SIZE_EXPAND_FILL);
+	add_child(container);
+
+	tag_button = memnew(Button);
+	tag_button->set_h_size_flags(SIZE_EXPAND_FILL);
+	tag_button->set_clip_text(true);
+	tag_button->connect("pressed", callable_mp(this, &EditorPropertyGameplayTag::_button_pressed));
+	container->add_child(tag_button);
+}
+
+void EditorPropertyGameplayTag::update_property() {
+	StringName val = get_edited_object()->get(get_edited_property());
+	if (val == StringName()) {
+		tag_button->set_text("[Empty]");
+		tag_button->set_tooltip_text("No tag selected");
+	} else {
+		tag_button->set_text(val);
+		tag_button->set_tooltip_text(val);
+	}
+}
+
+void EditorPropertyGameplayTag::setup(const String &p_base_type) {
+}
+
+void EditorPropertyGameplayTag::_set_read_only(bool p_read_only) {
+	tag_button->set_disabled(p_read_only);
+}
+
+void EditorPropertyGameplayTag::_button_pressed() {
+	if (is_read_only()) {
+		return;
+	}
+
+	PopupMenu *popup = memnew(PopupMenu);
+	popup->connect("index_pressed", callable_mp(this, &EditorPropertyGameplayTag::_tag_selected).bind(popup));
+	add_child(popup);
+
+	TypedArray<StringName> tags = AbilitySystem::get_singleton()->get_registered_tags();
+	tags.sort();
+
+	popup->add_item("[Empty]", 0);
+	popup->set_item_metadata(0, "");
+
+	for (int i = 0; i < tags.size(); i++) {
+		popup->add_item(tags[i]);
+		popup->set_item_metadata(popup->get_item_count() - 1, tags[i]);
+	}
+
+	popup->popup_centered();
+}
+
+void EditorPropertyGameplayTag::_tag_selected(int p_idx, PopupMenu *p_popup) {
+	if (p_popup) {
+		StringName tag = p_popup->get_item_metadata(p_idx);
+		emit_changed(get_edited_property(), tag);
+		update_property();
+		p_popup->queue_free();
+	}
+}
 
 // --- AbilitySystemInspectorPlugin ---
 
 bool AbilitySystemInspectorPlugin::can_handle(Object *p_object) {
-	// The inspector plugin handles the component and the resource-based specs
 	return Object::cast_to<AbilitySystemComponent>(p_object) != nullptr ||
 			Object::cast_to<AbilitySystemAbility>(p_object) != nullptr ||
-			Object::cast_to<AbilitySystemEffect>(p_object) != nullptr;
+			Object::cast_to<AbilitySystemEffect>(p_object) != nullptr ||
+			Object::cast_to<AbilitySystemCue>(p_object) != nullptr ||
+			Object::cast_to<AbilitySystemAbilityContainer>(p_object) != nullptr;
 }
 
 bool AbilitySystemInspectorPlugin::parse_property(Object *p_object, const Variant::Type p_type, const String &p_path, const PropertyHint p_hint, const String &p_hint_text, const BitField<PropertyUsageFlags> p_usage, const bool p_wide) {
-	// The logic here will be to identify tags and attributes names
-	// and instantiate specialized EditorProperty implementations.
-
-	// Example scope detection for future implementation:
-	// if (property_is_tag(p_path)) { add_property_editor(p_path, memnew(EditorPropertyAbilitySystemTag)); return true; }
+	if (p_type == Variant::STRING_NAME || p_type == Variant::STRING) {
+		if (p_path.ends_with("_tag") || p_path == "tag") {
+			EditorPropertyGameplayTag *editor = memnew(EditorPropertyGameplayTag);
+			add_property_editor(p_path, editor);
+			return true;
+		}
+	}
 
 	return false;
 }
