@@ -29,6 +29,7 @@
 /**************************************************************************/
 
 #include "ability_system_ability.h"
+#include "modules/ability_system/core/ability_system_ability_spec.h"
 #include "modules/ability_system/core/ability_system_effect_spec.h"
 #include "modules/ability_system/resources/ability_system_effect.h"
 #include "modules/ability_system/resources/ability_system_tag_container.h"
@@ -53,13 +54,13 @@ void AbilitySystemAbility::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_cooldown_effect", "effect"), &AbilitySystemAbility::set_cooldown_effect);
 	ClassDB::bind_method(D_METHOD("get_cooldown_effect"), &AbilitySystemAbility::get_cooldown_effect);
 
-	ClassDB::bind_method(D_METHOD("can_activate_ability", "owner"), &AbilitySystemAbility::can_activate_ability);
-	ClassDB::bind_method(D_METHOD("activate_ability", "owner"), &AbilitySystemAbility::activate_ability);
-	ClassDB::bind_method(D_METHOD("end_ability", "owner"), &AbilitySystemAbility::end_ability);
+	ClassDB::bind_method(D_METHOD("can_activate_ability", "owner", "spec"), &AbilitySystemAbility::can_activate_ability, DEFVAL(Variant()));
+	ClassDB::bind_method(D_METHOD("activate_ability", "owner", "spec"), &AbilitySystemAbility::activate_ability, DEFVAL(Variant()));
+	ClassDB::bind_method(D_METHOD("end_ability", "owner", "spec"), &AbilitySystemAbility::end_ability, DEFVAL(Variant()));
 
-	GDVIRTUAL_BIND(_activate_ability, "owner");
-	GDVIRTUAL_BIND(_can_activate_ability, "owner");
-	GDVIRTUAL_BIND(_on_end_ability, "owner");
+	GDVIRTUAL_BIND(_activate_ability, "owner", "spec");
+	GDVIRTUAL_BIND(_can_activate_ability, "owner", "spec");
+	GDVIRTUAL_BIND(_on_end_ability, "owner", "spec");
 
 	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "ability_tag"), "set_ability_tag", "get_ability_tag");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "activation_owned_tags", PROPERTY_HINT_ARRAY_TYPE, "StringName"), "set_activation_owned_tags", "get_activation_owned_tags");
@@ -69,7 +70,7 @@ void AbilitySystemAbility::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "cooldown_effect", PROPERTY_HINT_RESOURCE_TYPE, "AbilitySystemEffect"), "set_cooldown_effect", "get_cooldown_effect");
 }
 
-bool AbilitySystemAbility::can_activate_ability(AbilitySystemComponent *p_owner) const {
+bool AbilitySystemAbility::can_activate_ability(AbilitySystemComponent *p_owner, Ref<AbilitySystemAbilitySpec> p_spec) const {
 	ERR_FAIL_NULL_V(p_owner, false);
 
 	// Tag requirements
@@ -82,10 +83,25 @@ bool AbilitySystemAbility::can_activate_ability(AbilitySystemComponent *p_owner)
 	}
 
 	// Cost check
-	if (cost_effect.is_valid()) {
-		// In a real system we'd check if we CAN afford it without applying.
-		// For now let's assume if it's instant modifiers we can check them.
-		// Simplified for this implementation.
+	if (cost_effect.is_valid() && cost_effect->get_duration_policy() == AbilitySystemEffect::INSTANT) {
+		// Use a spec to calculate correct magnitudes (including custom calculations)
+		float level = p_spec.is_valid() ? (float)p_spec->get_level() : 1.0f;
+		Ref<AbilitySystemEffectSpec> cost_spec = p_owner->make_outgoing_spec(cost_effect, level);
+
+		for (int i = 0; i < cost_effect->get_modifier_count(); i++) {
+			StringName attr = cost_effect->get_modifier_attribute(i);
+			float current = p_owner->get_attribute_value(attr);
+
+			// Calculate magnitude using the spec (handles scalable costs)
+			float mag = cost_spec->calculate_modifier_magnitude(i);
+
+			// We only check ADD operations for now, assuming costs are negative additions.
+			if (cost_effect->get_modifier_operation(i) == AbilitySystemEffect::ADD) {
+				if (current + mag < 0.0f) {
+					return false;
+				}
+			}
+		}
 	}
 
 	// Cooldown check
@@ -99,7 +115,7 @@ bool AbilitySystemAbility::can_activate_ability(AbilitySystemComponent *p_owner)
 
 	// Script override
 	bool script_ret = true;
-	if (GDVIRTUAL_CALL(_can_activate_ability, p_owner, script_ret)) {
+	if (GDVIRTUAL_CALL(_can_activate_ability, p_owner, p_spec, script_ret)) {
 		if (!script_ret) {
 			return false;
 		}
@@ -108,18 +124,23 @@ bool AbilitySystemAbility::can_activate_ability(AbilitySystemComponent *p_owner)
 	return true;
 }
 
-void AbilitySystemAbility::activate_ability(AbilitySystemComponent *p_owner) {
+void AbilitySystemAbility::activate_ability(AbilitySystemComponent *p_owner, Ref<AbilitySystemAbilitySpec> p_spec) {
 	ERR_FAIL_NULL(p_owner);
 
 	// Apply Cost
 	if (cost_effect.is_valid()) {
-		Ref<AbilitySystemEffectSpec> cost_spec = p_owner->make_outgoing_spec(cost_effect);
+		if (!can_activate_ability(p_owner, p_spec)) {
+			return;
+		}
+		float level = p_spec.is_valid() ? (float)p_spec->get_level() : 1.0f;
+		Ref<AbilitySystemEffectSpec> cost_spec = p_owner->make_outgoing_spec(cost_effect, level);
 		p_owner->apply_gameplay_effect_spec_to_self(cost_spec);
 	}
 
 	// Apply Cooldown
 	if (cooldown_effect.is_valid()) {
-		Ref<AbilitySystemEffectSpec> cd_spec = p_owner->make_outgoing_spec(cooldown_effect);
+		float level = p_spec.is_valid() ? (float)p_spec->get_level() : 1.0f;
+		Ref<AbilitySystemEffectSpec> cd_spec = p_owner->make_outgoing_spec(cooldown_effect, level);
 		p_owner->apply_gameplay_effect_spec_to_self(cd_spec);
 	}
 
@@ -128,10 +149,10 @@ void AbilitySystemAbility::activate_ability(AbilitySystemComponent *p_owner) {
 		p_owner->add_tag(activation_owned_tags[i]);
 	}
 
-	GDVIRTUAL_CALL(_activate_ability, p_owner);
+	GDVIRTUAL_CALL(_activate_ability, p_owner, p_spec);
 }
 
-void AbilitySystemAbility::end_ability(AbilitySystemComponent *p_owner) {
+void AbilitySystemAbility::end_ability(AbilitySystemComponent *p_owner, Ref<AbilitySystemAbilitySpec> p_spec) {
 	ERR_FAIL_NULL(p_owner);
 
 	// Remove owned tags via ASC so tag_changed signal is emitted
@@ -139,7 +160,7 @@ void AbilitySystemAbility::end_ability(AbilitySystemComponent *p_owner) {
 		p_owner->remove_tag(activation_owned_tags[i]);
 	}
 
-	GDVIRTUAL_CALL(_on_end_ability, p_owner);
+	GDVIRTUAL_CALL(_on_end_ability, p_owner, p_spec);
 }
 
 void AbilitySystemAbility::set_cost_effect(Ref<AbilitySystemEffect> p_effect) {

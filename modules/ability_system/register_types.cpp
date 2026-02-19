@@ -55,6 +55,10 @@
 
 static AbilitySystem *ability_system_singleton = nullptr;
 
+#ifdef TOOLS_ENABLED
+void register_ability_system_script_templates();
+#endif
+
 void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
 		ClassDB::register_class<AbilitySystem>();
@@ -80,9 +84,69 @@ void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 	if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
 		ClassDB::register_class<AbilitySystemEditorPlugin>();
 		EditorPlugins::add_by_type<AbilitySystemEditorPlugin>();
+		register_ability_system_script_templates();
 	}
 #endif
 }
+
+#ifdef TOOLS_ENABLED
+#include "core/io/dir_access.h"
+#include "core/io/file_access.h"
+#include "editor/file_system/editor_paths.h"
+#include "editor/settings/editor_settings.h"
+#include "modules/ability_system/editor/script_templates/templates.gen.h"
+
+void register_ability_system_script_templates() {
+	if (!EditorPaths::get_singleton()) {
+		return;
+	}
+
+	String templates_dir = EditorPaths::get_singleton()->get_script_templates_dir();
+
+	Ref<DirAccess> da = DirAccess::create(DirAccess::ACCESS_FILESYSTEM); // Use filesystem access to ensure we can write
+	if (da.is_null()) {
+		return;
+	}
+
+	for (int i = 0; i < ABILITY_SYSTEM_TEMPLATES_ARRAY_SIZE; i++) {
+		const AbilitySystemScriptTemplate &t = ABILITY_SYSTEM_TEMPLATES[i];
+		String inherit = String(t.inherit);
+		String name = String(t.name);
+		String description = String(t.description);
+		String content_str = String(t.content);
+
+		String target_dir = templates_dir.path_join(inherit);
+
+		if (!da->dir_exists(target_dir)) {
+			da->make_dir_recursive(target_dir);
+		}
+
+		String extension = "gd"; // Default
+		if (content_str.contains("using _BINDINGS_NAMESPACE_;")) {
+			extension = "cs";
+		}
+
+		String filename = name.to_snake_case() + "." + extension;
+		String full_path = target_dir.path_join(filename);
+
+		// Only write if not exists or force update (controlled by version?)
+		// For now, let's write if missing to respect user modifications.
+		if (!FileAccess::exists(full_path)) {
+			Ref<FileAccess> f = FileAccess::open(full_path, FileAccess::WRITE);
+			if (f.is_valid()) {
+				// We need to restore indentation from _TS_
+				String final_content = content_str.replace("_TS_", "\t");
+
+				// Re-add meta information
+				f->store_line(extension == "cs" ? "// meta-name: " + name : "# meta-name: " + name);
+				f->store_line(extension == "cs" ? "// meta-description: " + description : "# meta-description: " + description);
+				f->store_line("");
+				f->store_string(final_content);
+			}
+		}
+	}
+}
+#endif
 
 void uninitialize_ability_system_module(ModuleInitializationLevel p_level) {
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {

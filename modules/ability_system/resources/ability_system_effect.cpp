@@ -44,6 +44,9 @@ void AbilitySystemEffect::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_modifier_magnitude", "index"), &AbilitySystemEffect::get_modifier_magnitude);
 	ClassDB::bind_method(D_METHOD("get_modifier_custom_magnitude", "index"), &AbilitySystemEffect::get_modifier_custom_magnitude);
 
+	ClassDB::bind_method(D_METHOD("set_modifiers_count", "count"), &AbilitySystemEffect::set_modifiers_count);
+	ClassDB::bind_method(D_METHOD("get_modifiers_count"), &AbilitySystemEffect::get_modifiers_count);
+
 	ClassDB::bind_method(D_METHOD("set_granted_tags", "tags"), &AbilitySystemEffect::set_granted_tags);
 	ClassDB::bind_method(D_METHOD("get_granted_tags"), &AbilitySystemEffect::get_granted_tags);
 	ClassDB::bind_method(D_METHOD("set_blocked_tags", "tags"), &AbilitySystemEffect::set_blocked_tags);
@@ -59,6 +62,8 @@ void AbilitySystemEffect::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "blocked_tags", PROPERTY_HINT_ARRAY_TYPE, "StringName"), "set_blocked_tags", "get_blocked_tags");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "removed_tags", PROPERTY_HINT_ARRAY_TYPE, "StringName"), "set_removed_tags", "get_removed_tags");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "cue_tags", PROPERTY_HINT_ARRAY_TYPE, "StringName"), "set_cue_tags", "get_cue_tags");
+
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "modifiers", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_ARRAY), "set_modifiers_count", "get_modifiers_count");
 
 	BIND_ENUM_CONSTANT(INSTANT);
 	BIND_ENUM_CONSTANT(DURATION);
@@ -97,6 +102,76 @@ AbilitySystemEffect::ModifierOp AbilitySystemEffect::get_modifier_operation(int 
 float AbilitySystemEffect::get_modifier_magnitude(int p_idx) const {
 	ERR_FAIL_INDEX_V(p_idx, modifiers.size(), 0.0f);
 	return modifiers[p_idx].magnitude;
+}
+
+void AbilitySystemEffect::set_modifiers_count(int p_count) {
+	modifiers.resize(p_count);
+}
+int AbilitySystemEffect::get_modifiers_count() const {
+	return modifiers.size();
+}
+
+bool AbilitySystemEffect::_set(const StringName &p_name, const Variant &p_value) {
+	String prop_name = p_name;
+	if (prop_name.begins_with("modifiers/")) {
+		int index = prop_name.get_slicec('/', 1).to_int();
+		String what = prop_name.get_slicec('/', 2);
+
+		if (modifiers.size() <= index) {
+			modifiers.resize(index + 1);
+		}
+
+		if (what == "attribute") {
+			modifiers.write[index].attribute = p_value;
+			return true;
+		} else if (what == "operation") {
+			modifiers.write[index].operation = (ModifierOp)(int)p_value;
+			return true;
+		} else if (what == "magnitude") {
+			modifiers.write[index].magnitude = p_value;
+			return true;
+		} else if (what == "custom_magnitude") {
+			modifiers.write[index].custom_magnitude = p_value;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool AbilitySystemEffect::_get(const StringName &p_name, Variant &r_ret) const {
+	String prop_name = p_name;
+	if (prop_name.begins_with("modifiers/")) {
+		int index = prop_name.get_slicec('/', 1).to_int();
+		String what = prop_name.get_slicec('/', 2);
+
+		if (index < 0 || index >= modifiers.size()) {
+			return false;
+		}
+
+		if (what == "attribute") {
+			r_ret = modifiers[index].attribute;
+			return true;
+		} else if (what == "operation") {
+			r_ret = modifiers[index].operation;
+			return true;
+		} else if (what == "magnitude") {
+			r_ret = modifiers[index].magnitude;
+			return true;
+		} else if (what == "custom_magnitude") {
+			r_ret = modifiers[index].custom_magnitude;
+			return true;
+		}
+	}
+	return false;
+}
+
+void AbilitySystemEffect::_get_property_list(List<PropertyInfo> *p_list) const {
+	for (int i = 0; i < modifiers.size(); i++) {
+		p_list->push_back(PropertyInfo(Variant::STRING_NAME, vformat("modifiers/%d/attribute", i)));
+		p_list->push_back(PropertyInfo(Variant::INT, vformat("modifiers/%d/operation", i), PROPERTY_HINT_ENUM, "Add,Multiply,Divide,Override"));
+		p_list->push_back(PropertyInfo(Variant::FLOAT, vformat("modifiers/%d/magnitude", i)));
+		p_list->push_back(PropertyInfo(Variant::OBJECT, vformat("modifiers/%d/custom_magnitude", i), PROPERTY_HINT_RESOURCE_TYPE, "AbilitySystemMagnitudeCalculation"));
+	}
 }
 
 AbilitySystemEffect::AbilitySystemEffect() {

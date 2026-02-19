@@ -52,7 +52,8 @@ public:
 protected:
 	static void _bind_methods();
 
-	AbilitySystemComponent *owner = nullptr;
+	AbilitySystemComponent *get_owner() const;
+	ObjectID owner_id;
 	bool finished = false;
 	TaskType task_type = TASK_GENERIC;
 
@@ -70,7 +71,7 @@ public:
 	void end_task();
 
 	bool is_finished() const { return finished; }
-	void set_owner(AbilitySystemComponent *p_owner) { owner = p_owner; }
+	void set_owner(AbilitySystemComponent *p_owner);
 
 	AbilitySystemTask();
 	~AbilitySystemTask();

@@ -39,10 +39,13 @@
 	</members>
 	<constants>
 		<constant name="ON_EXECUTE" value="0" enum="CueEventType">
+			Triggered for instant effects (e.g., hit impact, explosion).
 		</constant>
 		<constant name="ON_ACTIVE" value="1" enum="CueEventType">
+			Triggered when an effect/ability becomes active.
 		</constant>
 		<constant name="ON_REMOVE" value="2" enum="CueEventType">
+			Triggered when an effect/ability ends.
 		</constant>
 	</constants>
 </class>

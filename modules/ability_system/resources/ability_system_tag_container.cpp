@@ -46,8 +46,8 @@ bool AbilitySystemTagContainer::has_tag(const StringName &p_tag, bool p_exact) c
 		return tags.has(p_tag);
 	}
 
-	for (const StringName &T : tags) {
-		if (AbilitySystem::tag_matches(T, p_tag, false)) {
+	for (const KeyValue<StringName, int> &E : tags) {
+		if (AbilitySystem::tag_matches(E.key, p_tag, false)) {
 			return true;
 		}
 	}
@@ -72,12 +72,25 @@ bool AbilitySystemTagContainer::has_all_tags(const TypedArray<StringName> &p_tag
 	return true;
 }
 
-void AbilitySystemTagContainer::add_tag(const StringName &p_tag) {
-	tags.insert(p_tag);
+bool AbilitySystemTagContainer::add_tag(const StringName &p_tag) {
+	if (tags.has(p_tag)) {
+		tags[p_tag]++;
+		return false;
+	} else {
+		tags[p_tag] = 1;
+		return true;
+	}
 }
 
-void AbilitySystemTagContainer::remove_tag(const StringName &p_tag) {
-	tags.erase(p_tag);
+bool AbilitySystemTagContainer::remove_tag(const StringName &p_tag) {
+	if (tags.has(p_tag)) {
+		tags[p_tag]--;
+		if (tags[p_tag] <= 0) {
+			tags.erase(p_tag);
+			return true;
+		}
+	}
+	return false;
 }
 
 void AbilitySystemTagContainer::clear() {
@@ -86,8 +99,8 @@ void AbilitySystemTagContainer::clear() {
 
 TypedArray<StringName> AbilitySystemTagContainer::get_all_tags() const {
 	TypedArray<StringName> res;
-	for (const StringName &T : tags) {
-		res.push_back(T);
+	for (const KeyValue<StringName, int> &E : tags) {
+		res.push_back(E.key);
 	}
 	return res;
 }

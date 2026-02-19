@@ -59,6 +59,9 @@ public:
 
 protected:
 	static void _bind_methods();
+	bool _set(const StringName &p_name, const Variant &p_value);
+	bool _get(const StringName &p_name, Variant &r_ret) const;
+	void _get_property_list(List<PropertyInfo> *p_list) const;
 
 private:
 	DurationPolicy duration_policy = INSTANT;
@@ -102,6 +105,9 @@ public:
 
 	void set_cue_tags(const TypedArray<StringName> &p_tags) { cue_tags = p_tags; }
 	TypedArray<StringName> get_cue_tags() const { return cue_tags; }
+
+	void set_modifiers_count(int p_count);
+	int get_modifiers_count() const;
 
 	AbilitySystemEffect();
 	~AbilitySystemEffect();

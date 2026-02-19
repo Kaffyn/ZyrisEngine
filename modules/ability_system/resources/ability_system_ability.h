@@ -37,6 +37,8 @@
 class AbilitySystemComponent;
 class AbilitySystemEffect;
 
+class AbilitySystemAbilitySpec;
+
 class AbilitySystemAbility : public Resource {
 	GDCLASS(AbilitySystemAbility, Resource);
 
@@ -52,12 +54,16 @@ private:
 protected:
 	static void _bind_methods();
 
-	// Lifecycle - Script-overridable
-	GDVIRTUAL1(_activate_ability, Object *)
-	GDVIRTUAL1RC(bool, _can_activate_ability, Object *)
-	GDVIRTUAL1(_on_end_ability, Object *)
+	// GDScript virtuals
+	GDVIRTUAL2(_activate_ability, Object *, Ref<RefCounted>); // Context passed as generic RefCounted to avoid binding issues if Spec not exposed properly
+	GDVIRTUAL2RC(bool, _can_activate_ability, Object *, Ref<RefCounted>);
+	GDVIRTUAL2(_on_end_ability, Object *, Ref<RefCounted>);
 
 public:
+	// Public methods take the owner and the spec context (for level/state)
+	bool can_activate_ability(AbilitySystemComponent *p_owner, Ref<AbilitySystemAbilitySpec> p_spec = nullptr) const;
+	void activate_ability(AbilitySystemComponent *p_owner, Ref<AbilitySystemAbilitySpec> p_spec = nullptr);
+	void end_ability(AbilitySystemComponent *p_owner, Ref<AbilitySystemAbilitySpec> p_spec = nullptr);
 	void set_ability_tag(const StringName &p_tag) { ability_tag = p_tag; }
 	StringName get_ability_tag() const { return ability_tag; }
 
@@ -75,10 +81,6 @@ public:
 
 	void set_cooldown_effect(Ref<AbilitySystemEffect> p_effect);
 	Ref<AbilitySystemEffect> get_cooldown_effect() const;
-
-	bool can_activate_ability(AbilitySystemComponent *p_owner) const;
-	void activate_ability(AbilitySystemComponent *p_owner);
-	void end_ability(AbilitySystemComponent *p_owner);
 
 	AbilitySystemAbility();
 	~AbilitySystemAbility();

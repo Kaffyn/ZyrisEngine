@@ -66,7 +66,26 @@ class AbilitySystemComponent : public Node {
 	GDCLASS(AbilitySystemComponent, Node);
 
 public:
-	// Validation and Caching - Systems should check these before use
+	// Manual Node References - Set via Inspector
+	NodePath character_body_2d_path;
+	NodePath character_body_3d_path;
+	NodePath animation_player_path;
+	NodePath animated_sprite_2d_path;
+	NodePath animated_sprite_3d_path;
+	NodePath audio_player_2d_path;
+	NodePath audio_player_3d_path;
+	NodePath target_area_2d_path;
+	NodePath target_area_3d_path;
+	NodePath sensor_ray_2d_path;
+	NodePath sensor_ray_3d_path;
+	NodePath sensor_shape_2d_path;
+	NodePath sensor_shape_3d_path;
+	NodePath vfx_particles_2d_path;
+	NodePath vfx_particles_3d_path;
+	NodePath spawn_marker_2d_path;
+	NodePath spawn_marker_3d_path;
+
+	// Cached Node References - Performance cache
 	CharacterBody2D *character_body_2d = nullptr;
 	CharacterBody3D *character_body_3d = nullptr;
 	AnimationPlayer *animation_player = nullptr;
@@ -115,6 +134,9 @@ public:
 	Ref<AbilitySystemEffectSpec> make_outgoing_spec(Ref<AbilitySystemEffect> p_effect, float p_level = 1.0f);
 	void apply_gameplay_effect_spec_to_self(Ref<AbilitySystemEffectSpec> p_spec);
 
+	void remove_granted_ability(Ref<AbilitySystemAbilitySpec> p_spec);
+	void remove_active_effect(Ref<AbilitySystemEffectSpec> p_spec);
+
 	void register_task(Ref<AbilitySystemTask> p_task);
 	void play_montage(const String &p_name);
 	bool is_montage_playing(const String &p_name) const;
@@ -133,6 +155,112 @@ public:
 	Ref<class AbilitySystemCue> get_cue_resource(const StringName &p_tag) const;
 
 	Ref<AbilitySystemTagContainer> get_owned_tags() const;
+
+	TypedArray<AbilitySystemEffectSpec> get_active_effects_debug() const;
+	TypedArray<AbilitySystemAbilitySpec> get_granted_abilities_debug() const;
+
+	// Manual Node Path setters/getters
+	void set_character_body_2d_path(const NodePath &p_path) {
+		character_body_2d_path = p_path;
+		_update_cache();
+	}
+	NodePath get_character_body_2d_path() const { return character_body_2d_path; }
+
+	void set_character_body_3d_path(const NodePath &p_path) {
+		character_body_3d_path = p_path;
+		_update_cache();
+	}
+	NodePath get_character_body_3d_path() const { return character_body_3d_path; }
+
+	void set_animation_player_path(const NodePath &p_path) {
+		animation_player_path = p_path;
+		_update_cache();
+	}
+	NodePath get_animation_player_path() const { return animation_player_path; }
+
+	void set_animated_sprite_2d_path(const NodePath &p_path) {
+		animated_sprite_2d_path = p_path;
+		_update_cache();
+	}
+	NodePath get_animated_sprite_2d_path() const { return animated_sprite_2d_path; }
+
+	void set_animated_sprite_3d_path(const NodePath &p_path) {
+		animated_sprite_3d_path = p_path;
+		_update_cache();
+	}
+	NodePath get_animated_sprite_3d_path() const { return animated_sprite_3d_path; }
+
+	void set_audio_player_2d_path(const NodePath &p_path) {
+		audio_player_2d_path = p_path;
+		_update_cache();
+	}
+	NodePath get_audio_player_2d_path() const { return audio_player_2d_path; }
+
+	void set_audio_player_3d_path(const NodePath &p_path) {
+		audio_player_3d_path = p_path;
+		_update_cache();
+	}
+	NodePath get_audio_player_3d_path() const { return audio_player_3d_path; }
+
+	void set_target_area_2d_path(const NodePath &p_path) {
+		target_area_2d_path = p_path;
+		_update_cache();
+	}
+	NodePath get_target_area_2d_path() const { return target_area_2d_path; }
+
+	void set_target_area_3d_path(const NodePath &p_path) {
+		target_area_3d_path = p_path;
+		_update_cache();
+	}
+	NodePath get_target_area_3d_path() const { return target_area_3d_path; }
+
+	void set_sensor_ray_2d_path(const NodePath &p_path) {
+		sensor_ray_2d_path = p_path;
+		_update_cache();
+	}
+	NodePath get_sensor_ray_2d_path() const { return sensor_ray_2d_path; }
+
+	void set_sensor_ray_3d_path(const NodePath &p_path) {
+		sensor_ray_3d_path = p_path;
+		_update_cache();
+	}
+	NodePath get_sensor_ray_3d_path() const { return sensor_ray_3d_path; }
+
+	void set_sensor_shape_2d_path(const NodePath &p_path) {
+		sensor_shape_2d_path = p_path;
+		_update_cache();
+	}
+	NodePath get_sensor_shape_2d_path() const { return sensor_shape_2d_path; }
+
+	void set_sensor_shape_3d_path(const NodePath &p_path) {
+		sensor_shape_3d_path = p_path;
+		_update_cache();
+	}
+	NodePath get_sensor_shape_3d_path() const { return sensor_shape_3d_path; }
+
+	void set_vfx_particles_2d_path(const NodePath &p_path) {
+		vfx_particles_2d_path = p_path;
+		_update_cache();
+	}
+	NodePath get_vfx_particles_2d_path() const { return vfx_particles_2d_path; }
+
+	void set_vfx_particles_3d_path(const NodePath &p_path) {
+		vfx_particles_3d_path = p_path;
+		_update_cache();
+	}
+	NodePath get_vfx_particles_3d_path() const { return vfx_particles_3d_path; }
+
+	void set_spawn_marker_2d_path(const NodePath &p_path) {
+		spawn_marker_2d_path = p_path;
+		_update_cache();
+	}
+	NodePath get_spawn_marker_2d_path() const { return spawn_marker_2d_path; }
+
+	void set_spawn_marker_3d_path(const NodePath &p_path) {
+		spawn_marker_3d_path = p_path;
+		_update_cache();
+	}
+	NodePath get_spawn_marker_3d_path() const { return spawn_marker_3d_path; }
 
 	void set_ability_container(Ref<AbilitySystemAbilityContainer> p_container);
 	Ref<AbilitySystemAbilityContainer> get_ability_container() const;

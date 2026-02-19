@@ -5,12 +5,14 @@
 	</brief_description>
 	<description>
 		The [AbilitySystemComponent] (ASC) is the central hub for all gameplay-related logic on an actor. It manages abilities, attributes, and effects.
+		[b]Note:[/b] This component must be a child of [CharacterBody2D] or [CharacterBody3D] to function correctly.
 		[b]Example Usage:[/b]
 		[codeblock]
 		func _ready():
 			asc.give_ability(fireball_ability)
 			asc.try_activate_ability_by_tag("ability.fireball")
 		[/codeblock]
+		[b]Sibling Cache:[/b] The ASC uses [b]Sibling Cache[/b] to optimize performance. It avoids repeated [code]get_node()[/code] calls by caching references to common actor nodes (AnimationPlayer, CharacterBody, etc.) based on the [code]*_path[/code] properties.
 	</description>
 	<tutorials>
 	</tutorials>
@@ -52,6 +54,11 @@
 				Triggers a gameplay cue.
 			</description>
 		</method>
+		<method name="get_active_effects_debug" qualifiers="const">
+			<return type="AbilitySystemEffectSpec[]" />
+			<description>
+			</description>
+		</method>
 		<method name="get_attribute_value" qualifiers="const">
 			<return type="float" />
 			<param index="0" name="attribute_name" type="StringName" />
@@ -64,6 +71,11 @@
 			<param index="0" name="tag" type="StringName" />
 			<description>
 				Returns the registered cue resource for the given tag, or null if not found.
+			</description>
+		</method>
+		<method name="get_granted_abilities_debug" qualifiers="const">
+			<return type="AbilitySystemAbilitySpec[]" />
+			<description>
 			</description>
 		</method>
 		<method name="get_owned_tags" qualifiers="const">
@@ -123,6 +135,18 @@
 				Registers and activates an asynchronous gameplay task.
 			</description>
 		</method>
+		<method name="remove_active_effect">
+			<return type="void" />
+			<param index="0" name="spec" type="AbilitySystemEffectSpec" />
+			<description>
+			</description>
+		</method>
+		<method name="remove_granted_ability">
+			<return type="void" />
+			<param index="0" name="spec" type="AbilitySystemAbilitySpec" />
+			<description>
+			</description>
+		</method>
 		<method name="remove_tag">
 			<return type="void" />
 			<param index="0" name="tag" type="StringName" />
@@ -157,6 +181,40 @@
 		<member name="ability_container" type="AbilitySystemAbilityContainer" setter="set_ability_container" getter="get_ability_container">
 			The [AbilitySystemAbilityContainer] that defines the base configuration (abilities, effects, attributes) for this component.
 			[b]Note:[/b] This property is mandatory. A configuration warning will be issued if it is not set.
+		</member>
+		<member name="animated_sprite_2d_path" type="NodePath" setter="set_animated_sprite_2d_path" getter="get_animated_sprite_2d_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="animated_sprite_3d_path" type="NodePath" setter="set_animated_sprite_3d_path" getter="get_animated_sprite_3d_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="animation_player_path" type="NodePath" setter="set_animation_player_path" getter="get_animation_player_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="audio_player_2d_path" type="NodePath" setter="set_audio_player_2d_path" getter="get_audio_player_2d_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="audio_player_3d_path" type="NodePath" setter="set_audio_player_3d_path" getter="get_audio_player_3d_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="character_body_2d_path" type="NodePath" setter="set_character_body_2d_path" getter="get_character_body_2d_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="character_body_3d_path" type="NodePath" setter="set_character_body_3d_path" getter="get_character_body_3d_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="sensor_ray_2d_path" type="NodePath" setter="set_sensor_ray_2d_path" getter="get_sensor_ray_2d_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="sensor_ray_3d_path" type="NodePath" setter="set_sensor_ray_3d_path" getter="get_sensor_ray_3d_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="sensor_shape_2d_path" type="NodePath" setter="set_sensor_shape_2d_path" getter="get_sensor_shape_2d_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="sensor_shape_3d_path" type="NodePath" setter="set_sensor_shape_3d_path" getter="get_sensor_shape_3d_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="spawn_marker_2d_path" type="NodePath" setter="set_spawn_marker_2d_path" getter="get_spawn_marker_2d_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="spawn_marker_3d_path" type="NodePath" setter="set_spawn_marker_3d_path" getter="get_spawn_marker_3d_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="target_area_2d_path" type="NodePath" setter="set_target_area_2d_path" getter="get_target_area_2d_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="target_area_3d_path" type="NodePath" setter="set_target_area_3d_path" getter="get_target_area_3d_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="vfx_particles_2d_path" type="NodePath" setter="set_vfx_particles_2d_path" getter="get_vfx_particles_2d_path" default="NodePath(&quot;&quot;)">
+		</member>
+		<member name="vfx_particles_3d_path" type="NodePath" setter="set_vfx_particles_3d_path" getter="get_vfx_particles_3d_path" default="NodePath(&quot;&quot;)">
 		</member>
 	</members>
 	<signals>

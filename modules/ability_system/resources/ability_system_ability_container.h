@@ -37,12 +37,20 @@ class AbilitySystemAbility;
 class AbilitySystemEffect;
 class AbilitySystemCue;
 
+/**
+ * AbilitySystemAbilityContainer
+ *
+ * Acts as an Archetype or Preset for actors (Player, NPCs, Enemies).
+ * This is a designer-facing Resource used to define a collection of abilities,
+ * innate effects, and initial attributes in a single reusable asset.
+ */
 class AbilitySystemAbilityContainer : public Resource {
 	GDCLASS(AbilitySystemAbilityContainer, Resource);
 
 private:
 	TypedArray<AbilitySystemAbility> granted_abilities;
 	TypedArray<AbilitySystemEffect> innate_effects;
+	TypedArray<StringName> innate_tags;
 	Dictionary initial_attributes;
 	TypedArray<AbilitySystemCue> cues;
 
@@ -55,6 +63,9 @@ public:
 
 	void set_innate_effects(const TypedArray<AbilitySystemEffect> &p_effects) { innate_effects = p_effects; }
 	TypedArray<AbilitySystemEffect> get_innate_effects() const { return innate_effects; }
+
+	void set_innate_tags(const TypedArray<StringName> &p_tags) { innate_tags = p_tags; }
+	TypedArray<StringName> get_innate_tags() const { return innate_tags; }
 
 	void set_initial_attributes(const Dictionary &p_attributes) { initial_attributes = p_attributes; }
 	Dictionary get_initial_attributes() const { return initial_attributes; }

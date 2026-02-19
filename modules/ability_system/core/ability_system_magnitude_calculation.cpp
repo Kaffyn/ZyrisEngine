@@ -42,13 +42,15 @@ void AbilitySystemMagnitudeCalculation::_bind_methods() {
 float AbilitySystemMagnitudeCalculation::get_source_attribute_value(Ref<AbilitySystemEffectSpec> p_spec, const StringName &p_attribute) const {
 	ERR_FAIL_COND_V(p_spec.is_null(), 0.0f);
 	AbilitySystemComponent *source = p_spec->get_source_component();
-	return source ? source->get_attribute_value(p_attribute) : 0.0f;
+	ERR_FAIL_NULL_V(source, 0.0f);
+	return source->get_attribute_value(p_attribute);
 }
 
 float AbilitySystemMagnitudeCalculation::get_target_attribute_value(Ref<AbilitySystemEffectSpec> p_spec, const StringName &p_attribute) const {
 	ERR_FAIL_COND_V(p_spec.is_null(), 0.0f);
 	AbilitySystemComponent *target = p_spec->get_target_component();
-	return target ? target->get_attribute_value(p_attribute) : 0.0f;
+	ERR_FAIL_NULL_V(target, 0.0f);
+	return target->get_attribute_value(p_attribute);
 }
 
 AbilitySystemMagnitudeCalculation::AbilitySystemMagnitudeCalculation() {

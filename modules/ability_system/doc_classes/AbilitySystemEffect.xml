@@ -65,6 +65,8 @@
 		<member name="granted_tags" type="StringName[]" setter="set_granted_tags" getter="get_granted_tags" default="[]">
 			Tags granted to the actor while this effect is active.
 		</member>
+		<member name="modifiers" type="int" setter="set_modifiers_count" getter="get_modifiers_count" default="0">
+		</member>
 		<member name="removed_tags" type="StringName[]" setter="set_removed_tags" getter="get_removed_tags" default="[]">
 			Tags removed from the actor when this effect is applied.
 		</member>

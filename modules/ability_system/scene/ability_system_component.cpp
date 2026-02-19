@@ -58,11 +58,85 @@
 #include "scene/animation/animation_player.h"
 
 void AbilitySystemComponent::_bind_methods() {
+	// Bind NodePath properties for inspector
+	ADD_GROUP("Sibling Cache (2D)", "");
+	ClassDB::bind_method(D_METHOD("set_character_body_2d_path", "path"), &AbilitySystemComponent::set_character_body_2d_path);
+	ClassDB::bind_method(D_METHOD("get_character_body_2d_path"), &AbilitySystemComponent::get_character_body_2d_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "character_body_2d_path"), "set_character_body_2d_path", "get_character_body_2d_path");
+
+	ClassDB::bind_method(D_METHOD("set_animation_player_path", "path"), &AbilitySystemComponent::set_animation_player_path);
+	ClassDB::bind_method(D_METHOD("get_animation_player_path"), &AbilitySystemComponent::get_animation_player_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "animation_player_path"), "set_animation_player_path", "get_animation_player_path");
+
+	ClassDB::bind_method(D_METHOD("set_audio_player_2d_path", "path"), &AbilitySystemComponent::set_audio_player_2d_path);
+	ClassDB::bind_method(D_METHOD("get_audio_player_2d_path"), &AbilitySystemComponent::get_audio_player_2d_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "audio_player_2d_path"), "set_audio_player_2d_path", "get_audio_player_2d_path");
+
+	ClassDB::bind_method(D_METHOD("set_target_area_2d_path", "path"), &AbilitySystemComponent::set_target_area_2d_path);
+	ClassDB::bind_method(D_METHOD("get_target_area_2d_path"), &AbilitySystemComponent::get_target_area_2d_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "target_area_2d_path"), "set_target_area_2d_path", "get_target_area_2d_path");
+
+	ClassDB::bind_method(D_METHOD("set_vfx_particles_2d_path", "path"), &AbilitySystemComponent::set_vfx_particles_2d_path);
+	ClassDB::bind_method(D_METHOD("get_vfx_particles_2d_path"), &AbilitySystemComponent::get_vfx_particles_2d_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "vfx_particles_2d_path"), "set_vfx_particles_2d_path", "get_vfx_particles_2d_path");
+
+	ClassDB::bind_method(D_METHOD("set_spawn_marker_2d_path", "path"), &AbilitySystemComponent::set_spawn_marker_2d_path);
+	ClassDB::bind_method(D_METHOD("get_spawn_marker_2d_path"), &AbilitySystemComponent::get_spawn_marker_2d_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "spawn_marker_2d_path"), "set_spawn_marker_2d_path", "get_spawn_marker_2d_path");
+
 	ClassDB::bind_method(D_METHOD("give_ability", "ability", "level"), &AbilitySystemComponent::give_ability, DEFVAL(1));
+
+	ADD_GROUP("Sibling Cache (3D)", "");
+	ClassDB::bind_method(D_METHOD("set_character_body_3d_path", "path"), &AbilitySystemComponent::set_character_body_3d_path);
+	ClassDB::bind_method(D_METHOD("get_character_body_3d_path"), &AbilitySystemComponent::get_character_body_3d_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "character_body_3d_path"), "set_character_body_3d_path", "get_character_body_3d_path");
+
+	ClassDB::bind_method(D_METHOD("set_animated_sprite_2d_path", "path"), &AbilitySystemComponent::set_animated_sprite_2d_path);
+	ClassDB::bind_method(D_METHOD("get_animated_sprite_2d_path"), &AbilitySystemComponent::get_animated_sprite_2d_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "animated_sprite_2d_path"), "set_animated_sprite_2d_path", "get_animated_sprite_2d_path");
+
+	ClassDB::bind_method(D_METHOD("set_animated_sprite_3d_path", "path"), &AbilitySystemComponent::set_animated_sprite_3d_path);
+	ClassDB::bind_method(D_METHOD("get_animated_sprite_3d_path"), &AbilitySystemComponent::get_animated_sprite_3d_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "animated_sprite_3d_path"), "set_animated_sprite_3d_path", "get_animated_sprite_3d_path");
+
+	ClassDB::bind_method(D_METHOD("set_audio_player_3d_path", "path"), &AbilitySystemComponent::set_audio_player_3d_path);
+	ClassDB::bind_method(D_METHOD("get_audio_player_3d_path"), &AbilitySystemComponent::get_audio_player_3d_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "audio_player_3d_path"), "set_audio_player_3d_path", "get_audio_player_3d_path");
+
+	ClassDB::bind_method(D_METHOD("set_target_area_3d_path", "path"), &AbilitySystemComponent::set_target_area_3d_path);
+	ClassDB::bind_method(D_METHOD("get_target_area_3d_path"), &AbilitySystemComponent::get_target_area_3d_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "target_area_3d_path"), "set_target_area_3d_path", "get_target_area_3d_path");
+
+	ClassDB::bind_method(D_METHOD("set_sensor_ray_2d_path", "path"), &AbilitySystemComponent::set_sensor_ray_2d_path);
+	ClassDB::bind_method(D_METHOD("get_sensor_ray_2d_path"), &AbilitySystemComponent::get_sensor_ray_2d_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "sensor_ray_2d_path"), "set_sensor_ray_2d_path", "get_sensor_ray_2d_path");
+
+	ClassDB::bind_method(D_METHOD("set_sensor_ray_3d_path", "path"), &AbilitySystemComponent::set_sensor_ray_3d_path);
+	ClassDB::bind_method(D_METHOD("get_sensor_ray_3d_path"), &AbilitySystemComponent::get_sensor_ray_3d_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "sensor_ray_3d_path"), "set_sensor_ray_3d_path", "get_sensor_ray_3d_path");
+
+	ClassDB::bind_method(D_METHOD("set_sensor_shape_2d_path", "path"), &AbilitySystemComponent::set_sensor_shape_2d_path);
+	ClassDB::bind_method(D_METHOD("get_sensor_shape_2d_path"), &AbilitySystemComponent::get_sensor_shape_2d_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "sensor_shape_2d_path"), "set_sensor_shape_2d_path", "get_sensor_shape_2d_path");
+
+	ClassDB::bind_method(D_METHOD("set_sensor_shape_3d_path", "path"), &AbilitySystemComponent::set_sensor_shape_3d_path);
+	ClassDB::bind_method(D_METHOD("get_sensor_shape_3d_path"), &AbilitySystemComponent::get_sensor_shape_3d_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "sensor_shape_3d_path"), "set_sensor_shape_3d_path", "get_sensor_shape_3d_path");
+
+	ClassDB::bind_method(D_METHOD("set_vfx_particles_3d_path", "path"), &AbilitySystemComponent::set_vfx_particles_3d_path);
+	ClassDB::bind_method(D_METHOD("get_vfx_particles_3d_path"), &AbilitySystemComponent::get_vfx_particles_3d_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "vfx_particles_3d_path"), "set_vfx_particles_3d_path", "get_vfx_particles_3d_path");
+
+	ClassDB::bind_method(D_METHOD("set_spawn_marker_3d_path", "path"), &AbilitySystemComponent::set_spawn_marker_3d_path);
+	ClassDB::bind_method(D_METHOD("get_spawn_marker_3d_path"), &AbilitySystemComponent::get_spawn_marker_3d_path);
+	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "spawn_marker_3d_path"), "set_spawn_marker_3d_path", "get_spawn_marker_3d_path");
 	ClassDB::bind_method(D_METHOD("apply_ability_container", "container", "level"), &AbilitySystemComponent::apply_ability_container, DEFVAL(1));
 	ClassDB::bind_method(D_METHOD("try_activate_ability_by_tag", "tag"), &AbilitySystemComponent::try_activate_ability_by_tag);
 	ClassDB::bind_method(D_METHOD("make_outgoing_spec", "effect", "level"), &AbilitySystemComponent::make_outgoing_spec, DEFVAL(1.0f));
 	ClassDB::bind_method(D_METHOD("apply_gameplay_effect_spec_to_self", "spec"), &AbilitySystemComponent::apply_gameplay_effect_spec_to_self);
+	ClassDB::bind_method(D_METHOD("remove_granted_ability", "spec"), &AbilitySystemComponent::remove_granted_ability);
+	ClassDB::bind_method(D_METHOD("remove_active_effect", "spec"), &AbilitySystemComponent::remove_active_effect);
+
 	ClassDB::bind_method(D_METHOD("register_task", "task"), &AbilitySystemComponent::register_task);
 	ClassDB::bind_method(D_METHOD("play_montage", "name"), &AbilitySystemComponent::play_montage);
 	ClassDB::bind_method(D_METHOD("is_montage_playing", "name"), &AbilitySystemComponent::is_montage_playing);
@@ -77,7 +151,10 @@ void AbilitySystemComponent::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("unregister_cue_resource", "tag"), &AbilitySystemComponent::unregister_cue_resource);
 	ClassDB::bind_method(D_METHOD("get_cue_resource", "tag"), &AbilitySystemComponent::get_cue_resource);
 	ClassDB::bind_method(D_METHOD("get_owned_tags"), &AbilitySystemComponent::get_owned_tags);
+	ClassDB::bind_method(D_METHOD("get_active_effects_debug"), &AbilitySystemComponent::get_active_effects_debug);
+	ClassDB::bind_method(D_METHOD("get_granted_abilities_debug"), &AbilitySystemComponent::get_granted_abilities_debug);
 
+	ADD_GROUP("Setup", "");
 	ClassDB::bind_method(D_METHOD("set_ability_container", "container"), &AbilitySystemComponent::set_ability_container);
 	ClassDB::bind_method(D_METHOD("get_ability_container"), &AbilitySystemComponent::get_ability_container);
 
@@ -155,6 +232,9 @@ void AbilitySystemComponent::_process_tasks(float p_delta) {
 
 void AbilitySystemComponent::register_task(Ref<AbilitySystemTask> p_task) {
 	ERR_FAIL_COND(p_task.is_null());
+	if (active_tasks.find(p_task) != -1) {
+		return; // Already active
+	}
 	active_tasks.push_back(p_task);
 	p_task->activate();
 }
@@ -171,10 +251,37 @@ void AbilitySystemComponent::_remove_effect_at_index(int p_idx) {
 
 	active_effects.remove_at(p_idx);
 	emit_signal("effect_removed", spec);
-	// Note: Caller is responsible for calling _update_attribute_current_values() if needed
+
+	// Recalculate if duration/infinite
+	if (effect->get_duration_policy() != AbilitySystemEffect::INSTANT) {
+		// Just to be safe, although removed from active list, we should recalculate attributes?
+		// _update_attribute_current_values() is called by caller or tick.
+		// If called from user code (remove_active_effect), we must update.
+	}
+}
+
+void AbilitySystemComponent::remove_active_effect(Ref<AbilitySystemEffectSpec> p_spec) {
+	ERR_FAIL_COND(p_spec.is_null());
+	int idx = active_effects.find(p_spec);
+	if (idx != -1) {
+		_remove_effect_at_index(idx);
+		_update_attribute_current_values();
+	}
+}
+
+void AbilitySystemComponent::remove_granted_ability(Ref<AbilitySystemAbilitySpec> p_spec) {
+	ERR_FAIL_COND(p_spec.is_null());
+	int idx = granted_abilities.find(p_spec);
+	if (idx != -1) {
+		// If active, end it?
+		// Ideally we check if active. But Spec doesn't track active state properly yet (it has is_active bool but logic is loose).
+		// For now just remove.
+		granted_abilities.remove_at(idx);
+	}
 }
 
 void AbilitySystemComponent::_update_cache() {
+	// Clear all cached references
 	character_body_2d = nullptr;
 	character_body_3d = nullptr;
 	animation_player = nullptr;
@@ -193,65 +300,57 @@ void AbilitySystemComponent::_update_cache() {
 	spawn_marker_2d = nullptr;
 	spawn_marker_3d = nullptr;
 
-	Node *parent = get_parent();
-	if (!parent) {
-		return;
+	// Cache nodes from manual NodePaths
+	if (has_node(character_body_2d_path)) {
+		character_body_2d = Object::cast_to<CharacterBody2D>(get_node(character_body_2d_path));
 	}
-
-	character_body_2d = Object::cast_to<CharacterBody2D>(parent);
-	character_body_3d = Object::cast_to<CharacterBody3D>(parent);
-
-	for (int i = 0; i < parent->get_child_count(); i++) {
-		Node *child = parent->get_child(i);
-		if (child == this) {
-			continue;
-		}
-
-		if (!animation_player) {
-			animation_player = Object::cast_to<AnimationPlayer>(child);
-		}
-		if (!animated_sprite_2d) {
-			animated_sprite_2d = Object::cast_to<AnimatedSprite2D>(child);
-		}
-		if (!animated_sprite_3d) {
-			animated_sprite_3d = Object::cast_to<AnimatedSprite3D>(child);
-		}
-		if (!audio_player_2d) {
-			audio_player_2d = Object::cast_to<AudioStreamPlayer2D>(child);
-		}
-		if (!audio_player_3d) {
-			audio_player_3d = Object::cast_to<AudioStreamPlayer3D>(child);
-		}
-		if (!target_area_2d) {
-			target_area_2d = Object::cast_to<Area2D>(child);
-		}
-		if (!target_area_3d) {
-			target_area_3d = Object::cast_to<Area3D>(child);
-		}
-		if (!sensor_ray_2d) {
-			sensor_ray_2d = Object::cast_to<RayCast2D>(child);
-		}
-		if (!sensor_ray_3d) {
-			sensor_ray_3d = Object::cast_to<RayCast3D>(child);
-		}
-		if (!sensor_shape_2d) {
-			sensor_shape_2d = Object::cast_to<ShapeCast2D>(child);
-		}
-		if (!sensor_shape_3d) {
-			sensor_shape_3d = Object::cast_to<ShapeCast3D>(child);
-		}
-		if (!vfx_particles_2d) {
-			vfx_particles_2d = Object::cast_to<GPUParticles2D>(child);
-		}
-		if (!vfx_particles_3d) {
-			vfx_particles_3d = Object::cast_to<GPUParticles3D>(child);
-		}
-		if (!spawn_marker_2d) {
-			spawn_marker_2d = Object::cast_to<Marker2D>(child);
-		}
-		if (!spawn_marker_3d) {
-			spawn_marker_3d = Object::cast_to<Marker3D>(child);
-		}
+	if (has_node(character_body_3d_path)) {
+		character_body_3d = Object::cast_to<CharacterBody3D>(get_node(character_body_3d_path));
+	}
+	if (has_node(animation_player_path)) {
+		animation_player = Object::cast_to<AnimationPlayer>(get_node(animation_player_path));
+	}
+	if (has_node(animated_sprite_2d_path)) {
+		animated_sprite_2d = Object::cast_to<AnimatedSprite2D>(get_node(animated_sprite_2d_path));
+	}
+	if (has_node(animated_sprite_3d_path)) {
+		animated_sprite_3d = Object::cast_to<AnimatedSprite3D>(get_node(animated_sprite_3d_path));
+	}
+	if (has_node(audio_player_2d_path)) {
+		audio_player_2d = Object::cast_to<AudioStreamPlayer2D>(get_node(audio_player_2d_path));
+	}
+	if (has_node(audio_player_3d_path)) {
+		audio_player_3d = Object::cast_to<AudioStreamPlayer3D>(get_node(audio_player_3d_path));
+	}
+	if (has_node(target_area_2d_path)) {
+		target_area_2d = Object::cast_to<Area2D>(get_node(target_area_2d_path));
+	}
+	if (has_node(target_area_3d_path)) {
+		target_area_3d = Object::cast_to<Area3D>(get_node(target_area_3d_path));
+	}
+	if (has_node(sensor_ray_2d_path)) {
+		sensor_ray_2d = Object::cast_to<RayCast2D>(get_node(sensor_ray_2d_path));
+	}
+	if (has_node(sensor_ray_3d_path)) {
+		sensor_ray_3d = Object::cast_to<RayCast3D>(get_node(sensor_ray_3d_path));
+	}
+	if (has_node(sensor_shape_2d_path)) {
+		sensor_shape_2d = Object::cast_to<ShapeCast2D>(get_node(sensor_shape_2d_path));
+	}
+	if (has_node(sensor_shape_3d_path)) {
+		sensor_shape_3d = Object::cast_to<ShapeCast3D>(get_node(sensor_shape_3d_path));
+	}
+	if (has_node(vfx_particles_2d_path)) {
+		vfx_particles_2d = Object::cast_to<GPUParticles2D>(get_node(vfx_particles_2d_path));
+	}
+	if (has_node(vfx_particles_3d_path)) {
+		vfx_particles_3d = Object::cast_to<GPUParticles3D>(get_node(vfx_particles_3d_path));
+	}
+	if (has_node(spawn_marker_2d_path)) {
+		spawn_marker_2d = Object::cast_to<Marker2D>(get_node(spawn_marker_2d_path));
+	}
+	if (has_node(spawn_marker_3d_path)) {
+		spawn_marker_3d = Object::cast_to<Marker3D>(get_node(spawn_marker_3d_path));
 	}
 }
 
@@ -285,7 +384,13 @@ void AbilitySystemComponent::apply_ability_container(Ref<AbilitySystemAbilityCon
 		}
 	}
 
-	// 3. Set Initial Attributes
+	// 3. Apply Innate Tags
+	TypedArray<StringName> tags = p_container->get_innate_tags();
+	for (int i = 0; i < tags.size(); i++) {
+		add_tag(tags[i]);
+	}
+
+	// 4. Set Initial Attributes
 	Dictionary attributes = p_container->get_initial_attributes();
 	Array keys = attributes.keys();
 	for (int i = 0; i < keys.size(); i++) {
@@ -294,7 +399,7 @@ void AbilitySystemComponent::apply_ability_container(Ref<AbilitySystemAbilityCon
 		set_attribute_base_value(key, value);
 	}
 
-	// 4. Register Cues
+	// 5. Register Cues
 	TypedArray<AbilitySystemCue> cues = p_container->get_cues();
 	for (int i = 0; i < cues.size(); i++) {
 		Ref<AbilitySystemCue> cue = cues[i];
@@ -311,8 +416,8 @@ bool AbilitySystemComponent::try_activate_ability_by_tag(const StringName &p_tag
 	for (int i = 0; i < granted_abilities.size(); i++) {
 		Ref<AbilitySystemAbilitySpec> spec = granted_abilities[i];
 		if (AbilitySystem::tag_matches(spec->get_ability()->get_ability_tag(), p_tag)) {
-			if (spec->get_ability()->can_activate_ability(this)) {
-				spec->get_ability()->activate_ability(this);
+			if (spec->get_ability()->can_activate_ability(this, spec)) {
+				spec->get_ability()->activate_ability(this, spec);
 				emit_signal("ability_activated", spec);
 				return true;
 			}
@@ -453,15 +558,13 @@ Ref<AbilitySystemCue> AbilitySystemComponent::get_cue_resource(const StringName 
 }
 
 void AbilitySystemComponent::add_tag(const StringName &p_tag) {
-	if (!owned_tags->has_tag(p_tag, true)) {
-		owned_tags->add_tag(p_tag);
+	if (owned_tags->add_tag(p_tag)) {
 		emit_signal("tag_changed", p_tag, true);
 	}
 }
 
 void AbilitySystemComponent::remove_tag(const StringName &p_tag) {
-	if (owned_tags->has_tag(p_tag, true)) {
-		owned_tags->remove_tag(p_tag);
+	if (owned_tags->remove_tag(p_tag)) {
 		emit_signal("tag_changed", p_tag, false);
 	}
 }
@@ -492,6 +595,9 @@ void AbilitySystemComponent::add_attribute_set(Ref<AbilitySystemAttributeSet> p_
 	ERR_FAIL_COND(p_set.is_null());
 	attribute_sets.push_back(p_set);
 	// Connect to changed signals
+	if (p_set->is_connected("attribute_changed", callable_mp(this, &AbilitySystemComponent::_on_attribute_set_attribute_changed))) {
+		return; // Already connected
+	}
 	p_set->connect("attribute_changed", callable_mp(this, &AbilitySystemComponent::_on_attribute_set_attribute_changed));
 }
 
@@ -556,6 +662,22 @@ void AbilitySystemComponent::set_ability_container(Ref<AbilitySystemAbilityConta
 
 Ref<AbilitySystemAbilityContainer> AbilitySystemComponent::get_ability_container() const {
 	return ability_container;
+}
+
+TypedArray<AbilitySystemEffectSpec> AbilitySystemComponent::get_active_effects_debug() const {
+	TypedArray<AbilitySystemEffectSpec> ret;
+	for (int i = 0; i < active_effects.size(); i++) {
+		ret.push_back(active_effects[i]);
+	}
+	return ret;
+}
+
+TypedArray<AbilitySystemAbilitySpec> AbilitySystemComponent::get_granted_abilities_debug() const {
+	TypedArray<AbilitySystemAbilitySpec> ret;
+	for (int i = 0; i < granted_abilities.size(); i++) {
+		ret.push_back(granted_abilities[i]);
+	}
+	return ret;
 }
 
 Dictionary AbilitySystemComponent::get_net_state() const {

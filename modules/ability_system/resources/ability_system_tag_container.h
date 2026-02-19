@@ -37,7 +37,7 @@
 class AbilitySystemTagContainer : public RefCounted {
 	GDCLASS(AbilitySystemTagContainer, RefCounted);
 
-	HashSet<StringName> tags;
+	HashMap<StringName, int> tags;
 
 protected:
 	static void _bind_methods();
@@ -47,8 +47,8 @@ public:
 	bool has_any_tags(const TypedArray<StringName> &p_tags, bool p_exact = false) const;
 	bool has_all_tags(const TypedArray<StringName> &p_tags, bool p_exact = false) const;
 
-	void add_tag(const StringName &p_tag);
-	void remove_tag(const StringName &p_tag);
+	bool add_tag(const StringName &p_tag);
+	bool remove_tag(const StringName &p_tag);
 	void clear();
 	TypedArray<StringName> get_all_tags() const;
 

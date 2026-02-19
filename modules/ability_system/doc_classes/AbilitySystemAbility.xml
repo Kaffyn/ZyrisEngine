@@ -24,6 +24,7 @@
 		<method name="_activate_ability" qualifiers="virtual">
 			<return type="void" />
 			<param index="0" name="owner" type="Object" />
+			<param index="1" name="spec" type="RefCounted" />
 			<description>
 				Virtual method to implement the ability's logic.
 			</description>
@@ -31,6 +32,7 @@
 		<method name="_can_activate_ability" qualifiers="virtual const">
 			<return type="bool" />
 			<param index="0" name="owner" type="Object" />
+			<param index="1" name="spec" type="RefCounted" />
 			<description>
 				Virtual method to implement custom activation requirements.
 			</description>
@@ -38,6 +40,7 @@
 		<method name="_on_end_ability" qualifiers="virtual">
 			<return type="void" />
 			<param index="0" name="owner" type="Object" />
+			<param index="1" name="spec" type="RefCounted" />
 			<description>
 				Virtual method called when the ability ends.
 			</description>
@@ -45,6 +48,7 @@
 		<method name="activate_ability">
 			<return type="void" />
 			<param index="0" name="owner" type="AbilitySystemComponent" />
+			<param index="1" name="spec" type="AbilitySystemAbilitySpec" default="null" />
 			<description>
 				Starts the ability execution.
 			</description>
@@ -52,6 +56,7 @@
 		<method name="can_activate_ability" qualifiers="const">
 			<return type="bool" />
 			<param index="0" name="owner" type="AbilitySystemComponent" />
+			<param index="1" name="spec" type="AbilitySystemAbilitySpec" default="null" />
 			<description>
 				Returns true if the ability can be activated by the pointer owner.
 			</description>
@@ -59,6 +64,7 @@
 		<method name="end_ability">
 			<return type="void" />
 			<param index="0" name="owner" type="AbilitySystemComponent" />
+			<param index="1" name="spec" type="AbilitySystemAbilitySpec" default="null" />
 			<description>
 				Ends the ability execution and cleans up tags.
 			</description>

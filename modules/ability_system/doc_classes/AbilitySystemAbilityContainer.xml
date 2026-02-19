@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="AbilitySystemAbilityContainer" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
 	<brief_description>
-		Master container for an Ability System configuration, grouping abilities, effects, and attributes.
+		Resource used to define an actor archetype (abilities, effects, and attributes).
 	</brief_description>
 	<description>
-		[AbilitySystemAbilityContainer] serves as a data definition for a character archetype or class configuration. It holds references to:
-		- Abilities to be granted.
-		- Innate effects (passives) to be applied.
-		- Initial attribute values (base stats).
-		- Gameplay Cues to be registered.
-
-		This resource is typically applied to an [AbilitySystemComponent] upon initialization or class change.
+		[AbilitySystemAbilityContainer] acts as an [b]Archetype[/b] or [b]Preset[/b] for actors. It allows designers to define a specific collection of abilities, innate effects, initial attributes, and cues in a single Resource asset.
+		By assigning different containers to an [AbilitySystemComponent], you can easily create distinct actor types (e.g., Player, Zombie, Woodcutter NPC) with unique gameplay traits without changing the underlying node structure or code.
 	</description>
 	<tutorials>
 	</tutorials>
@@ -27,6 +22,9 @@
 		</member>
 		<member name="innate_effects" type="AbilitySystemEffect[]" setter="set_innate_effects" getter="get_innate_effects" default="[]">
 			List of [AbilitySystemEffect] resources that will be applied automatically (usually Infinite duration).
+		</member>
+		<member name="innate_tags" type="StringName[]" setter="set_innate_tags" getter="get_innate_tags" default="[]">
+			List of Gameplay Tags granted permanently by this archetype.
 		</member>
 	</members>
 </class>

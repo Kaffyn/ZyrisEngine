@@ -52,6 +52,10 @@ Ref<AbilitySystemTask> AbilitySystemTask::wait_delay(AbilitySystemComponent *p_o
 	task->set_owner(p_owner);
 	task->task_type = TASK_WAIT_DELAY;
 	task->delay_remaining = p_delay;
+
+	if (p_owner) {
+		p_owner->register_task(task);
+	}
 	return task;
 }
 
@@ -61,10 +65,30 @@ Ref<AbilitySystemTask> AbilitySystemTask::play_montage(AbilitySystemComponent *p
 	task->set_owner(p_owner);
 	task->task_type = TASK_PLAY_MONTAGE;
 	task->animation_name = p_anim;
+
+	if (p_owner) {
+		p_owner->register_task(task);
+	}
 	return task;
 }
 
+AbilitySystemComponent *AbilitySystemTask::get_owner() const {
+	if (owner_id.is_null()) {
+		return nullptr;
+	}
+	return Object::cast_to<AbilitySystemComponent>(ObjectDB::get_instance(owner_id));
+}
+
+void AbilitySystemTask::set_owner(AbilitySystemComponent *p_owner) {
+	if (p_owner) {
+		owner_id = p_owner->get_instance_id();
+	} else {
+		owner_id = ObjectID();
+	}
+}
+
 void AbilitySystemTask::activate() {
+	AbilitySystemComponent *owner = get_owner();
 	if (task_type == TASK_PLAY_MONTAGE && owner) {
 		owner->play_montage(animation_name);
 		started = true;
@@ -90,6 +114,7 @@ void AbilitySystemTask::tick(float p_delta) {
 			if (!started) {
 				break;
 			}
+			AbilitySystemComponent *owner = get_owner();
 			if (!owner) {
 				end_task();
 				break;
