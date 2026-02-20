@@ -52,6 +52,7 @@
 #ifdef TOOLS_ENABLED
 #include "editor/editor_node.h"
 #include "modules/ability_system/editor/ability_system_editor_plugin.h"
+#include "servers/display_server.h"
 #endif
 
 static AbilitySystem *ability_system_singleton = nullptr;
@@ -85,7 +86,12 @@ void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 #ifdef TOOLS_ENABLED
 	if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
 		ClassDB::register_class<AbilitySystemEditorPlugin>();
-		EditorPlugins::add_by_type<AbilitySystemEditorPlugin>();
+
+		// Only add the plugin if we have a display server (not headless)
+		if (DisplayServer::get_singleton() && DisplayServer::get_singleton()->get_name() != "headless") {
+			EditorPlugins::add_by_type<AbilitySystemEditorPlugin>();
+		}
+
 		register_ability_system_script_templates();
 	}
 #endif
