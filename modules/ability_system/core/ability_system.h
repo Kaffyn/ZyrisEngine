@@ -49,6 +49,11 @@ class AbilitySystem : public Object {
 	static AbilitySystem *singleton;
 
 	HashSet<StringName> registered_tags;
+	HashSet<StringName> registered_attributes;
+
+	void _save_to_settings();
+	void _load_from_settings();
+
 
 protected:
 	static void _bind_methods();
@@ -60,6 +65,11 @@ public:
 	bool is_tag_registered(const StringName &p_tag) const;
 	void unregister_tag(const StringName &p_tag);
 	TypedArray<StringName> get_registered_tags() const;
+
+	void register_attribute(const StringName &p_attr);
+	bool is_attribute_registered(const StringName &p_attr) const;
+	void unregister_attribute(const StringName &p_attr);
+	TypedArray<StringName> get_registered_attributes() const;
 
 	// Helper to check if a tag matches another (hierarchical)
 	static bool tag_matches(const StringName &p_tag, const StringName &p_match_against, bool p_exact = false);

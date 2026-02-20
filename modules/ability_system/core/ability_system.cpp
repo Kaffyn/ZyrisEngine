@@ -39,12 +39,18 @@ void AbilitySystem::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("unregister_tag", "tag"), &AbilitySystem::unregister_tag);
 	ClassDB::bind_method(D_METHOD("get_registered_tags"), &AbilitySystem::get_registered_tags);
 
+	ClassDB::bind_method(D_METHOD("register_attribute", "attribute"), &AbilitySystem::register_attribute);
+	ClassDB::bind_method(D_METHOD("is_attribute_registered", "attribute"), &AbilitySystem::is_attribute_registered);
+	ClassDB::bind_method(D_METHOD("unregister_attribute", "attribute"), &AbilitySystem::unregister_attribute);
+	ClassDB::bind_method(D_METHOD("get_registered_attributes"), &AbilitySystem::get_registered_attributes);
+
 	ClassDB::bind_static_method("AbilitySystem", D_METHOD("tag_matches", "tag", "match_against", "exact"), &AbilitySystem::tag_matches, DEFVAL(false));
 }
 
 void AbilitySystem::register_tag(const StringName &p_tag) {
 	if (!registered_tags.has(p_tag)) {
 		registered_tags.insert(p_tag);
+		_save_to_settings();
 	}
 }
 
@@ -53,7 +59,36 @@ bool AbilitySystem::is_tag_registered(const StringName &p_tag) const {
 }
 
 void AbilitySystem::unregister_tag(const StringName &p_tag) {
-	registered_tags.erase(p_tag);
+	if (registered_tags.has(p_tag)) {
+		registered_tags.erase(p_tag);
+		_save_to_settings();
+	}
+}
+
+void AbilitySystem::register_attribute(const StringName &p_attr) {
+	if (!registered_attributes.has(p_attr)) {
+		registered_attributes.insert(p_attr);
+		_save_to_settings();
+	}
+}
+
+bool AbilitySystem::is_attribute_registered(const StringName &p_attr) const {
+	return registered_attributes.has(p_attr);
+}
+
+void AbilitySystem::unregister_attribute(const StringName &p_attr) {
+	if (registered_attributes.has(p_attr)) {
+		registered_attributes.erase(p_attr);
+		_save_to_settings();
+	}
+}
+
+TypedArray<StringName> AbilitySystem::get_registered_attributes() const {
+	TypedArray<StringName> res;
+	for (const StringName &E : registered_attributes) {
+		res.push_back(E);
+	}
+	return res;
 }
 
 TypedArray<StringName> AbilitySystem::get_registered_tags() const {
@@ -83,8 +118,34 @@ bool AbilitySystem::tag_matches(const StringName &p_tag, const StringName &p_mat
 	return false;
 }
 
+void AbilitySystem::_save_to_settings() {
+	TypedArray<StringName> tags = get_registered_tags();
+	TypedArray<StringName> attributes = get_registered_attributes();
+
+	ProjectSettings::get_singleton()->set_setting("ability_system/config/tags", tags);
+	ProjectSettings::get_singleton()->set_setting("ability_system/config/attributes", attributes);
+	ProjectSettings::get_singleton()->save();
+}
+
+void AbilitySystem::_load_from_settings() {
+	if (ProjectSettings::get_singleton()->has_setting("ability_system/config/tags")) {
+		TypedArray<StringName> tags = ProjectSettings::get_singleton()->get_setting("ability_system/config/tags");
+		for (int i = 0; i < tags.size(); i++) {
+			registered_tags.insert(tags[i]);
+		}
+	}
+
+	if (ProjectSettings::get_singleton()->has_setting("ability_system/config/attributes")) {
+		TypedArray<StringName> attributes = ProjectSettings::get_singleton()->get_setting("ability_system/config/attributes");
+		for (int i = 0; i < attributes.size(); i++) {
+			registered_attributes.insert(attributes[i]);
+		}
+	}
+}
+
 AbilitySystem::AbilitySystem() {
 	singleton = this;
+	_load_from_settings();
 }
 
 AbilitySystem::~AbilitySystem() {
