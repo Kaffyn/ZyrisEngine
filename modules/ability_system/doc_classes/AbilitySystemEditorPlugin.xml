@@ -4,7 +4,11 @@
 		Editor integration for the Ability System.
 	</brief_description>
 	<description>
-		[AbilitySystemEditorPlugin] provides custom inspectors and UI for managing gameplay tags and attributes within the Zyris Editor.
+		[AbilitySystemEditorPlugin] provides custom inspectors and UI tools for managing gameplay tags and attributes within the Zyris Editor.
+		Features include:
+		- [b]Ability System Dashboard:[/b] A real-time debugging panel in the bottom dock.
+		- [b]Visual Archetype Editor:[/b] A dedicated modal for configuring [AbilitySystemAbilityContainer] resources.
+		- [b]Custom Property Editors:[/b] Searchable dropdowns for attributes and advanced search dialogs for tags.
 	</description>
 	<tutorials>
 	</tutorials>

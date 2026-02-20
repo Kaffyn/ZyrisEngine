@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  ability_system.h                                                      */
+/*  ability_system_attribute.h                                             */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -30,49 +30,31 @@
 
 #pragma once
 
-#include "core/object/class_db.h"
-#include "core/object/object.h"
-#include "core/templates/hash_map.h"
-#include "core/templates/hash_set.h"
-#include "core/variant/typed_array.h"
-
-class AbilitySystemCue;
+#include "core/io/resource.h"
 
 /**
- * AbilitySystem
- * The central singleton for the Ability System module.
- * Primarily manages the Gameplay Tag registry for the project.
+ * AbilitySystemAttribute
+ * Resource that defines a specific attribute (e.g., Health, Mana).
  */
-class AbilitySystem : public Object {
-	GDCLASS(AbilitySystem, Object);
+class AbilitySystemAttribute : public Resource {
+	GDCLASS(AbilitySystemAttribute, Resource);
 
-	static AbilitySystem *singleton;
-
-	HashSet<StringName> registered_tags;
-	HashSet<StringName> registered_attributes;
-
-	void _save_to_settings();
-	void _load_from_settings();
+	StringName attribute_name; // The unique identifier (e.g., stats.health)
+	String display_name;
+	String description;
 
 protected:
 	static void _bind_methods();
 
 public:
-	static AbilitySystem *get_singleton() { return singleton; }
+	void set_attribute_name(const StringName &p_name) { attribute_name = p_name; }
+	StringName get_attribute_name() const { return attribute_name; }
 
-	void register_tag(const StringName &p_tag);
-	bool is_tag_registered(const StringName &p_tag) const;
-	void unregister_tag(const StringName &p_tag);
-	TypedArray<StringName> get_registered_tags() const;
+	void set_display_name(const String &p_name) { display_name = p_name; }
+	String get_display_name() const { return display_name; }
 
-	void register_attribute(const StringName &p_attr);
-	bool is_attribute_registered(const StringName &p_attr) const;
-	void unregister_attribute(const StringName &p_attr);
-	TypedArray<StringName> get_registered_attributes() const;
+	void set_description(const String &p_desc) { description = p_desc; }
+	String get_description() const { return description; }
 
-	// Helper to check if a tag matches another (hierarchical)
-	static bool tag_matches(const StringName &p_tag, const StringName &p_match_against, bool p_exact = false);
-
-	AbilitySystem();
-	~AbilitySystem();
+	AbilitySystemAttribute();
 };

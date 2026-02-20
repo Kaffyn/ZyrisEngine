@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="AbilitySystem" inherits="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
 	<brief_description>
-		Central authority for Gameplay Tags.
+		Central authority for Gameplay Tags and Attributes.
 	</brief_description>
 	<description>
-		[AbilitySystem] is a singleton that manages the global registry of gameplay tags for the project.
+		[AbilitySystem] is a singleton that manages the global registry of gameplay tags and attributes for the project.
 	</description>
 	<tutorials>
 	</tutorials>
@@ -43,6 +43,33 @@
 			<param index="0" name="tag" type="StringName" />
 			<description>
 				Unregisters a tag.
+			</description>
+		</method>
+		<method name="get_registered_attributes" qualifiers="const">
+			<return type="StringName[]" />
+			<description>
+				Returns all attributes registered in the system.
+			</description>
+		</method>
+		<method name="is_attribute_registered" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="attribute" type="StringName" />
+			<description>
+				Checks if an attribute is registered.
+			</description>
+		</method>
+		<method name="register_attribute">
+			<return type="void" />
+			<param index="0" name="attribute" type="StringName" />
+			<description>
+				Registers a new attribute globally.
+			</description>
+		</method>
+		<method name="unregister_attribute">
+			<return type="void" />
+			<param index="0" name="attribute" type="StringName" />
+			<description>
+				Unregisters an attribute.
 			</description>
 		</method>
 	</methods>

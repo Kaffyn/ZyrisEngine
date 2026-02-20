@@ -6,6 +6,7 @@
 	<description>
 		[AbilitySystemAbilityContainer] acts as an [b]Archetype[/b] or [b]Preset[/b] for actors. It allows designers to define a specific collection of abilities, innate effects, initial attributes, and cues in a single Resource asset.
 		By assigning different containers to an [AbilitySystemComponent], you can easily create distinct actor types (e.g., Player, Zombie, Woodcutter NPC) with unique gameplay traits without changing the underlying node structure or code.
+		[b]Note:[/b] This resource can be configured visually using the [b]Visual Archetype Editor[/b] provided by the [AbilitySystemEditorPlugin].
 	</description>
 	<tutorials>
 	</tutorials>

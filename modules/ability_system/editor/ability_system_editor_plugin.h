@@ -34,9 +34,9 @@
 #include "editor/plugins/editor_plugin.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/button.h"
+#include "scene/gui/dialogs.h"
 #include "scene/gui/line_edit.h"
 #include "scene/gui/tree.h"
-#include "scene/gui/dialogs.h"
 
 /**
  * EditorPropertyGameplayTag
@@ -114,7 +114,6 @@ public:
 	EditorPropertyAbilityAttribute();
 };
 
-
 /**
  * AbilitySystemInspectorPlugin
  * Responsible for intercepting and customizing how Ability System properties
@@ -141,13 +140,13 @@ class AbilitySystemEditorPlugin : public EditorPlugin {
 	AbilitySystemDashboard *dashboard = nullptr;
 	AbilitySystemArchetypeEditor *archetype_editor = nullptr;
 
-protected:
-	void _notification(int p_what);
+	class EditorFileSystemDirectory;
+	void _scan_dir(EditorFileSystemDirectory *p_dir, HashSet<StringName> &r_tags, HashSet<StringName> &r_attrs);
+	void _rescan_resources();
 
 public:
 	virtual bool handles(Object *p_object) const override;
 	virtual void edit(Object *p_object) override;
-	virtual void make_visible(bool p_visible) override;
 	virtual String get_plugin_name() const override { return "AbilitySystem"; }
 
 	AbilitySystemEditorPlugin();
@@ -192,5 +191,3 @@ public:
 	void set_container(Ref<AbilitySystemAbilityContainer> p_container);
 	AbilitySystemArchetypeEditor();
 };
-
-

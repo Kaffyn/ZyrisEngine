@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  ability_system.h                                                      */
+/*  ability_system_attribute.cpp                                           */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,51 +28,22 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#include "ability_system_attribute.h"
 
-#include "core/object/class_db.h"
-#include "core/object/object.h"
-#include "core/templates/hash_map.h"
-#include "core/templates/hash_set.h"
-#include "core/variant/typed_array.h"
+void AbilitySystemAttribute::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("set_attribute_name", "name"), &AbilitySystemAttribute::set_attribute_name);
+	ClassDB::bind_method(D_METHOD("get_attribute_name"), &AbilitySystemAttribute::get_attribute_name);
 
-class AbilitySystemCue;
+	ClassDB::bind_method(D_METHOD("set_display_name", "name"), &AbilitySystemAttribute::set_display_name);
+	ClassDB::bind_method(D_METHOD("get_display_name"), &AbilitySystemAttribute::get_display_name);
 
-/**
- * AbilitySystem
- * The central singleton for the Ability System module.
- * Primarily manages the Gameplay Tag registry for the project.
- */
-class AbilitySystem : public Object {
-	GDCLASS(AbilitySystem, Object);
+	ClassDB::bind_method(D_METHOD("set_description", "description"), &AbilitySystemAttribute::set_description);
+	ClassDB::bind_method(D_METHOD("get_description"), &AbilitySystemAttribute::get_description);
 
-	static AbilitySystem *singleton;
+	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "attribute_name"), "set_attribute_name", "get_attribute_name");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "display_name"), "set_display_name", "get_display_name");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "description", PROPERTY_HINT_MULTILINE_TEXT), "set_description", "get_description");
+}
 
-	HashSet<StringName> registered_tags;
-	HashSet<StringName> registered_attributes;
-
-	void _save_to_settings();
-	void _load_from_settings();
-
-protected:
-	static void _bind_methods();
-
-public:
-	static AbilitySystem *get_singleton() { return singleton; }
-
-	void register_tag(const StringName &p_tag);
-	bool is_tag_registered(const StringName &p_tag) const;
-	void unregister_tag(const StringName &p_tag);
-	TypedArray<StringName> get_registered_tags() const;
-
-	void register_attribute(const StringName &p_attr);
-	bool is_attribute_registered(const StringName &p_attr) const;
-	void unregister_attribute(const StringName &p_attr);
-	TypedArray<StringName> get_registered_attributes() const;
-
-	// Helper to check if a tag matches another (hierarchical)
-	static bool tag_matches(const StringName &p_tag, const StringName &p_match_against, bool p_exact = false);
-
-	AbilitySystem();
-	~AbilitySystem();
-};
+AbilitySystemAttribute::AbilitySystemAttribute() {
+}

@@ -41,6 +41,7 @@
 #include "modules/ability_system/core/ability_system_task.h"
 #include "modules/ability_system/resources/ability_system_ability.h"
 #include "modules/ability_system/resources/ability_system_ability_container.h"
+#include "modules/ability_system/resources/ability_system_attribute.h"
 #include "modules/ability_system/resources/ability_system_attribute_set.h"
 #include "modules/ability_system/resources/ability_system_cue.h"
 #include "modules/ability_system/resources/ability_system_effect.h"
@@ -65,6 +66,7 @@ void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 		ClassDB::register_class<AbilitySystemTag>();
 		ClassDB::register_class<AbilitySystemTagContainer>();
 		ClassDB::register_class<AbilitySystemAttributeSet>();
+		ClassDB::register_class<AbilitySystemAttribute>();
 		ClassDB::register_class<AbilitySystemAbilityContainer>();
 		ClassDB::register_class<AbilitySystemEffect>();
 		ClassDB::register_class<AbilitySystemEffectSpec>();

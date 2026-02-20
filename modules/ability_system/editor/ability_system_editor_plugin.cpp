@@ -29,9 +29,12 @@
 /**************************************************************************/
 
 #include "ability_system_editor_plugin.h"
+#include "core/io/resource_loader.h"
+#include "editor/editor_file_system.h"
 #include "modules/ability_system/core/ability_system.h"
 #include "modules/ability_system/resources/ability_system_ability.h"
 #include "modules/ability_system/resources/ability_system_ability_container.h"
+#include "modules/ability_system/resources/ability_system_attribute.h"
 #include "modules/ability_system/resources/ability_system_cue.h"
 #include "modules/ability_system/resources/ability_system_effect.h"
 #include "modules/ability_system/scene/ability_system_component.h"
@@ -148,7 +151,6 @@ void EditorPropertyGameplayTag::TagSearchDialog::_activated() {
 	emit_signal("confirmed");
 }
 
-
 // --- EditorPropertyAbilityAttribute ---
 
 EditorPropertyAbilityAttribute::EditorPropertyAbilityAttribute() {
@@ -250,7 +252,6 @@ EditorPropertyAbilityAttribute::AttributeCreateDialog::AttributeCreateDialog() {
 	register_text_enter(name_edit);
 }
 
-
 // --- AbilitySystemInspectorPlugin ---
 
 bool AbilitySystemInspectorPlugin::can_handle(Object *p_object) {
@@ -281,14 +282,6 @@ bool AbilitySystemInspectorPlugin::parse_property(Object *p_object, const Varian
 
 // --- AbilitySystemEditorPlugin ---
 
-void AbilitySystemEditorPlugin::_notification(int p_what) {
-	if (p_what == NOTIFICATION_PROCESS) {
-		if (dashboard && dashboard->is_visible_in_tree()) {
-			// Periodic update during debug
-		}
-	}
-}
-
 void AbilitySystemEditorPlugin::edit(Object *p_object) {
 	AbilitySystemComponent *asc = Object::cast_to<AbilitySystemComponent>(p_object);
 	if (asc) {
@@ -301,14 +294,6 @@ bool AbilitySystemEditorPlugin::handles(Object *p_object) const {
 	return Object::cast_to<AbilitySystemComponent>(p_object) != nullptr;
 }
 
-void AbilitySystemEditorPlugin::make_visible(bool p_visible) {
-	if (p_visible) {
-		// dashboard->show();
-	} else {
-		// dashboard->hide();
-	}
-}
-
 AbilitySystemEditorPlugin::AbilitySystemEditorPlugin() {
 	Ref<AbilitySystemInspectorPlugin> inspector_plugin;
 	inspector_plugin.instantiate();
@@ -319,8 +304,62 @@ AbilitySystemEditorPlugin::AbilitySystemEditorPlugin() {
 
 	archetype_editor = memnew(AbilitySystemArchetypeEditor);
 	get_editor_interface()->get_base_control()->add_child(archetype_editor);
+
+	EditorFileSystem::get_singleton()->connect("filesystem_changed", callable_mp(this, &AbilitySystemEditorPlugin::_rescan_resources));
+	EditorFileSystem::get_singleton()->connect("resources_reload_finished", callable_mp(this, &AbilitySystemEditorPlugin::_rescan_resources));
+
+	_rescan_resources();
 }
 
+void AbilitySystemEditorPlugin::_rescan_resources() {
+	HashSet<StringName> tags;
+	HashSet<StringName> attrs;
+
+	_scan_dir(EditorFileSystem::get_singleton()->get_filesystem(), tags, attrs);
+
+	// Sync with singleton
+	AbilitySystem *as = AbilitySystem::get_singleton();
+	if (as) {
+		// Update tags
+		for (const StringName &E : tags) {
+			as->register_tag(E);
+		}
+		// Update attributes
+		for (const StringName &E : attrs) {
+			as->register_attribute(E);
+		}
+	}
+}
+
+void AbilitySystemEditorPlugin::_scan_dir(EditorFileSystemDirectory *p_dir, HashSet<StringName> &r_tags, HashSet<StringName> &r_attrs) {
+	if (!p_dir) {
+		return;
+	}
+
+	for (int i = 0; i < p_dir->get_subdir_count(); i++) {
+		_scan_dir(p_dir->get_subdir(i), r_tags, r_attrs);
+	}
+
+	for (int i = 0; i < p_dir->get_file_count(); i++) {
+		String type = p_dir->get_file_type(i);
+		if (type == "AbilitySystemAttribute" || type == "AbilitySystemCue") {
+			Ref<Resource> res = ResourceLoader::load(p_dir->get_file_path(i));
+			if (res.is_valid()) {
+				if (type == "AbilitySystemAttribute") {
+					Ref<AbilitySystemAttribute> attr = res;
+					if (attr->get_attribute_name() != StringName()) {
+						r_attrs.insert(attr->get_attribute_name());
+					}
+				} else if (type == "AbilitySystemCue") {
+					Ref<AbilitySystemCue> cue = res;
+					if (cue->get_cue_tag() != StringName()) {
+						r_tags.insert(cue->get_cue_tag());
+					}
+				}
+			}
+		}
+	}
+}
 
 AbilitySystemEditorPlugin::~AbilitySystemEditorPlugin() {
 }
@@ -377,9 +416,8 @@ void AbilitySystemDashboard::_update_debug_view() {
 	attr_root->set_text(0, "Attributes");
 	attr_root->set_selectable(0, false);
 
-	// Instead of iterating all sets, use a unified debug call if available or just the basic ones.
-	// For now, let's keep it simple.
-	Dictionary state = current_asc->get_net_state(); // Handy shortcut for attributes and tags
+	// Use unified net state for attributes and tags.
+	Dictionary state = current_asc->get_net_state();
 	if (state.has("attributes")) {
 		Dictionary attrs = state["attributes"];
 		Array keys = attrs.keys();
@@ -476,4 +514,3 @@ void AbilitySystemArchetypeEditor::_add_attribute() {
 	add_child(popup);
 	popup->popup_centered();
 }
-

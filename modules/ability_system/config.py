@@ -14,6 +14,7 @@ def get_doc_classes():
     return [
         "AbilitySystemComponent",
         "AbilitySystemAttributeSet",
+        "AbilitySystemAttribute",
         "AbilitySystemAbilityContainer",
         "AbilitySystemAbility",
         "AbilitySystemAbilitySpec",

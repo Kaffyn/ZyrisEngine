@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AbilitySystemAttribute" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		Resource defining a singular attribute type.
+	</brief_description>
+	<description>
+		[AbilitySystemAttribute] is a data resource that defines the metadata for a gameplay attribute (e.g., Health, Mana, Strength).
+		These resources are automatically scanned by the engine to populate the global attribute registry.
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="attribute_name" type="StringName" setter="set_attribute_name" getter="get_attribute_name" default="&quot;&quot;">
+			The unique identifier for this attribute. Used in effects and attribute sets.
+		</member>
+		<member name="description" type="String" setter="set_description" getter="get_description" default="&quot;&quot;">
+			A long description of what this attribute represents.
+		</member>
+		<member name="display_name" type="String" setter="set_display_name" getter="get_display_name" default="&quot;&quot;">
+			The human-readable name for UI display.
+		</member>
+	</members>
+</class>
