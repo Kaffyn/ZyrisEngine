@@ -35,8 +35,12 @@
 #include "scene/gui/box_container.h"
 #include "scene/gui/button.h"
 #include "scene/gui/dialogs.h"
+#include "scene/gui/label.h"
 #include "scene/gui/line_edit.h"
 #include "scene/gui/tree.h"
+
+class AbilitySystemComponent;
+class AbilitySystemAbilityContainer;
 
 /**
  * EditorPropertyGameplayTag
@@ -140,8 +144,7 @@ class AbilitySystemEditorPlugin : public EditorPlugin {
 	AbilitySystemDashboard *dashboard = nullptr;
 	AbilitySystemArchetypeEditor *archetype_editor = nullptr;
 
-	class EditorFileSystemDirectory;
-	void _scan_dir(EditorFileSystemDirectory *p_dir, HashSet<StringName> &r_tags, HashSet<StringName> &r_attrs);
+	void _scan_dir(class EditorFileSystemDirectory *p_dir, HashSet<StringName> &r_tags, HashSet<StringName> &r_attrs);
 	void _rescan_resources();
 
 public:
@@ -166,6 +169,9 @@ class AbilitySystemDashboard : public VBoxContainer {
 	Label *header_label = nullptr;
 
 	void _update_debug_view();
+
+protected:
+	void _notification(int p_what);
 
 public:
 	void set_asc(AbilitySystemComponent *p_asc);

@@ -147,6 +147,19 @@
 			<description>
 			</description>
 		</method>
+		<method name="get_net_state" qualifiers="const">
+			<return type="Dictionary" />
+			<description>
+				Returns a compact dictionary representing the current state (attributes and tags) for replication.
+			</description>
+		</method>
+		<method name="apply_net_state">
+			<return type="void" />
+			<param index="0" name="state" type="Dictionary" />
+			<description>
+				Applies a state dictionary (usually received from server) to this component.
+			</description>
+		</method>
 		<method name="remove_tag">
 			<return type="void" />
 			<param index="0" name="tag" type="StringName" />

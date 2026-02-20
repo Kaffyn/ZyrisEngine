@@ -30,13 +30,16 @@
 
 #include "ability_system_editor_plugin.h"
 #include "core/io/resource_loader.h"
-#include "editor/editor_file_system.h"
+#include "editor/editor_interface.h"
+#include "editor/file_system/editor_file_system.h"
 #include "modules/ability_system/core/ability_system.h"
+#include "modules/ability_system/core/ability_system_effect_spec.h"
 #include "modules/ability_system/resources/ability_system_ability.h"
 #include "modules/ability_system/resources/ability_system_ability_container.h"
 #include "modules/ability_system/resources/ability_system_attribute.h"
 #include "modules/ability_system/resources/ability_system_cue.h"
 #include "modules/ability_system/resources/ability_system_effect.h"
+#include "modules/ability_system/resources/ability_system_tag_container.h"
 #include "modules/ability_system/scene/ability_system_component.h"
 #include "scene/gui/popup_menu.h"
 
@@ -44,11 +47,11 @@
 
 EditorPropertyGameplayTag::EditorPropertyGameplayTag() {
 	container = memnew(HBoxContainer);
-	container->set_h_size_flags(SIZE_EXPAND_FILL);
+	container->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	add_child(container);
 
 	tag_button = memnew(Button);
-	tag_button->set_h_size_flags(SIZE_EXPAND_FILL);
+	tag_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	tag_button->set_clip_text(true);
 	tag_button->connect("pressed", callable_mp(this, &EditorPropertyGameplayTag::_button_pressed));
 	container->add_child(tag_button);
@@ -155,11 +158,11 @@ void EditorPropertyGameplayTag::TagSearchDialog::_activated() {
 
 EditorPropertyAbilityAttribute::EditorPropertyAbilityAttribute() {
 	container = memnew(HBoxContainer);
-	container->set_h_size_flags(SIZE_EXPAND_FILL);
+	container->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	add_child(container);
 
 	attr_button = memnew(Button);
-	attr_button->set_h_size_flags(SIZE_EXPAND_FILL);
+	attr_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	attr_button->set_clip_text(true);
 	attr_button->connect("pressed", callable_mp(this, &EditorPropertyAbilityAttribute::_button_pressed));
 	container->add_child(attr_button);
@@ -242,9 +245,9 @@ EditorPropertyAbilityAttribute::AttributeCreateDialog::AttributeCreateDialog() {
 	VBoxContainer *vbox = memnew(VBoxContainer);
 	add_child(vbox);
 
-	Label *label = memnew(Label);
-	label->set_text("Attribute Name:");
-	vbox->add_child(label);
+	Label *name_label = memnew(Label);
+	name_label->set_text("Attribute Name:");
+	vbox->add_child(name_label);
 
 	name_edit = memnew(LineEdit);
 	vbox->add_child(name_edit);
@@ -303,15 +306,22 @@ AbilitySystemEditorPlugin::AbilitySystemEditorPlugin() {
 	add_control_to_bottom_panel(dashboard, "AbilitySystem");
 
 	archetype_editor = memnew(AbilitySystemArchetypeEditor);
-	get_editor_interface()->get_base_control()->add_child(archetype_editor);
+	if (get_editor_interface() && get_editor_interface()->get_base_control()) {
+		get_editor_interface()->get_base_control()->add_child(archetype_editor);
+	}
 
-	EditorFileSystem::get_singleton()->connect("filesystem_changed", callable_mp(this, &AbilitySystemEditorPlugin::_rescan_resources));
-	EditorFileSystem::get_singleton()->connect("resources_reload_finished", callable_mp(this, &AbilitySystemEditorPlugin::_rescan_resources));
-
-	_rescan_resources();
+	if (EditorFileSystem::get_singleton()) {
+		EditorFileSystem::get_singleton()->connect("filesystem_changed", callable_mp(this, &AbilitySystemEditorPlugin::_rescan_resources));
+		EditorFileSystem::get_singleton()->connect("resources_reload_finished", callable_mp(this, &AbilitySystemEditorPlugin::_rescan_resources));
+		_rescan_resources();
+	}
 }
 
 void AbilitySystemEditorPlugin::_rescan_resources() {
+	if (!EditorFileSystem::get_singleton() || !EditorFileSystem::get_singleton()->get_filesystem()) {
+		return;
+	}
+
 	HashSet<StringName> tags;
 	HashSet<StringName> attrs;
 
@@ -377,7 +387,7 @@ AbilitySystemDashboard::AbilitySystemDashboard() {
 	header->add_child(header_label);
 
 	debug_tree = memnew(Tree);
-	debug_tree->set_v_size_flags(SIZE_EXPAND_FILL);
+	debug_tree->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	debug_tree->set_columns(2);
 	debug_tree->set_column_title(0, "Property");
 	debug_tree->set_column_title(1, "Value");
@@ -457,7 +467,7 @@ void AbilitySystemDashboard::_update_debug_view() {
 
 AbilitySystemArchetypeEditor::AbilitySystemArchetypeEditor() {
 	set_title("Visual Archetype Editor");
-	set_custom_minimum_size(Size2(600, 400));
+	set_min_size(Size2i(600, 400));
 
 	main_vbox = memnew(VBoxContainer);
 	add_child(main_vbox);
@@ -471,7 +481,7 @@ AbilitySystemArchetypeEditor::AbilitySystemArchetypeEditor() {
 	toolbar->add_child(add_attr);
 
 	stats_tree = memnew(Tree);
-	stats_tree->set_v_size_flags(SIZE_EXPAND_FILL);
+	stats_tree->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	stats_tree->set_columns(2);
 	stats_tree->set_column_title(0, "Attribute");
 	stats_tree->set_column_title(1, "Base Value");
