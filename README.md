@@ -1,7 +1,6 @@
 # Zyris Engine
 
-[![Godot Version](https://img.shields.io/badge/Godot-4.6--stable-blue.svg)](https://github.com/godotengine/godot)
-[![Zyris Version](https://img.shields.io/badge/4.6.0-zyris.3-orange.svg)](https://github.com/Kaffyn/ZyrisEngine/tree/Zyris)
+[![Zyris Version](https://img.shields.io/badge/Zyris-1.3--AbilitySystem-blue.svg)](https://github.com/godotengine/godot)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.txt)
 
 > [!TIP]
@@ -11,7 +10,7 @@
 Zyris é uma engine open source orientada a sistemas e arquitetura de produção.
 
 Projetada para oferecer controle estrutural, previsibilidade e escalabilidade,
-Zyris se posiciona no mesmo ecossistema de engines como Godot, Unreal Engine e Unity.
+Zyris integra o mesmo ecossistema de engines profissionais como Godot, Unreal Engine e Unity.
 
 ---
 
