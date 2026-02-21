@@ -8,11 +8,30 @@
 > **Leia isto em outros idiomas / Read this in other languages:**
 > [**English**](README.en.md) | [**Português**](README.md)
 
-> [!NOTE]
-> **Por que o README principal está em Português?**
-> O Zyris é uma iniciativa do **MachiTwo** e brasileiros estão contribuindo diretamente com ele. Por isso, decidimos manter o README principal em português enquanto o projeto for pequeno. Assim que o Zyris crescer e atrair mais colaboradores internacionais, passaremos a utilizar o Inglês como idioma principal.
+Zyris é uma engine open source orientada a sistemas e arquitetura de produção.
 
-**Zyris** é uma poderosa distribuição de game engine baseada na [Godot Engine](https://godotengine.org), desenvolvida por **MachiTwo** e contribuidores. Nossa missão é expandir os limites do desenvolvimento de jogos de código aberto, implementando recursos avançados e otimizações que rivalizam com engines líderes da indústria como Unreal Engine e Unity.
+Projetada para oferecer controle estrutural, previsibilidade e escalabilidade,
+Zyris se posiciona no mesmo ecossistema de engines como Godot, Unreal Engine e Unity.
+
+---
+
+## Origem Tecnológica
+
+Zyris é um fork da Godot Engine
+
+Isso significa que:
+
+- Projetos feitos na Godot podem ser abertos no Zyris
+- Seu conhecimento em GDScript continua válido
+- O fluxo de trabalho permanece familiar
+
+Zyris mantém compatibilidade com a base Godot,
+mas possui governança própria de commits e roadmap.
+
+As atualizações upstream não são aplicadas automaticamente.
+Cada mudança é analisada, filtrada e integrada de forma controlada.
+
+---
 
 ## Filosofia
 
@@ -37,21 +56,19 @@ A engine evolui de forma **curada**. Atualizações externas não são adotadas 
 
 Todo o crédito para a engine base vai para o [repositório official da Godot Engine](https://github.com/godotengine/godot) e sua incrível comunidade de contribuidores.
 
-## Versionamento e Política de Sincronização
+## Comunicação Oficial
 
-O Zyris realiza rebase manual apenas em versões maiores da Godot (ex: `4.5 → 4.6`).
+O desenvolvimento e anúncios oficiais do Zyris são comunicados através de:
 
-Atualizações menores não são acompanhadas.
+🎥 [Machi](https://www.youtube.com/@machiatodev)
+🎥 [Alen](https://www.youtube.com/@yatsuragames)
 
-### Formato de Versão
+Esses canais são responsáveis por:
 
-**Formato de Versão Zyris** - `Godot-X.Y.Z-zyris.N`
-
-- **X.Y.Z** - Versão official da Godot Engine (ex: `4.6.0`)
-
-- **N** - Incremento de subversão do Zyris (ex: `zyris.1`, `zyris.2`)
-
-**Versão Atual** - `4.6.0-zyris.3`
+- Atualizações da engine
+- Explicações técnicas
+- Demonstrações de sistemas
+- Tutoriais oficiais
 
 ## Roadmap
 
