@@ -14,14 +14,26 @@
 
 **Zyris** is a powerful game engine distribution based on the [Godot Engine](https://godotengine.org), developed by **MachiTwo** and contributors. Our mission is to expand the boundaries of open-source game development by implementing advanced features and optimizations that rival industry-leading engines like Unreal Engine and Unity.
 
-## Vision
+## Philosophy
 
-Zyris is not a fork intended for upstream contributions to the Godot Engine. Instead, we are a **parallel distribution** that:
+Zyris is an **intentionally opinionated** engine. We believe that absolute freedom without direction leads to chaotic code, structural rework, and inconsistent systems over time.
 
-- **Extends Godot's capabilities** with cutting-edge features
-- **Optimizes performance** for high-level game development
-- **Implements proprietary innovations** while maintaining open-source principles
-- **Focuses on AAA production workflows and tools**
+Therefore, Zyris establishes **clear conventions**, recommended architectures, and integrated systems as standard. These conventions do not remove freedom—they reduce the need to reinvent fundamental solutions.
+
+You can still develop however you prefer, but by default, Zyris offers:
+
+- **Predictable structures**
+- **Integrated persistent systems**
+- **Deterministic state management**
+- **Consistent architectural base** for AI and gameplay
+
+Our goal is not to limit creativity, but to **eliminate unnecessary complexity**. Zyris evolves as a production-oriented engine, focused on systemic coherence, project longevity, and technical maturity.
+
+### Evolution Principles
+
+Every system introduced in Zyris must integrate natively into the core, adhere to deterministic principles, and prioritize production stability.
+
+The engine evolves in a **curated** manner. External updates are not adopted automatically; every change is evaluated through the lens of structural coherence and technical maturity. Our focus is to build a solid foundation for scalable projects prepared for longevity and continuous evolution.
 
 All credit for the base engine goes to the [official Godot Engine repository](https://github.com/godotengine/godot) and its incredible community of contributors.
 

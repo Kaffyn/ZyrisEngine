@@ -2,7 +2,7 @@
 trigger: always_on
 ---
 
-# Ability System (Zyris v3)
+# Ability System
 
 ## 1. Contexto e Filosofia
 

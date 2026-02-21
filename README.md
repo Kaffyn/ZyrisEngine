@@ -14,14 +14,26 @@
 
 **Zyris** é uma poderosa distribuição de game engine baseada na [Godot Engine](https://godotengine.org), desenvolvida por **MachiTwo** e contribuidores. Nossa missão é expandir os limites do desenvolvimento de jogos de código aberto, implementando recursos avançados e otimizações que rivalizam com engines líderes da indústria como Unreal Engine e Unity.
 
-## Visão
+## Filosofia
 
-O Zyris não é um fork destinado a contribuições upstream para a Godot Engine. Em vez disso, somos uma **distribuição paralela** que:
+Zyris é uma engine **intencionalmente opinada**. Acreditamos que liberdade absoluta sem direção gera código caótico, retrabalho estrutural e sistemas inconsistentes ao longo do tempo.
 
-- **Estende as capacidades da Godot** com recursos de ponta
-- **Otimiza a performance** para o desenvolvimento de jogos de alto nível
-- **Implementa inovações proprietárias** mantendo os princípios de código aberto
-- **Foca em fluxos de trabalho e ferramentas de produção AAA**
+Por isso, o Zyris estabelece **convenções claras**, arquiteturas recomendadas e sistemas integrados como padrão. Essas convenções não removem liberdade — elas reduzem a necessidade de reinventar soluções fundamentais.
+
+Você ainda pode desenvolver da forma que preferir, mas, por padrão, o Zyris oferece:
+
+- **Estruturas previsíveis**
+- **Sistemas persistentes integrados**
+- **Gerenciamento determinístico de estados**
+- **Base arquitetural consistente** para IA e gameplay
+
+Nosso objetivo não é limitar criatividade, mas **eliminar complexidade desnecessária**. Zyris evolui como uma engine orientada a produção, focada em coerência sistêmica, longevidade de projeto e maturidade técnica.
+
+### Princípios de Evolução
+
+Cada sistema introduzido no Zyris deve integrar-se nativamente ao núcleo, aderir a princípios determinísticos e priorizar estabilidade de produção.
+
+A engine evolui de forma **curada**. Atualizações externas não são adotadas automaticamente; cada mudança é avaliada sob a ótica de coerência estrutural e maturidade técnica. Nosso foco é construir uma base sólida para projetos escaláveis e preparados para longevidade e evolução contínua.
 
 Todo o crédito para a engine base vai para o [repositório official da Godot Engine](https://github.com/godotengine/godot) e sua incrível comunidade de contribuidores.
 

@@ -1,4 +1,8 @@
-# Sistema Central de Persistência (Zyris v2)
+---
+trigger: always_on
+---
+
+# Sistema Central de Persistência
 
 ## 1. Contexto da Engine
 
